@@ -188,6 +188,138 @@ body{background:var(--bg);color:var(--text)}
 .geo-status:empty{display:none}
 @media(max-width:740px){.reference-row{flex-direction:column}.reference-row select{flex:auto;width:100%}.clear-location{width:100%;min-height:42px}}
 
+
+/* ==============================================
+   FJU CONNECT V8 — REAL PHOTO EDITION
+   Mobile first photography / navy white red
+   ============================================== */
+:root{--navy:#081a32;--red:#e52241;--wrap:1180px}
+html{scroll-behavior:smooth}
+body{background:#f5f7fa}
+.header-inner{height:78px}
+.site-header{background:#061b35f5;border-bottom:3px solid var(--red)}
+.desktop-nav{gap:20px}
+.brand-mark{font-size:38px}
+.hero{background:radial-gradient(circle at 77% 31%,#194679 0,transparent 46%),linear-gradient(115deg,#06172d 0%,#092951 63%,#0d3464 100%);color:#fff}
+.hero:before{background:linear-gradient(135deg,#1165ac17,#173a6930)}
+.hero-grid{display:grid;grid-template-columns:1fr 1.15fr;align-items:center;gap:22px;min-height:680px;padding:72px 0 77px}
+.hero-copy{position:relative;z-index:2;padding:20px 0}
+.hero h1{font-size:clamp(51px,5.9vw,82px);letter-spacing:-3.7px;max-width:610px;line-height:1}
+.hero-copy>p{font-size:18px;max-width:520px;line-height:1.65;color:#d9e6f8}
+.hero-photo-stage{position:relative;height:550px;min-width:0;isolation:isolate;transform:translateX(15px)}
+.hero-main-photo{position:absolute;inset:7px 20px 40px 28px;overflow:hidden;border-radius:16px 16px 16px 70px;box-shadow:0 30px 90px #0008;outline:1px solid #ffffff36}
+.hero-main-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#081a31c4,transparent 38%,#051c2810)}
+.hero-main-photo img{width:100%;height:100%;object-fit:cover;object-position:54% 44%;filter:saturate(1.06) contrast(1.06)}
+.hero-photo-label{position:absolute;bottom:24px;left:29px;z-index:1;font:800 11px 'Space Grotesk',sans-serif;letter-spacing:2px;color:#fff}
+.hero-side-photo{position:absolute;right:-4%;bottom:-6px;width:39%;height:35%;border:7px solid #0d2a4e;border-radius:8px 8px 32px 8px;overflow:hidden;z-index:2;box-shadow:0 14px 38px #03152bd1;transform:rotate(2deg)}
+.hero-side-photo img{width:100%;height:100%;object-fit:cover;object-position:center 46%}
+.hero-side-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#081a31df,transparent 60%)}
+.hero-side-photo span{position:absolute;bottom:12px;left:12px;right:9px;color:#fff;z-index:2;font:800 9px 'Space Grotesk',sans-serif;letter-spacing:.6px}
+.hero-photo-corner{position:absolute;top:-18px;right:-15px;z-index:3;transform:rotate(8deg);font-weight:900;font-size:38px;letter-spacing:-3px;color:#fff;text-shadow:2px 3px #e51f3d}
+.hero-photo-corner span{color:#ff3b58}
+.hero-identity{display:none}
+.hero-meta{margin-top:45px}
+.action-section{padding:92px 0 100px;background:#fff}
+.action-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px}
+.action-section-head h2{font-size:clamp(34px,4.2vw,62px);line-height:1.01;letter-spacing:-2.1px;margin:12px 0 17px;max-width:770px}
+.action-section-head h2 span{color:#e52241}
+.action-section-head p{max-width:630px;line-height:1.7;color:#5b6980;font-size:15px;margin:0}
+.action-social-link{flex-shrink:0;font-weight:800;color:#a90d2b;letter-spacing:.6px;font-size:11px;border-bottom:2px solid #d51e3c;padding-bottom:8px}
+.action-photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:220px;gap:12px}
+.action-photo{position:relative;overflow:hidden;margin:0;border-radius:8px;background:#08234b;box-shadow:0 9px 25px #10274717}
+.action-photo:nth-child(1){grid-column:span 2;grid-row:span 2}
+.action-photo:nth-child(5){grid-column:span 2}
+.action-photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;display:block}
+.action-photo:hover img{transform:scale(1.06)}
+.action-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#061a36e5,transparent 62%)}
+.action-photo figcaption{position:absolute;bottom:0;left:0;right:0;padding:20px 24px;display:flex;flex-direction:column;gap:3px;z-index:1;color:white}
+.action-photo figcaption strong{font-size:clamp(15px,1.7vw,22px);font-weight:900;letter-spacing:.5px}
+.action-photo-number{font:700 10px 'Space Grotesk',sans-serif;color:#ff6f82;letter-spacing:3px}
+.action-photo:nth-child(1) figcaption strong{font-size:clamp(26px,2.4vw,34px)}
+.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.project-card{padding:0 26px 28px;min-height:390px;display:flex;flex-direction:column}
+.project-card:before{height:0}
+.project-real-photo{width:calc(100% + 52px);max-width:none;height:196px;object-fit:cover;object-position:center;margin:0 -26px 22px;display:block}
+.project-index{font-size:11px;letter-spacing:1px;font-weight:900}
+.project-icon{font-size:25px;line-height:1}
+.project-card h3{margin-top:3px;margin-bottom:7px}
+.project-card p{margin-top:0}
+.live-panel-art{position:relative;overflow:hidden}
+.live-real-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.42) saturate(.8)}
+.live-panel-art:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,#061b3760,#061b37b0)}
+.live-panel-art .live-ring{position:relative;z-index:2}
+.live-panel-art .live-bottom{z-index:2;position:relative}
+.story-card{position:relative;overflow:hidden}
+.story-real-photo,.story-side-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.47;filter:saturate(.9)}
+.story-card-main:after,.story-card-side:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#071b37eb,#071b3720 90%);z-index:0}
+.story-card-side:after{background:linear-gradient(0deg,#750a21ec,#750a2150 90%)}
+.story-card .story-content,.story-card .story-visual,.story-side-symbol{position:relative;z-index:1}
+.moments-section{padding:90px 0 96px;background:#0a2341;color:#fff}
+.moments-section h2{color:#fff}
+.moments-section h2 span{color:#ff5873}
+.moments-section .section-intro p{color:#c6d5e5}
+.moments-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:210px 210px;gap:12px}
+.moment-photo{overflow:hidden;border-radius:7px;background:#12314e}
+.moment-photo:nth-child(1){grid-column:span 2;grid-row:span 2}
+.moment-photo:nth-child(2){grid-column:span 2}
+.moment-photo:nth-child(3){grid-column:span 2}
+.moment-photo:nth-child(4){grid-column:span 1}
+.moment-photo:nth-child(5){grid-column:span 1}
+.moment-photo:nth-child(6){grid-column:span 2}
+.moment-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.moment-photo:hover img{transform:scale(1.04)}
+.moments-cta{display:inline-flex;margin-top:24px}
+.closing-section{position:relative;isolation:isolate}
+.closing-photo{position:absolute;inset:0;height:100%;width:100%;object-fit:cover;z-index:-2;filter:brightness(.44) saturate(.8)}
+.closing-section:before{content:"";position:absolute;inset:0;z-index:-1;background:#051b35b9}
+.section-intro{position:relative}
+@media(max-width:1000px){
+ .hero-grid{grid-template-columns:1fr .94fr;gap:14px;min-height:580px}
+ .hero-photo-stage{height:460px;transform:none}
+ .hero-side-photo{right:0}
+ .hero h1{font-size:clamp(45px,6vw,73px)}
+ .action-photos{grid-auto-rows:180px}
+ .project-real-photo{height:165px}
+ .moments-grid{grid-template-rows:170px 170px}
+}
+@media(max-width:740px){
+ .header-inner{height:65px}
+ .hero-grid{display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:38px 0 50px;min-height:0}
+ .hero-copy{padding:0 0 10px}
+ .hero h1{font-size:clamp(44px,10vw,62px);letter-spacing:-2.2px;line-height:1.02}
+ .hero-copy>p{font-size:14px;line-height:1.5}
+ .hero-actions{gap:10px;flex-direction:column;align-items:stretch}
+ .hero-actions .btn{width:100%;justify-content:center}
+ .hero-meta{margin-top:18px}
+ .hero-photo-stage{height:300px;width:100%;margin:12px 0 3px;transform:none}
+ .hero-main-photo{inset:5px 15px 18px 0;border-radius:9px 9px 9px 35px}
+ .hero-side-photo{height:42%;width:43%;right:0;bottom:0;border-width:4px}
+ .hero-photo-corner{right:4px;top:-8px;font-size:28px}
+ .hero-photo-label{bottom:13px;left:15px;font-size:9px}
+ .action-section{padding:65px 0}
+ .action-section-head{display:block}
+ .action-section-head h2{font-size:36px}
+ .action-section-head p{font-size:14px}
+ .action-social-link{display:inline-block;margin-top:18px;font-size:11px}
+ .action-photos{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:160px;gap:8px}
+ .action-photo:nth-child(1){grid-column:span 2;grid-row:span 2}
+ .action-photo:nth-child(5){grid-column:span 1}
+ .action-photo figcaption{padding:12px}
+ .action-photo figcaption strong{font-size:14px}
+ .action-photo:nth-child(1) figcaption strong{font-size:23px}
+ .project-grid{grid-template-columns:1fr;gap:16px}
+ .project-card{min-height:0;padding-bottom:18px}
+ .project-real-photo{height:220px}
+ .moments-section{padding:65px 0}
+ .moments-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,150px);gap:8px}
+ .moment-photo:nth-child(1){grid-column:span 2;grid-row:span 2}
+ .moment-photo:nth-child(2),.moment-photo:nth-child(3){grid-column:span 1}
+ .moment-photo:nth-child(4),.moment-photo:nth-child(5){grid-column:span 1}
+ .moment-photo:nth-child(6){grid-column:span 2}
+ .moment-photo img{object-fit:cover}
+ .live-panel-art{min-height:300px}
+}
+
 </style>
   <script defer>
 'use strict';
@@ -454,6 +586,7 @@ const initialPolos = [
 ];
 const translations = {
   pt: {
+    navAction:"FJU EM AÇÃO",actionTitle:"A FJU ACONTECE <span>DE VERDADE.</span>",actionDesc:"Muito mais do que uma página: encontros, amizades, desafios e histórias que acontecem aqui no Japão.",actionTile1:"JUNTOS",actionTile2:"MOVIMENTO",actionTile3:"EXPRESSÃO",actionTile4:"SUPERAÇÃO",actionTile5:"AMIZADE",actionTile6:"COMUNIDADE",actionMore:"ACOMPANHE NOSSO INSTAGRAM",galleryTitle:"MOMENTOS QUE <span>FICAM.</span>",galleryDesc:"Um pouco da energia dos nossos encontros e atividades em todo o Japão.",galleryCTA:"VER MAIS NO INSTAGRAM",portalBadge:"23 POLOS EM TODO O JAPÃO",
     navLive:'LIVE',navMusic:'MÚSICA',navProjects:'PROJETOS',navPoles:'ENCONTRE A FJU',contact:'CONTATO',
     eyebrow:'UMA NOVA GERAÇÃO, UM NOVO COMEÇO',heroTitle:'SUA HISTÓRIA<br><em>PODE MUDAR</em><br>AQUI<span>.</span>',
     heroSub:'Conexões de verdade. Novos desafios. Uma nova direção. Encontre a FJU mais perto de você.',
@@ -471,6 +604,7 @@ const translations = {
     whatsappGeneral:'Olá! Gostaria de conhecer a FJU JAPAN.',whatsappPolo:(name)=>`Olá! Conheci a FJU pelo polo ${name} e gostaria de saber mais.`
   },
   ja: {
+    navAction:"FJUの活動",actionTitle:"ここにある、<span>リアルなFJU。</span>",actionDesc:"出会い、仲間、挑戦。日本各地で生まれているFJUのリアルな瞬間。",actionTile1:"仲間",actionTile2:"チャレンジ",actionTile3:"表現",actionTile4:"成長",actionTile5:"友情",actionTile6:"コミュニティ",actionMore:"インスタグラムを見る",galleryTitle:"心に残る<span>瞬間。</span>",galleryDesc:"日本各地の仲間たちとの活動や出会いを写真でご紹介します。",galleryCTA:"インスタグラムでもっと見る",portalBadge:"日本全国23拠点",
     navLive:'ライブ',navMusic:'音楽',navProjects:'プロジェクト',navPoles:'FJUを探す',contact:'お問い合わせ',
     eyebrow:'新しい世代、新しいスタート',heroTitle:'あなたの物語は<br><em>ここから</em><br>変わる<span>。</span>',
     heroSub:'本当のつながり、新しい挑戦、新しい一歩。あなたの近くのFJUを見つけよう。',findFju:'近くのFJUを探す',watchLive:'FJUライブを見る',
@@ -487,6 +621,7 @@ const translations = {
     whatsappGeneral:'こんにちは！FJU JAPANについて詳しく知りたいです。',whatsappPolo:(name)=>`こんにちは！${name}のページを見ました。FJUについて詳しく知りたいです。`
   },
   en: {
+    navAction:"FJU IN ACTION",actionTitle:"REAL PEOPLE. <span>REAL CONNECTIONS.</span>",actionDesc:"Friendship, community and new challenges — real moments from FJU across Japan.",actionTile1:"TOGETHER",actionTile2:"CHALLENGE",actionTile3:"EXPRESSION",actionTile4:"GROWTH",actionTile5:"FRIENDSHIP",actionTile6:"COMMUNITY",actionMore:"FOLLOW OUR INSTAGRAM",galleryTitle:"MOMENTS THAT <span>MATTER.</span>",galleryDesc:"A glimpse into real friendships and activities across Japan.",galleryCTA:"MORE ON INSTAGRAM",portalBadge:"23 LOCATIONS IN JAPAN",
     navLive:'LIVE',navMusic:'MUSIC',navProjects:'PROJECTS',navPoles:'FIND FJU',contact:'CONTACT',
     eyebrow:'A NEW GENERATION, A NEW BEGINNING',heroTitle:'YOUR STORY<br><em>CAN CHANGE</em><br>HERE<span>.</span>',
     heroSub:'Real connections. New challenges. A fresh direction. Find the FJU closest to you.',findFju:'FIND MY FJU',watchLive:'DISCOVER FJU LIVE',
@@ -559,34 +694,11 @@ function applyLanguage(next){
   renderReferenceChoices();updateGeoMessage();
   renderPolos();renderEditorEntries();renderDetailIfOpen();updateCountdown();
 }
-// Nome e cidade exibidos no idioma escolhido. Mantemos os IDs e endereços originais.
-const poloNamesJa = {
-  hamamatsu:'FJU 浜松', toyohashi:'FJU 豊橋', suzuka:'FJU 鈴鹿',
-  iwata:'FJU 磐田', yaizu:'FJU 焼津', fuji:'FJU 富士',
-  anjo:'FJU 安城', shiga:'FJU 滋賀', nagahama:'FJU 長浜',
-  kani:'FJU 可児', toyota:'FJU 豊田', nagoya:'FJU 名古屋',
-  komaki:'FJU 小牧', takaoka:'FJU 高岡', kanagawa:'FJU 神奈川',
-  yamanashi:'FJU 山梨', nagano:'FJU 長野', chiba:'FJU 千葉',
-  gunma:'FJU 群馬', ibaraki:'FJU 茨城', isesaki:'FJU 伊勢崎',
-  tokyo:'FJU 東京', ryuzenji:'FJU 龍禅寺'
-};
-const poloAreasJa = {
-  hamamatsu:'浜松市・静岡県', toyohashi:'豊橋市・愛知県',
-  suzuka:'鈴鹿市・三重県', iwata:'磐田市・静岡県',
-  yaizu:'焼津市・静岡県', fuji:'富士市・静岡県',
-  anjo:'安城市・愛知県', shiga:'湖南市・滋賀県',
-  nagahama:'長浜市・滋賀県', kani:'可児市・岐阜県',
-  toyota:'豊田市・愛知県', nagoya:'名古屋市・愛知県',
-  komaki:'小牧市・愛知県', takaoka:'高岡市・富山県',
-  kanagawa:'綾瀬市・神奈川県', yamanashi:'中央市・山梨県',
-  nagano:'上田市・長野県', chiba:'千葉市・千葉県',
-  gunma:'大泉町・群馬県', ibaraki:'常総市・茨城県',
-  isesaki:'伊勢崎市・群馬県', tokyo:'新宿区・東京都',
-  ryuzenji:'浜松市・静岡県'
-};
+// Labels for every public FJU location in Japanese, independent of browser-stored records.
+const poloNamesJa={hamamatsu:'FJU 浜松',toyohashi:'FJU 豊橋',suzuka:'FJU 鈴鹿',iwata:'FJU 磐田',yaizu:'FJU 焼津',fuji:'FJU 富士',anjo:'FJU 安城',shiga:'FJU 滋賀',nagahama:'FJU 長浜',kani:'FJU 可児',toyota:'FJU 豊田',nagoya:'FJU 名古屋',komaki:'FJU 小牧',takaoka:'FJU 高岡',kanagawa:'FJU 神奈川',yamanashi:'FJU 山梨',nagano:'FJU 長野',chiba:'FJU 千葉',gunma:'FJU 群馬',ibaraki:'FJU 茨城',isesaki:'FJU 伊勢崎',tokyo:'FJU 東京',ryuzenji:'FJU 龍禅寺'};
+const poloAreasJa={hamamatsu:'浜松市・静岡県',toyohashi:'豊橋市・愛知県',suzuka:'鈴鹿市・三重県',iwata:'磐田市・静岡県',yaizu:'焼津市・静岡県',fuji:'富士市・静岡県',anjo:'安城市・愛知県',shiga:'湖南市・滋賀県',nagahama:'長浜市・滋賀県',kani:'可児市・岐阜県',toyota:'豊田市・愛知県',nagoya:'名古屋市・愛知県',komaki:'小牧市・愛知県',takaoka:'高岡市・富山県',kanagawa:'綾瀬市・神奈川県',yamanashi:'中央市・山梨県',nagano:'上田市・長野県',chiba:'千葉市・千葉県',gunma:'大泉町・群馬県',ibaraki:'常総市・茨城県',isesaki:'伊勢崎市・群馬県',tokyo:'新宿区・東京都',ryuzenji:'浜松市・静岡県'};
 function displayPoloName(p){return lang==='ja'?(poloNamesJa[p.id]||p.name):p.name}
 function displayPoloArea(p){return lang==='ja'?(poloAreasJa[p.id]||[p.city,p.prefecture].filter(Boolean).join('・')):[p.city,p.prefecture].filter(Boolean).join(', ')}
-
 function whatsappLink(polo){const message=polo?locale().whatsappPolo(displayPoloName(polo)):locale().whatsappGeneral;return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`}
 function haversine(lat1,lon1,lat2,lon2){const rad=Math.PI/180;const a=Math.sin((lat2-lat1)*rad/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin((lon2-lon1)*rad/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 function poloDistance(polo){return currentPosition&&polo.lat!==null&&polo.lng!==null?haversine(currentPosition.lat,currentPosition.lng,polo.lat,polo.lng):null}
@@ -690,7 +802,7 @@ document.addEventListener('DOMContentLoaded',init);
         <span class="brand-sub">CONNECT <i>JAPAN</i></span>
       </a>
       <nav class="desktop-nav" aria-label="Primary navigation">
-        <a href="#live" data-i18n="navLive">LIVE</a>
+        <a href="#acao" data-i18n="navAction">FJU EM AÇÃO</a><a href="#live" data-i18n="navLive">LIVE</a>
         <a href="#musica" data-i18n="navMusic">MUSIC</a>
         <a href="#projetos" data-i18n="navProjects">PROJECTS</a>
         <a href="#polos" data-i18n="navPoles">FIND FJU</a>
@@ -721,23 +833,31 @@ document.addEventListener('DOMContentLoaded',init);
           </div>
           <div class="hero-meta"><span>JAPAN</span><span class="meta-divider"></span><span>日本全国</span><span class="meta-divider"></span><span>FJU CONNECT</span></div>
         </div>
-        <div class="hero-art" aria-hidden="true">
-          <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
-          <div class="hero-art-card card-back"><span class="mini-label">FJU / JAPAN</span><span class="art-symbol">✦</span><strong>YOU<br>BELONG<br>HERE.</strong></div>
-          <div class="hero-art-card card-front"><div class="hero-card-top"><span>THE NEXT GENERATION</span><span>↗</span></div><div class="art-burst">FJU<span>!</span></div><div class="hero-card-bottom">CONNECTING PEOPLE<br>CHANGING STORIES</div></div>
-          <span class="floating-word">つながろう。</span><span class="hero-stamp">FJU JAPAN / 2026</span>
+        <div class="hero-photo-stage" aria-label="Fotos reais de jovens da FJU Japão">
+          <div class="hero-main-photo"><img src="assets/hero.webp" alt="Jovens reunidos em uma atividade da FJU no Japão" fetchpriority="high" width="1440" height="960"><span class="hero-photo-label">FJU JAPAN / REAL PEOPLE</span></div>
+          <div class="hero-side-photo"><img src="assets/hero-friendship.webp" alt="Jovens juntos em encontro da FJU" loading="eager"><span>TOGETHER WE GO FURTHER ↗</span></div>
+          <span class="hero-photo-corner" aria-hidden="true">FJU<span>!</span></span>
         </div>
       </div>
       <div class="ticker" aria-hidden="true"><div>FJU JAPAN <span>✦</span> MUSIC <span>✦</span> LIVE <span>✦</span> COMMUNITY <span>✦</span> CONNECT <span>✦</span> FJU JAPAN <span>✦</span> MUSIC <span>✦</span> LIVE <span>✦</span> COMMUNITY <span>✦</span></div></div>
     </section>
 
     <div class="brand-stripe" aria-hidden="true"></div>
+<section class="section action-section" id="acao"><div class="wrap">
+  <div class="action-section-head"><div><span class="kicker">01 / THIS IS FJU</span><h2 data-i18n-html="actionTitle">A FJU ACONTECE <span>DE VERDADE.</span></h2><p data-i18n="actionDesc">Muito mais do que uma página: encontros, amizades, desafios e histórias que acontecem aqui no Japão.</p></div><a class="action-social-link" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/fjujapan"><span data-i18n="actionMore">ACOMPANHE NOSSO INSTAGRAM</span> ↗</a></div>
+  <div class="action-photos"><figure class="action-photo action-photo-1"><img src="assets/action-together.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 1"><figcaption><span class="action-photo-number">01</span><strong data-i18n="actionTile1">JUNTOS</strong></figcaption></figure>
+<figure class="action-photo action-photo-2"><img src="assets/action-challenge.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 2"><figcaption><span class="action-photo-number">02</span><strong data-i18n="actionTile2">JUNTOS</strong></figcaption></figure>
+<figure class="action-photo action-photo-3"><img src="assets/action-culture.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 3"><figcaption><span class="action-photo-number">03</span><strong data-i18n="actionTile3">JUNTOS</strong></figcaption></figure>
+<figure class="action-photo action-photo-4"><img src="assets/action-sports.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 4"><figcaption><span class="action-photo-number">04</span><strong data-i18n="actionTile4">JUNTOS</strong></figcaption></figure>
+<figure class="action-photo action-photo-5"><img src="assets/action-friends.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 5"><figcaption><span class="action-photo-number">05</span><strong data-i18n="actionTile5">JUNTOS</strong></figcaption></figure>
+<figure class="action-photo action-photo-6"><img src="assets/action-community.webp" loading="lazy" alt="Atividade da FJU Japão: fotografia real 6"><figcaption><span class="action-photo-number">06</span><strong data-i18n="actionTile6">JUNTOS</strong></figcaption></figure></div>
+</div></section>
     <section class="section live-section" id="live">
       <div class="wrap">
         <div class="section-intro"><div><span class="kicker">01 / ON AIR</span><h2>FJU <span>LIVE</span></h2><p data-i18n="liveDesc">Todo domingo, às 19h, um encontro para você se conectar, refletir e seguir em frente.</p></div><span class="outline-word">LIVE</span></div>
         <div class="live-panel">
           <div class="live-panel-copy"><div class="live-label"><span class="live-dot"></span><span data-i18n="weeklyLive">PROGRAMA SEMANAL</span></div><h3 data-i18n-html="liveHeadline">DOMINGO<br><em>19:00</em> JST</h3><p data-i18n="liveTimezone">Horário do Japão · YouTube FJU JAPAN</p><div class="countdown-wrap"><span data-i18n="nextLive">PRÓXIMA EDIÇÃO</span><strong id="countdown">—</strong></div><a href="https://www.youtube.com/FJUJapan/live" target="_blank" rel="noopener noreferrer" class="btn btn-light"><span data-i18n="goYoutube">IR PARA O YOUTUBE</span> ↗</a></div>
-          <div class="live-panel-art"><div class="live-ring"><div class="live-ring-inner"><span>FJU</span><strong>LIVE</strong><small>JAPAN</small></div></div><div class="live-bottom">EVERY SUNDAY <span>•</span> 7:00 PM</div></div>
+          <div class="live-panel-art"><img class="live-real-photo" src="assets/live.webp" alt="Participante da FJU em apresentação" loading="lazy"><div class="live-ring"><div class="live-ring-inner"><span>FJU</span><strong>LIVE</strong><small>JAPAN</small></div></div><div class="live-bottom">EVERY SUNDAY <span>•</span> 7:00 PM</div></div>
         </div>
       </div>
     </section>
@@ -749,13 +869,14 @@ document.addEventListener('DOMContentLoaded',init);
       </div>
     </section>
 
-    <section class="section stories-section" id="historias"><div class="wrap"><div class="section-intro"><div><span class="kicker">03 / REAL STORIES</span><h2 data-i18n-html="storiesTitle">HISTÓRIAS QUE <span>INSPIRAM.</span></h2><p data-i18n="storiesDesc">Testemunhos e histórias reais da FJU JAPAN.</p></div></div><div class="stories-grid"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-main"><div class="story-visual"><span class="story-symbol">“</span><span class="story-play">▶</span></div><div class="story-content"><span class="story-overline">YOUTUBE / FJU JAPAN</span><strong data-i18n="testimonials">ASSISTA AOS TESTEMUNHOS</strong><span class="story-arrow">↗</span></div></a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-side"><div class="story-side-symbol">◎</div><div class="story-content"><span class="story-overline">INSTAGRAM / @FJUJAPAN</span><strong data-i18n="followUs">ACOMPANHE A FJU NO INSTAGRAM</strong><span class="story-arrow">↗</span></div></a></div></div></section>
+    <section class="section stories-section" id="historias"><div class="wrap"><div class="section-intro"><div><span class="kicker">03 / REAL STORIES</span><h2 data-i18n-html="storiesTitle">HISTÓRIAS QUE <span>INSPIRAM.</span></h2><p data-i18n="storiesDesc">Testemunhos e histórias reais da FJU JAPAN.</p></div></div><div class="stories-grid"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-main"><div class="story-visual"><img class="story-real-photo" src="assets/stories.webp" alt="Momento em evento da FJU Japão" loading="lazy"><span class="story-symbol">“</span><span class="story-play">▶</span></div><div class="story-content"><span class="story-overline">YOUTUBE / FJU JAPAN</span><strong data-i18n="testimonials">ASSISTA AOS TESTEMUNHOS</strong><span class="story-arrow">↗</span></div></a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-side"><img class="story-side-photo" src="assets/instagram.webp" alt="Jovens da FJU reunidos" loading="lazy"><div class="story-side-symbol">◎</div><div class="story-content"><span class="story-overline">INSTAGRAM / @FJUJAPAN</span><strong data-i18n="followUs">ACOMPANHE A FJU NO INSTAGRAM</strong><span class="story-arrow">↗</span></div></a></div></div></section>
 
-    <section class="section projects-section" id="projetos"><div class="wrap"><div class="section-intro"><div><span class="kicker">04 / GET INVOLVED</span><h2 data-i18n-html="projectsTitle">ENCONTRE SEU <span>ESPAÇO.</span></h2><p data-i18n="projectsDesc">Conheça algumas áreas de atuação da FJU. Cada polo tem seus projetos ativos.</p></div></div><div class="project-grid"><article class="project-card"><div class="project-index">01</div><div class="project-icon">◉</div><h3 data-i18n="projectMedia">MÍDIA</h3><p data-i18n="projectMediaDesc">Criatividade, fotografia, vídeo e comunicação.</p></article><article class="project-card"><div class="project-index">02</div><div class="project-icon">↗</div><h3 data-i18n="projectSports">ESPORTE</h3><p data-i18n="projectSportsDesc">Movimento, amizade e novos desafios.</p></article><article class="project-card"><div class="project-index">03</div><div class="project-icon">✳</div><h3 data-i18n="projectCulture">CULTURA</h3><p data-i18n="projectCultureDesc">Expressão, música, arte e talento.</p></article></div><p class="project-note" data-i18n="projectsNote">Áreas ilustrativas. A lista oficial e os projetos ativos de cada polo serão cadastrados pela administração.</p></div></section>
+    <section class="section projects-section" id="projetos"><div class="wrap"><div class="section-intro"><div><span class="kicker">04 / GET INVOLVED</span><h2 data-i18n-html="projectsTitle">ENCONTRE SEU <span>ESPAÇO.</span></h2><p data-i18n="projectsDesc">Conheça algumas áreas de atuação da FJU. Cada polo tem seus projetos ativos.</p></div></div><div class="project-grid"><article class="project-card"><img class="project-real-photo" src="assets/project-media.webp" alt="Participante falando ao microfone" loading="lazy"><div class="project-index">01</div><div class="project-icon">◉</div><h3 data-i18n="projectMedia">MÍDIA</h3><p data-i18n="projectMediaDesc">Criatividade, fotografia, vídeo e comunicação.</p></article><article class="project-card"><img class="project-real-photo" src="assets/project-sport.webp" alt="Atividade esportiva e jiu-jitsu" loading="lazy"><div class="project-index">02</div><div class="project-icon">↗</div><h3 data-i18n="projectSports">ESPORTE</h3><p data-i18n="projectSportsDesc">Movimento, amizade e novos desafios.</p></article><article class="project-card"><img class="project-real-photo" src="assets/project-culture.webp" alt="Apresentação de música e cultura da FJU" loading="lazy"><div class="project-index">03</div><div class="project-icon">✳</div><h3 data-i18n="projectCulture">CULTURA</h3><p data-i18n="projectCultureDesc">Expressão, música, arte e talento.</p></article></div><p class="project-note" data-i18n="projectsNote">Áreas ilustrativas. A lista oficial e os projetos ativos de cada polo serão cadastrados pela administração.</p></div></section>
 
+<section class="section moments-section" id="galeria"><div class="wrap"><div class="section-intro"><div><span class="kicker">05 / THE MOMENTS</span><h2 data-i18n-html="galleryTitle">MOMENTOS QUE <span>FICAM.</span></h2><p data-i18n="galleryDesc">Um pouco da energia dos nossos encontros e atividades em todo o Japão.</p></div></div><div class="moments-grid"><div class="moment-photo"><img src="assets/gallery-show.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div><div class="moment-photo"><img src="assets/gallery-smiles.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div><div class="moment-photo"><img src="assets/gallery-stage.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div><div class="moment-photo"><img src="assets/gallery-event.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div><div class="moment-photo"><img src="assets/action-friends.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div><div class="moment-photo"><img src="assets/action-together.webp" alt="Galeria de atividades da FJU no Japão" loading="lazy"></div></div><a class="btn btn-primary moments-cta" href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer"><span data-i18n="galleryCTA">VER MAIS NO INSTAGRAM</span> ↗</a></div></section>
     <section class="section poles-section" id="polos"><div class="wrap"><div class="section-intro"><div><span class="kicker">05 / FIND YOUR PEOPLE</span><h2 data-i18n-html="polesTitle">A FJU MAIS <span>PERTO DE VOCÊ.</span></h2><p data-i18n="polesDesc">Encontre seu polo no Japão. Com o GPS, todos os 23 polos aparecem do mais próximo ao mais distante.</p></div></div><div class="locator"><p id="poloCount" class="polo-count" aria-live="polite">23 polos cadastrados</p><div class="locator-controls"><div class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input type="search" id="poloSearch" autocomplete="off" data-placeholder="searchPlaceholder" placeholder="Buscar cidade ou polo" aria-label="Buscar polo" /></div><button id="geoBtn" class="btn btn-primary" type="button"><span aria-hidden="true">◎</span> <span data-i18n="useLocation">USAR MEU GPS</span></button></div><div class="reference-row"><label class="sr-only" for="referencePolo">Reference location / 基準地点 / Local de referência</label><select id="referencePolo" aria-label="Local de referência sem GPS"><option value="">SEM GPS? ESCOLHA UM POLO</option></select><button id="clearGeoBtn" class="clear-location" type="button" data-i18n="clearLocation" hidden>LIMPAR LOCALIZAÇÃO</button></div><p id="geoStatus" class="geo-status" role="status" aria-live="polite"></p><div id="poloList" class="polo-list" aria-live="polite"></div><p class="locator-note" data-i18n="locatorNote">Distância aproximada em linha reta. Consulte o Google Maps para ver o percurso real.</p></div></div></section>
 
-    <section class="section closing-section"><div class="wrap closing-inner"><span class="kicker">STAY CONNECTED</span><h2 data-i18n-html="closingTitle">O PRÓXIMO PASSO<br><span>COMEÇA AQUI.</span></h2><p data-i18n="closingDesc">Tem alguma dúvida? Fale com a equipe FJU JAPAN.</p><a id="closingWhatsApp" class="btn btn-primary btn-big" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="talkToUs">FALAR COM A FJU</span> ↗</a><div class="social-row"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer">YOUTUBE ↗</a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://open.spotify.com/artist/2sau9NCVYFTqSRnMPjnhzT" target="_blank" rel="noopener noreferrer">SPOTIFY ↗</a></div></div></section>
+    <section class="section closing-section"><img class="closing-photo" src="assets/gallery-event.webp" alt="Encontro da FJU no Japão" loading="lazy"><div class="wrap closing-inner"><span class="kicker">STAY CONNECTED</span><h2 data-i18n-html="closingTitle">O PRÓXIMO PASSO<br><span>COMEÇA AQUI.</span></h2><p data-i18n="closingDesc">Tem alguma dúvida? Fale com a equipe FJU JAPAN.</p><a id="closingWhatsApp" class="btn btn-primary btn-big" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="talkToUs">FALAR COM A FJU</span> ↗</a><div class="social-row"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer">YOUTUBE ↗</a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://open.spotify.com/artist/2sau9NCVYFTqSRnMPjnhzT" target="_blank" rel="noopener noreferrer">SPOTIFY ↗</a></div></div></section>
   </main>
 
   <footer class="footer"><div class="wrap footer-inner"><div class="footer-logo">FJU<span>.</span> <small>CONNECT JAPAN</small></div><p>© <span id="year"></span> FJU JAPAN</p><button id="editorToggle" type="button" class="editor-link" data-i18n="localEditor">CONFIGURAR POLOS (DEMO LOCAL)</button></div></footer>
