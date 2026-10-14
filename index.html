@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#081e3b" />
+  <meta name="description" content="FJU Connect Japan — músicas, lives, projetos e polos da FJU em todo o Japão." />
+  <title>FJU CONNECT — JAPAN</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+:root{color-scheme:dark;--bg:#0d0d18;--bg2:#151522;--text:#f8f7ff;--muted:#b5b2c9;--purple:#9c6cff;--pink:#ef65d7;--line:#333043;--wrap:1160px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans','Noto Sans JP',sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}img{max-width:100%}.wrap{width:min(var(--wrap),calc(100% - 44px));margin:auto}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.skip-link{position:absolute;top:-50px;left:10px;background:#fff;color:#000;padding:10px;z-index:100}.skip-link:focus{top:10px}.site-header{position:sticky;top:0;z-index:30;background:#10101be9;border-bottom:1px solid #ffffff13;backdrop-filter:blur(20px)}.header-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:13px;flex-shrink:0}.brand-mark{font:700 35px/1 'Space Grotesk',sans-serif;letter-spacing:-4px}.brand-mark>span:first-child{color:#bc8aff}.brand-dot{color:#d75de4}.brand-sub{font:700 11px/1.3 'Space Grotesk',sans-serif;letter-spacing:2px}.brand-sub i{display:block;font-style:normal;color:#9c91b3;font-size:9px;letter-spacing:3px}.desktop-nav{display:flex;gap:30px}.desktop-nav a{font-size:11px;font-weight:800;letter-spacing:1.2px;color:#d3ccdd;transition:color .2s}.desktop-nav a:hover{color:var(--purple)}.header-actions{display:flex;align-items:center;gap:13px}.header-actions select{background:#222034;border:1px solid #494058;color:#fff;padding:9px 8px;border-radius:8px;font-size:12px;max-width:113px}.header-contact{font-size:11px;font-weight:800;letter-spacing:.6px;border:1px solid #6f558e;padding:12px 14px;border-radius:7px}.hero{position:relative;overflow:hidden;background:radial-gradient(ellipse at 75% 45%,#351d60 0%,#181328 44%,#0d0d18 80%)}.hero-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(65px)}.hero-glow-a{width:370px;height:370px;right:10%;top:8%;background:#7c39dc50}.hero-glow-b{width:270px;height:270px;right:40%;bottom:0;background:#9b39a82e}.hero-grid{position:relative;display:grid;grid-template-columns:1.08fr .92fr;min-height:600px;align-items:center;gap:30px;padding:68px 0 82px}.hero-copy{position:relative;z-index:2}.eyebrow,.kicker{font:800 11px/1.5 'Space Grotesk',sans-serif;letter-spacing:2px;color:#c38dff}.eyebrow{display:flex;align-items:center;gap:10px}.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#d979ff;box-shadow:0 0 14px #d979ff}.hero h1{font:700 clamp(52px,6.1vw,88px)/.98 'Space Grotesk','Noto Sans JP',sans-serif;letter-spacing:-4.5px;margin:24px 0 23px;max-width:740px}.hero h1 em,.live-panel h3 em{font-style:normal;color:#b37dff}.hero h1>span{color:#ed66dc}.hero-copy>p{max-width:500px;font-size:17px;line-height:1.7;color:#c7c2d3;margin-bottom:29px}.hero-actions{display:flex;flex-wrap:wrap;gap:12px}.btn{border-radius:8px;padding:15px 21px;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid transparent;font:800 12px/1.2 'Space Grotesk','Noto Sans JP',sans-serif;letter-spacing:.5px;transition:transform .2s,background .2s;min-height:46px;text-align:center}.btn:hover{transform:translateY(-2px)}.btn-primary{background:#a678ff;color:#14101c}.btn-primary:hover{background:#c09cff}.btn-ghost{background:#ffffff0c;border-color:#ffffff2b;color:#fff}.btn-outline{border-color:#675b7b;color:#fff;background:transparent}.btn-outline:hover{background:#ffffff12}.btn-light{background:#fff;color:#211631}.btn-danger{border-color:#8d485f;color:#ffb7c6;background:transparent}.play-icon{display:grid;place-items:center;border:1px solid #a87ee5;border-radius:50%;width:26px;height:26px;font-size:9px}.hero-meta{display:flex;gap:17px;align-items:center;margin-top:58px;font:700 10px 'Space Grotesk',sans-serif;letter-spacing:2px;color:#968ba9}.meta-divider{height:13px;width:1px;background:#514264}.hero-art{height:470px;position:relative;display:grid;place-items:center}.hero-orbit{position:absolute;border:1px solid #a376e534;border-radius:50%;transform:rotate(-26deg)}.orbit-one{width:540px;height:350px}.orbit-two{width:440px;height:460px;transform:rotate(30deg)}.hero-art-card{position:absolute;border-radius:16px;box-shadow:0 30px 70px #0008;overflow:hidden}.card-back{width:270px;height:350px;background:linear-gradient(150deg,#eb77df,#7138bb);transform:rotate(13deg) translate(84px,-15px);padding:23px;display:flex;flex-direction:column;justify-content:space-between}.card-back .mini-label{font:700 11px 'Space Grotesk';letter-spacing:3px}.art-symbol{font-size:66px;align-self:flex-end}.card-back strong{font:700 39px/.9 'Space Grotesk';letter-spacing:-2px}.card-front{width:285px;height:385px;background:linear-gradient(135deg,#241338,#411d68 48%,#191226);transform:rotate(-12deg) translate(-50px,4px);border:1px solid #caa7ff80;display:flex;flex-direction:column;justify-content:space-between;padding:24px}.hero-card-top,.hero-card-bottom{font:700 10px/1.6 'Space Grotesk';letter-spacing:2px;display:flex;justify-content:space-between}.hero-card-bottom{color:#c4acd8}.art-burst{font:700 108px/.9 'Space Grotesk';letter-spacing:-10px;text-shadow:0 8px 35px #ac66ff88}.art-burst span{color:#ee72e3}.floating-word{position:absolute;right:0;bottom:22px;color:#e3b7ff;font-size:19px;font-weight:900;transform:rotate(8deg)}.ticker{border-top:1px solid #ffffff18;border-bottom:1px solid #ffffff18;background:#191323;overflow:hidden;white-space:nowrap;padding:13px 0;color:#c5a3ee;font:800 12px 'Space Grotesk';letter-spacing:4px}.ticker>div{width:max-content;animation:marquee 35s linear infinite}.ticker span{color:#ed76df;margin:0 24px}@keyframes marquee{to{transform:translateX(-50%)}}.section{padding:105px 0;scroll-margin-top:80px}.section-intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:36px}.section h2{font:700 clamp(40px,5.1vw,70px)/1.06 'Space Grotesk','Noto Sans JP',sans-serif;letter-spacing:-3px;margin:16px 0 14px}.section h2 span{color:#b37dff}.section-intro p,.music-copy p{font-size:16px;line-height:1.75;color:var(--muted);max-width:590px}.outline-word{font:700 120px 'Space Grotesk';letter-spacing:-9px;color:transparent;-webkit-text-stroke:1px #4d3e63;opacity:.5}.live-section{background:#11111e}.live-panel{display:grid;grid-template-columns:1fr 1fr;border:1px solid #52416c;border-radius:18px;overflow:hidden;min-height:420px}.live-panel-copy{padding:48px 54px;background:linear-gradient(135deg,#30204b,#1a1729)}.live-label{font:800 11px 'Space Grotesk';letter-spacing:2px;color:#e0baff;display:flex;align-items:center;gap:9px}.live-panel h3{font:700 clamp(49px,5vw,75px)/1.05 'Space Grotesk','Noto Sans JP';letter-spacing:-3px;margin:24px 0 10px}.live-panel-copy>p{color:#d0c7d9}.countdown-wrap{display:flex;flex-direction:column;gap:5px;margin:26px 0;color:#baa5cb;font:800 10px 'Space Grotesk';letter-spacing:1.5px}.countdown-wrap strong{color:#fff;font:700 22px 'Space Grotesk','Noto Sans JP';letter-spacing:0}.live-panel-art{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 50%,#a34ce9 0%,#5b288b 34%,#2c184b 65%,#1c162a 100%);display:grid;place-items:center;min-height:390px}.live-ring{border:2px solid #ffffff70;border-radius:50%;width:290px;height:290px;display:grid;place-items:center;box-shadow:0 0 0 25px #ffffff10,0 0 0 55px #ffffff0a}.live-ring-inner{text-align:center;display:flex;flex-direction:column;align-items:center;line-height:1}.live-ring-inner span{font:700 50px 'Space Grotesk';letter-spacing:-4px}.live-ring-inner strong{font:700 76px 'Space Grotesk';letter-spacing:-5px}.live-ring-inner small{font:700 12px 'Space Grotesk';letter-spacing:7px;margin-top:10px}.live-bottom{position:absolute;bottom:27px;font:800 11px 'Space Grotesk';letter-spacing:3px}.live-bottom span{color:#f2a6f6}.music-section{background:#161522}.two-col{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:70px}.music-copy p{max-width:470px;margin:0 0 28px}.spotify-frame{background:#222136;padding:19px;border-radius:15px;border:1px solid #47425a}.embed-label{font:700 11px 'Space Grotesk';letter-spacing:1.8px;display:flex;align-items:center;gap:10px;margin-bottom:15px}.spotify-circle{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#1ed760;color:#102415;font-size:18px}.spotify-frame iframe{border-radius:10px;background:#191919}.embed-note{font-size:12px;color:#9f99b2;margin:10px 0 0}.stories-section{background:#10101a}.stories-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.story-card{min-height:310px;border-radius:15px;overflow:hidden;position:relative;display:flex;flex-direction:column;justify-content:space-between;border:1px solid #ffffff22;transition:transform .2s}.story-card:hover{transform:translateY(-4px)}.story-card-main{background:radial-gradient(circle at 35% 35%,#7c4acc,#28163f 65%,#1c1529)}.story-card-side{background:linear-gradient(135deg,#58244f,#a04f87 55%,#2e1b41)}.story-visual{flex:1;display:grid;place-items:center;position:relative}.story-symbol{font:700 240px/.6 Georgia,serif;color:#ffffff18;position:absolute;left:15%;top:35%}.story-play{width:68px;height:68px;border-radius:50%;border:2px solid #ffffff9c;background:#ffffff2c;display:grid;place-items:center;padding-left:4px;font-size:20px}.story-side-symbol{font:700 160px 'Space Grotesk';color:#ffffff40;position:absolute;right:25px;top:10px}.story-content{padding:28px;position:relative;z-index:1;display:flex;flex-direction:column;gap:10px}.story-overline{font:700 10px 'Space Grotesk';letter-spacing:2px;color:#e5c0fa}.story-content strong{font:700 26px/1.15 'Space Grotesk','Noto Sans JP';max-width:350px}.story-arrow{position:absolute;right:28px;bottom:26px;font-size:28px}.projects-section{background:#151422}.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.project-card{border:1px solid #494158;background:linear-gradient(160deg,#242035,#171524);border-radius:14px;min-height:260px;padding:26px;display:flex;flex-direction:column}.project-index{font:700 11px 'Space Grotesk';color:#8f7ca7;letter-spacing:2px}.project-icon{font-size:62px;color:#bd8cff;margin:auto 0 8px}.project-card h3{font:700 25px 'Space Grotesk','Noto Sans JP';margin:8px 0}.project-card p{font-size:14px;color:#b6adc4;line-height:1.6;margin:0}.project-note,.locator-note{font-size:12px;color:#8f89a1;line-height:1.6;margin-top:20px}.poles-section{background:#10101b}.locator{border:1px solid #464057;border-radius:16px;padding:25px;background:#191725}.locator-controls{display:grid;grid-template-columns:1fr auto;gap:12px}.search-wrap{position:relative}.search-wrap input{width:100%;height:51px;border:1px solid #504760;border-radius:8px;background:#11111d;color:#fff;padding:0 18px 0 47px;outline:none}.search-wrap input:focus{border-color:#b58aff}.search-icon{position:absolute;left:16px;top:8px;font-size:28px;color:#ad9bbf}.geo-status{font-size:13px;min-height:20px;color:#c9b4ea}.polo-list{display:grid;gap:10px}.polo-item{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:17px;padding:19px;border-radius:10px;border:1px solid #3e374e;background:#201d2d}.polo-rank{width:42px;height:42px;border-radius:10px;background:#38264e;color:#d7b1ff;display:grid;place-items:center;font:700 17px 'Space Grotesk'}.polo-item h3{font:700 19px 'Space Grotesk','Noto Sans JP';margin:0 0 6px}.polo-item p{font-size:13px;color:#b5aec5;margin:0}.polo-distance{display:inline-block;margin-top:7px;font-size:12px;color:#d1a8ff}.polo-actions{display:flex;gap:9px;align-items:center}.polo-actions a{border:1px solid #69567c;border-radius:7px;padding:10px 13px;font:700 11px 'Space Grotesk','Noto Sans JP';white-space:nowrap}.polo-actions a.primary-action{background:#9f73e9;color:#170f22;border-color:#9f73e9}.polo-empty{padding:35px;text-align:center;color:#aaa1bd;border:1px dashed #5b506b;border-radius:10px}.closing-section{text-align:center;background:radial-gradient(ellipse at center,#3a215b,#171123 70%,#100f19);border-top:1px solid #473453}.closing-inner{display:flex;align-items:center;flex-direction:column}.closing-inner h2{font-size:clamp(44px,6.4vw,83px)}.closing-inner p{color:#c7bad5}.btn-big{margin:20px 0 45px;padding:19px 35px}.social-row{display:flex;gap:35px;flex-wrap:wrap;justify-content:center}.social-row a{font:800 11px 'Space Grotesk';letter-spacing:1.5px;color:#d4c3e4}.footer{background:#0a0a12;border-top:1px solid #30293a}.footer-inner{min-height:115px;display:flex;align-items:center;justify-content:space-between;gap:20px}.footer-logo{font:700 25px 'Space Grotesk';letter-spacing:-2px}.footer-logo span{color:#c16ff4}.footer-logo small{font-size:10px;letter-spacing:1px;color:#aaa0b9}.footer p{font-size:11px;color:#8f849f}.editor-link{background:none;border:0;color:#a99cba;font-size:11px;text-decoration:underline;text-underline-offset:4px}.editor-dialog{width:min(840px,calc(100% - 24px));max-height:90vh;background:#181525;color:#fff;border:1px solid #6b5785;border-radius:14px;padding:0;box-shadow:0 30px 100px #000c}.editor-dialog::backdrop{background:#000b}.editor-head{display:flex;align-items:start;justify-content:space-between;padding:25px;border-bottom:1px solid #453a55}.editor-head h2{margin:0 0 9px;font:700 24px 'Space Grotesk','Noto Sans JP'}.editor-head p{color:#f0c9aa;font-size:13px;line-height:1.5;margin:0}.close-editor{background:#33293e;color:#fff;border:0;border-radius:6px;padding:10px}.editor-body{padding:24px}.editor-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.editor-entries{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px}.editor-entry{border:1px solid #645272;background:#272036;border-radius:7px;color:#fff;padding:9px 12px;font-size:12px}.editor-entry.active{background:#8255b9}.polo-form{border-top:1px solid #4b3d5d;padding-top:20px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid label{display:flex;flex-direction:column;gap:6px;color:#d4c7e1;font-size:12px}.form-grid input{height:41px;background:#0f0e18;color:#fff;border:1px solid #60506e;border-radius:7px;padding:10px;min-width:0}.form-grid input:focus{outline:2px solid #9e6bea}.full-width{grid-column:1/-1}.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.editor-status{font-size:13px;color:#cfb2e7}.import-label{cursor:pointer}body:has(dialog[open]){overflow:hidden}:focus-visible{outline:2px solid #d5a4ff;outline-offset:3px}
+@media(max-width:1000px){.desktop-nav{gap:15px}.desktop-nav a{font-size:10px}.hero-grid{grid-template-columns:1fr .85fr}.hero-art{transform:scale(.8);transform-origin:center}.hero h1{font-size:clamp(48px,6.6vw,74px)}.two-col{gap:32px}.outline-word{font-size:80px}.polo-item{grid-template-columns:44px 1fr}.polo-actions{grid-column:2}}
+@media(max-width:740px){.wrap{width:min(100% - 32px,560px)}.header-inner{height:68px;gap:10px}.brand-mark{font-size:29px}.brand-sub{font-size:9px;letter-spacing:1px}.desktop-nav{display:none}.header-actions{gap:7px}.header-actions select{font-size:11px;max-width:105px;padding:8px 4px}.header-contact{font-size:10px;padding:10px 9px}.hero-grid{grid-template-columns:1fr;gap:0;padding:67px 0 36px;min-height:0}.hero h1{font-size:clamp(44px,10vw,70px);letter-spacing:-2.8px}.hero-copy>p{font-size:15px}.hero-art{height:280px;transform:scale(.64);transform-origin:50% 45%;margin:-10px 0 -65px}.hero-meta{margin-top:34px}.section{padding:72px 0}.section h2{font-size:clamp(36px,9vw,55px);letter-spacing:-1.8px}.section-intro{margin-bottom:27px}.outline-word{display:none}.live-panel{grid-template-columns:1fr}.live-panel-copy{padding:33px 27px}.live-panel h3{font-size:56px}.live-panel-art{min-height:280px}.live-ring{width:200px;height:200px}.live-ring-inner span{font-size:35px}.live-ring-inner strong{font-size:55px}.live-ring-inner small{font-size:9px}.two-col{grid-template-columns:1fr}.stories-grid{grid-template-columns:1fr}.story-card{min-height:240px}.project-grid{grid-template-columns:1fr}.project-card{min-height:185px}.project-icon{font-size:44px}.locator{padding:15px}.locator-controls{grid-template-columns:1fr}.polo-item{grid-template-columns:35px 1fr;gap:12px;padding:15px}.polo-rank{width:35px;height:35px}.polo-actions{grid-column:1/-1}.polo-actions a{flex:1;text-align:center}.footer-inner{padding:24px 0;flex-direction:column;gap:14px}.form-grid{grid-template-columns:1fr}.social-row{gap:18px}.closing-inner h2{font-size:44px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+.polo-count{display:inline-flex;margin:0 0 15px;padding:7px 13px;border:1px solid #745593;background:#2a1c3e;color:#dbc5ff;border-radius:99px;font-size:12px;font-weight:700}.polo-address{font-size:12px!important;color:#b7b0c9!important;line-height:1.55;margin-top:5px!important;overflow-wrap:anywhere}.polo-item{min-width:0}.polo-info{min-width:0}
+
+</style>
+  <style>
+/* FJU CONNECT JAPAN — visual edition inspired by the FJU Brazil brand family.
+ * Original layout, not a copy of forcajovemuniversal.com.
+ * Main palette: navy / red / white / FJU-blue.
+ */
+:root{
+  color-scheme:light;
+  --bg:#f5f7fb;--bg2:#eef2f8;--text:#102340;
+  --muted:#56647a;--purple:#e11d3b;--pink:#ee3b56;
+  --line:#dfe5ef;--navy:#081e3b;--navy2:#102d55;
+  --blue:#114d99;--sky:#1c76d2;--red:#e51f3d;--wrap:1180px;
+}
+html{scroll-padding-top:90px}
+body{background:var(--bg);color:var(--text)}
+::selection{background:#e51f3d;color:#fff}
+.site-header{background:rgba(6,25,50,.97);border-bottom:2px solid #df2844;box-shadow:0 7px 24px #0510241a}
+.header-inner{height:83px}
+.brand-mark{font-weight:800;color:#fff;letter-spacing:-3.5px}
+.brand-mark>span:first-child{color:#fff}
+.brand-dot,.footer-logo span{color:#f52748}
+.brand-sub{color:#fff;letter-spacing:1.8px}
+.brand-sub i{color:#80b5ec}
+.desktop-nav a{color:#e9f1ff}
+.desktop-nav a:hover{color:#ff5570}
+.header-actions select{background:#153251;border:1px solid #45617e;color:#fff;border-radius:5px}
+.header-contact{background:#e51f3d;color:white;border-color:#e51f3d;border-radius:5px}
+.header-contact:hover{background:#c41732}
+.hero{
+  color:#fff;
+  background:linear-gradient(113deg,#061a35 0%,#0a2a54 50%,#103e75 100%);
+  isolation:isolate;
+}
+.hero:before{content:"";position:absolute;z-index:0;right:-12%;top:-40%;height:900px;width:620px;background:linear-gradient(135deg,#146bc369,#0b396f36);transform:rotate(20deg);clip-path:polygon(36% 0,100% 0,68% 100%,0 100%)}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:linear-gradient(90deg,#e41c3a 0 28%,#fff 28% 31%,#175baf 31% 100%)}
+.hero-glow-a{background:#238de83b;filter:blur(105px)}
+.hero-glow-b{background:#f5264540;filter:blur(100px)}
+.hero-grid{min-height:620px;grid-template-columns:1.15fr .85fr;padding:75px 0 85px}
+.eyebrow,.kicker{color:#e51f3d;letter-spacing:2.8px;font-weight:800}
+.eyebrow{color:#ff8293}
+.live-dot{background:#f32c4c;box-shadow:0 0 0 5px #f32c4c20}
+.hero h1{font-weight:800;letter-spacing:-4px;line-height:.97;font-size:clamp(54px,6.6vw,94px)}
+.hero h1 em{color:#fff;background:linear-gradient(transparent 69%,#df2049 69% 91%,transparent 91%)}
+.hero h1>span{color:#ff334f}
+.hero-copy>p{color:#dbe9fa;font-size:18px}
+.btn{border-radius:5px;font-weight:800;letter-spacing:.55px}
+.btn-primary{background:#e41f3e;color:#fff;border-color:#e41f3e;box-shadow:0 7px 19px #a20f2a26}
+.btn-primary:hover{background:#c71535;border-color:#c71535}
+.btn-ghost{background:#ffffff0a;border-color:#abc9e06a;color:#fff}
+.btn-outline{border-color:#204b7b;color:#0b2d53;background:transparent}
+.btn-outline:hover{background:#e4f0fc}
+.btn-light{background:white;color:#082246}
+.btn-danger{color:#e94057}
+.play-icon{border-color:#fff}
+.hero-meta{color:#b4d4f7}
+.meta-divider{background:#83a8cf}
+.hero-orbit{border-color:#83cbff55}
+.card-front{background:linear-gradient(147deg,#124a88,#061b35 74%);border:2px solid #5f9ee0;box-shadow:0 27px 65px #0007}
+.card-back{background:linear-gradient(145deg,#e52847,#b90e30);border:1px solid #ff778a;box-shadow:0 25px 55px #0006}
+.art-burst{color:#fff;text-shadow:0 7px 0 #0b3269,0 18px 30px #0005}
+.art-burst span{color:#ee314e}
+.art-symbol{color:#fff7}
+.hero-card-bottom{color:#b5d7fb}
+.floating-word{color:white;font-size:22px;text-shadow:2px 2px #d72245}
+.ticker{color:#fff;background:#e31f3e;border:0;font-size:11px;padding:15px 0}
+.ticker span{color:#082344}
+.section{scroll-margin-top:80px}
+.section h2{color:#0a2a50;font-weight:800}
+.section h2 span{color:#e51f3d}
+.section-intro p,.music-copy p{color:#5b687b}
+.outline-word{-webkit-text-stroke-color:#c9d8ea}
+.live-section{background:#fff}
+.live-panel{border:0;border-radius:8px;box-shadow:0 18px 58px #10234216}
+.live-panel-copy{background:linear-gradient(135deg,#071d3b,#104b90);color:#fff}
+.live-label{color:#ffb9c3}
+.live-panel h3{color:#fff}
+.live-panel h3 em{color:#fff;background:#e51f3d;padding:0 9px;font-style:normal}
+.live-panel-copy>p{color:#cce1f9}
+.countdown-wrap{color:#c5dff7}
+.live-panel-art{background:radial-gradient(circle at 50% 42%,#2a74bb 0,#0c376c 45%,#06172f 100%)}
+.live-panel-art:after{content:"";position:absolute;bottom:0;left:0;right:0;height:7px;background:#e51f3d}
+.live-ring{border-color:#ffffffa6;box-shadow:0 0 0 26px #ffffff08,0 0 0 53px #ffffff06}
+.live-ring-inner strong{color:#fff}
+.live-bottom span{color:#ed3150}
+.music-section{background:#edf3f9}
+.music-copy p{color:#5e697a}
+.spotify-frame{background:#fff;border:1px solid #dce5f0;box-shadow:0 12px 38px #1023420d;border-radius:10px}
+.embed-label{color:#17375c}
+.embed-note{color:#657283}
+.stories-section{background:#fff}
+.stories-grid{gap:22px}
+.story-card{border-radius:8px;border:0;box-shadow:0 13px 36px #10234218}
+.story-card-main{background:linear-gradient(135deg,#0b2852a8,#0b2852ba),linear-gradient(25deg,#1d5ca0,#092246)}
+.story-card-main:before{content:"";position:absolute;left:-90px;top:-150px;width:460px;height:460px;border:45px solid #ffffff0b;border-radius:50%}
+.story-card-side{background:linear-gradient(145deg,#c91033,#f03953 60%,#79132c)}
+.story-content{color:#fff}
+.story-overline{color:#ecf5ff}
+.story-side-symbol{color:#ffffff25}
+.projects-section{background:#eff4f9}
+.project-grid{gap:18px}
+.project-card{background:#fff;border:1px solid #e0e8f1;box-shadow:0 9px 34px #142e4810;border-radius:7px;min-height:270px;position:relative;overflow:hidden}
+.project-card:before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:#0c467f}
+.project-card:nth-child(2):before{background:#169c5f}
+.project-card:nth-child(3):before{background:#e9a11e}
+.project-index{color:#738198}
+.project-icon{color:#104a8c}
+.project-card:nth-child(2) .project-icon{color:#169c5f}
+.project-card:nth-child(3) .project-icon{color:#e9a11e}
+.project-card h3{color:#082a50}
+.project-card p{color:#56667a}
+.project-note,.locator-note{color:#718096}
+.poles-section{background:#fff}
+.locator{background:#f7f9fd;border:1px solid #dbe5f0;border-radius:8px;box-shadow:0 15px 48px #1023420d}
+.polo-count{background:#e6eff9;color:#154977;border:1px solid #cadff4}
+.search-wrap input{background:#fff;color:#0a2852;border:1px solid #cbd9e8;border-radius:5px}
+.search-wrap input:focus{border-color:#135ba6}
+.search-icon{color:#5275a0}
+.geo-status{color:#245584}
+.polo-list{gap:9px}
+.polo-item{background:#fff;border:1px solid #dce5ef;border-radius:6px;transition:box-shadow .2s,transform .2s}
+.polo-item:hover{box-shadow:0 10px 20px #0d355d0b;transform:translateY(-2px)}
+.polo-rank{background:#e5eff9;color:#15518f;border-radius:5px}
+.polo-item h3{color:#0a2a50}
+.polo-item p{color:#637084}
+.polo-address{color:#6a788d!important}
+.polo-distance{color:#095e9d}
+.polo-actions a{border-color:#bacde1;border-radius:5px;color:#103e76}
+.polo-actions a.primary-action{background:#0b4a8c;border-color:#0b4a8c;color:white}
+.polo-empty{color:#6a7890;border-color:#b3c7da}
+.closing-section{background:linear-gradient(112deg,#071b39,#0b376c);border-top:7px solid #e41c3a}
+.closing-inner h2{color:#fff}
+.closing-inner h2 span{color:#fff;background:linear-gradient(transparent 66%,#d91d39 66% 89%,transparent 89%)}
+.closing-inner>.kicker{color:#ff859a}
+.closing-inner p{color:#d7e5f5}
+.social-row a{color:#e1edfa}
+.footer{background:#06172e;border-top-color:#204365;color:#eaf1fd}
+.footer-logo span{color:#fb2b50}
+.footer-logo small{color:#90b9df}
+.footer p,.editor-link{color:#acc9e7}
+.editor-dialog{background:#f9fbfe;color:#142e52;border-color:#d4e0ec;border-radius:9px}
+.editor-head{border-bottom-color:#d7e1ed}
+.editor-head h2{color:#082449}
+.editor-head p{color:#aa314b}
+.close-editor{background:#e9eff6;color:#092b51}
+.editor-entry{color:#15395d;background:#e9f1fa;border-color:#c7d9ec}
+.editor-entry.active{background:#174d8c;color:#fff}
+.polo-form{border-top-color:#d7e1ed}
+.form-grid label{color:#25476b}
+.form-grid input{background:#fff;color:#082449;border-color:#c8d7e6}
+.form-grid input:focus{outline-color:#1665b0}
+.editor-status{color:#244e7f}
+:focus-visible{outline:3px solid #e51f3d;outline-offset:3px}
+/* Original signature treatment: red tab + white-blue editorial marks */
+.hero-identity{position:absolute;right:0;top:40px;font-weight:900;letter-spacing:4px;writing-mode:vertical-rl;font-size:11px;color:#adcceb;opacity:.7}
+.hero-stamp{position:absolute;z-index:2;bottom:35px;right:50px;padding:13px 17px;border:2px solid #fff7;background:#e51f3d;color:#fff;font:800 11px 'Space Grotesk',sans-serif;letter-spacing:2px;transform:rotate(-6deg)}
+.brand-stripe{height:6px;background:linear-gradient(90deg,#0e3c78 0 47%,#fff 47% 51%,#e51f3d 51% 100%)}
+@media(max-width:1000px){.hero-grid{grid-template-columns:1fr .8fr}.hero-art{transform:scale(.83)}}
+@media(max-width:740px){.header-inner{height:69px}.hero-grid{grid-template-columns:1fr;min-height:0;padding-top:62px;padding-bottom:43px}.hero h1{letter-spacing:-2.8px;font-size:clamp(45px,10.7vw,73px)}.hero-art{height:280px;transform:scale(.65);margin-bottom:-65px}.hero-stamp{right:20px;bottom:65px}.section{padding:70px 0}.project-card{min-height:182px}.locator{padding:16px}.polo-item{padding:15px}.header-contact{padding:9px 8px}.brand-sub{letter-spacing:.6px}}
+/* Stable fallback when external webfonts are unavailable */
+.art-burst,.hero-card-top,.hero-card-bottom,.card-back strong,.mini-label,.ticker,.hero-stamp,.brand-mark,.brand-sub{font-family:'Space Grotesk',Arial,sans-serif}
+
+/* Locator GPS: 23 verified Google Maps markers + manual reference fallback */
+.reference-row{display:flex;gap:12px;align-items:stretch;margin:13px 0 14px;flex-wrap:wrap}
+.reference-row select{min-width:220px;max-width:100%;flex:1;background:#fff;color:#0b2d53;border:1px solid #bbcee4;border-radius:5px;min-height:48px;padding:0 14px;font:700 12px 'Space Grotesk','Noto Sans JP',sans-serif;cursor:pointer}
+.reference-row select:focus{outline:2px solid #14569b;outline-offset:2px}
+.clear-location{border:1px solid #b9ccdf;color:#154977;border-radius:5px;background:#e6eff9;padding:10px 16px;font:800 11px 'Space Grotesk','Noto Sans JP',sans-serif}
+.clear-location[hidden]{display:none!important}
+.polo-nearest{border-color:#e51f3d;background:#fffcfd;box-shadow:0 4px 18px #e51f3d17}
+.polo-nearest>.polo-rank{background:#e51f3d;color:#fff}
+.polo-nearest-tag{display:inline-flex;align-items:center;margin:9px 0 0;padding:5px 9px;border-radius:3px;background:#e51f3d;color:#fff;font-size:10px;font-weight:900;letter-spacing:.5px}
+.geo-status:empty{display:none}
+@media(max-width:740px){.reference-row{flex-direction:column}.reference-row select{flex:auto;width:100%}.clear-location{width:100%;min-height:42px}}
+
+</style>
+  <script defer>
+'use strict';
+
+// FJU Connect — front-end prototype. There is NO server, authentication or shared database here.
+// Polo edits are stored only in this browser (localStorage). Production requires a secure backend.
+const WHATSAPP = '819099471661';
+const STORE_KEY = 'fju-connect-polos-v1';
+const LANG_KEY = 'fju-connect-lang';
+const initialPolos = [
+  {
+    "id": "hamamatsu",
+    "name": "FJU Hamamatsu",
+    "city": "Hamamatsu",
+    "prefecture": "Shizuoka",
+    "address": "〒430-0923 静岡県浜松市中央区北寺島町211-19",
+    "lat": 34.7032527,
+    "lng": 137.7415086,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/ugJtkCHTGUp8Vuzi7"
+  },
+  {
+    "id": "toyohashi",
+    "name": "FJU Toyohashi",
+    "city": "Toyohashi",
+    "prefecture": "Aichi",
+    "address": "〒440-0842 愛知県豊橋市岩屋町字岩屋下108-5",
+    "lat": 34.7409576,
+    "lng": 137.4201769,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/syWDWwNR3Uy2WUvH8"
+  },
+  {
+    "id": "suzuka",
+    "name": "FJU Suzuka",
+    "city": "Suzuka",
+    "prefecture": "Mie",
+    "address": "〒513-0805 三重県鈴鹿市算所町837",
+    "lat": 34.8745552,
+    "lng": 136.5501453,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/fPGwAcvSc9EsLES6A"
+  },
+  {
+    "id": "iwata",
+    "name": "FJU Iwata",
+    "city": "Iwata",
+    "prefecture": "Shizuoka",
+    "address": "〒438-0078 静岡県磐田市中泉246-1",
+    "lat": 34.7138469,
+    "lng": 137.8522363,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/2DYR13q5GRfitK3h7"
+  },
+  {
+    "id": "yaizu",
+    "name": "FJU Yaizu",
+    "city": "Yaizu",
+    "prefecture": "Shizuoka",
+    "address": "〒425-0057 静岡県焼津市下小田787-2",
+    "lat": 34.835143,
+    "lng": 138.3159926,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/E7jXs4xJXtwaJ8tp6"
+  },
+  {
+    "id": "fuji",
+    "name": "FJU Fuji",
+    "city": "Fuji",
+    "prefecture": "Shizuoka",
+    "address": "〒416-0914 静岡県富士市本町12-2",
+    "lat": 35.1552485,
+    "lng": 138.6513436,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/kpKj9SnqjUsa5MNT8"
+  },
+  {
+    "id": "anjo",
+    "name": "FJU Anjo",
+    "city": "Anjo",
+    "prefecture": "Aichi",
+    "address": "〒446-0046 愛知県安城市赤松町大北85-2",
+    "lat": 34.9453173,
+    "lng": 137.0707976,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/LYJQLCHJf6tuNa1Y8"
+  },
+  {
+    "id": "shiga",
+    "name": "FJU Shiga",
+    "city": "Shiga",
+    "prefecture": "Shiga",
+    "address": "〒520-3114 滋賀県湖南市石部口1-10-20",
+    "lat": 35.0125196,
+    "lng": 136.0661894,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/w377bzY4UVh9b54F8"
+  },
+  {
+    "id": "nagahama",
+    "name": "FJU Nagahama",
+    "city": "Nagahama",
+    "prefecture": "Shiga",
+    "address": "〒526-0033 滋賀県長浜市平方町1294",
+    "lat": 35.3716179,
+    "lng": 136.2704121,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/nJcAMh9WHdQqV9qj8"
+  },
+  {
+    "id": "kani",
+    "name": "FJU Kani",
+    "city": "Kani",
+    "prefecture": "Gifu",
+    "address": "〒509-0206 岐阜県可児市土田2752-4",
+    "lat": 35.4311105,
+    "lng": 137.018792,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/yXVw57zvynRrs33w7"
+  },
+  {
+    "id": "toyota",
+    "name": "FJU Toyota",
+    "city": "Toyota",
+    "prefecture": "Aichi",
+    "address": "〒470-0353 愛知県豊田市保見ケ丘5-1 FOXTOWN 3F",
+    "lat": 35.1469792,
+    "lng": 137.1371297,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/ExN5RVtC6WnzhqYm8"
+  },
+  {
+    "id": "nagoya",
+    "name": "FJU Nagoya",
+    "city": "Nagoya",
+    "prefecture": "Aichi",
+    "address": "〒455-0008 愛知県名古屋市港区九番町3-3-3",
+    "lat": 35.1161492,
+    "lng": 136.8849277,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/Sun6t12KrESbUemT8"
+  },
+  {
+    "id": "komaki",
+    "name": "FJU Komaki",
+    "city": "Komaki",
+    "prefecture": "Aichi",
+    "address": "〒485-0023 愛知県小牧市北外山607-8",
+    "lat": 35.2842589,
+    "lng": 136.9242332,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/cuQyirso77vmKuow9"
+  },
+  {
+    "id": "takaoka",
+    "name": "FJU Takaoka",
+    "city": "Takaoka",
+    "prefecture": "Toyama",
+    "address": "〒933-0112 富山県高岡市伏木古国府4-7",
+    "lat": 36.7918024,
+    "lng": 137.0567975,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/dePxXR2MV7JgWtSP9"
+  },
+  {
+    "id": "kanagawa",
+    "name": "FJU Kanagawa",
+    "city": "Kanagawa",
+    "prefecture": "Kanagawa",
+    "address": "〒252-1132 神奈川県綾瀬市寺尾中1丁目17-24",
+    "lat": 35.4587159,
+    "lng": 139.4258426,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/VYUuTS8w9xAtGx6L6"
+  },
+  {
+    "id": "yamanashi",
+    "name": "FJU Yamanashi",
+    "city": "Yamanashi",
+    "prefecture": "Yamanashi",
+    "address": "〒409-3842 山梨県中央市東花輪529-4 2F",
+    "lat": 35.5941609,
+    "lng": 138.5258859,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/NPMVLTSUTxHFrLbW8"
+  },
+  {
+    "id": "nagano",
+    "name": "FJU Nagano",
+    "city": "Nagano",
+    "prefecture": "Nagano",
+    "address": "〒386-0018 長野県上田市常田2-7-11",
+    "lat": 36.3948023,
+    "lng": 138.2560945,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/brQSiocnX2xxu5Jf7"
+  },
+  {
+    "id": "chiba",
+    "name": "FJU Chiba",
+    "city": "Chiba",
+    "prefecture": "Chiba",
+    "address": "〒260-0018 千葉県千葉市中央区院内1-12-6",
+    "lat": 35.6121706,
+    "lng": 140.1227754,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/aXFGiED5pKtCqCnu8"
+  },
+  {
+    "id": "gunma",
+    "name": "FJU Gunma",
+    "city": "Gunma",
+    "prefecture": "Gunma",
+    "address": "〒370-0514 群馬県邑楽郡大泉町朝日3-17-17",
+    "lat": 36.2574783,
+    "lng": 139.4247318,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/QFzF4Sp2TsAXHuaC9"
+  },
+  {
+    "id": "ibaraki",
+    "name": "FJU Ibaraki",
+    "city": "Ibaraki",
+    "prefecture": "Ibaraki",
+    "address": "〒303-0003 茨城県常総市水海道橋本町3475-9",
+    "lat": 36.0256049,
+    "lng": 139.9904856,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/EwoBapL5eRzaguKY9"
+  },
+  {
+    "id": "isesaki",
+    "name": "FJU Isesaki",
+    "city": "Isesaki",
+    "prefecture": "Gunma",
+    "address": "〒372-0047 群馬県伊勢崎市本町10-16",
+    "lat": 36.32032,
+    "lng": 139.199563,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/UG1kQQg2zAB9tN6B6"
+  },
+  {
+    "id": "tokyo",
+    "name": "FJU Tokyo",
+    "city": "Tokyo",
+    "prefecture": "Tokyo",
+    "address": "〒169-0073 東京都新宿区百人町2-23-43",
+    "lat": 35.7026572,
+    "lng": 139.6968977,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/cJtj7A9JKeaqaJNKA"
+  },
+  {
+    "id": "ryuzenji",
+    "name": "FJU Ryuzenji",
+    "city": "Ryuzenji",
+    "prefecture": "Shizuoka",
+    "address": "〒430-0924 静岡県浜松市中央区龍禅寺町622",
+    "lat": 34.6932832,
+    "lng": 137.7411801,
+    "projects": [],
+    "mapsUrl": "https://maps.app.goo.gl/BUhQXjUNcTHS3AxB7"
+  }
+];
+const translations = {
+  pt: {
+    navLive:'LIVE',navMusic:'MÚSICA',navProjects:'PROJETOS',navPoles:'ENCONTRE A FJU',contact:'CONTATO',
+    eyebrow:'UMA NOVA GERAÇÃO, UM NOVO COMEÇO',heroTitle:'SUA HISTÓRIA<br><em>PODE MUDAR</em><br>AQUI<span>.</span>',
+    heroSub:'Conexões de verdade. Novos desafios. Uma nova direção. Encontre a FJU mais perto de você.',
+    findFju:'ENCONTRAR MINHA FJU',watchLive:'CONHEÇA A FJU LIVE',liveDesc:'Todo domingo, às 19h, um encontro para você se conectar, refletir e seguir em frente.',
+    weeklyLive:'PROGRAMA SEMANAL',liveHeadline:'DOMINGO<br><em>19:00</em> JST',liveTimezone:'Horário do Japão · YouTube FJU JAPAN',nextLive:'PRÓXIMA EDIÇÃO',goYoutube:'IR PARA O YOUTUBE',
+    musicDesc:'A música também faz parte da nossa história. Ouça os lançamentos e descubra o som da FJU JAPAN.',openSpotify:'ABRIR NO SPOTIFY',spotifyFallback:'Se o player não carregar, use o botão para abrir o Spotify.',
+    storiesTitle:'HISTÓRIAS QUE <span>INSPIRAM.</span>',storiesDesc:'Testemunhos e histórias reais da FJU JAPAN.',testimonials:'ASSISTA AOS TESTEMUNHOS',followUs:'ACOMPANHE A FJU NO INSTAGRAM',
+    projectsTitle:'ENCONTRE SEU <span>ESPAÇO.</span>',projectsDesc:'Conheça algumas áreas de atuação da FJU. Cada polo tem seus projetos ativos.',projectMedia:'MÍDIA',projectMediaDesc:'Criatividade, fotografia, vídeo e comunicação.',projectSports:'ESPORTE',projectSportsDesc:'Movimento, amizade e novos desafios.',projectCulture:'CULTURA',projectCultureDesc:'Expressão, música, arte e talento.',projectsNote:'Áreas ilustrativas. A lista oficial e os projetos ativos de cada polo serão cadastrados pela administração.',
+    polesTitle:'A FJU MAIS <span>PERTO DE VOCÊ.</span>',polesDesc:'Encontre seu polo no Japão. Autorize o GPS para ver todos os 23 polos do mais próximo ao mais distante. Ou escolha um polo de referência.',searchPlaceholder:'Buscar cidade ou polo',useLocation:'USAR MEU GPS',locatorNote:'Distâncias aproximadas em linha reta, não representam o trajeto por ruas. Em «Como chegar», consulte a rota real no Google Maps.',locationsCount:'polos cadastrados', referencePlaceholder:'SEM GPS? ESCOLHA UM POLO DE REFERÊNCIA', referenceHint:(name)=>`Distâncias aproximadas a partir do polo ${name} (não da sua posição).`, nearest:'MAIS PRÓXIMO', clearLocation:'LIMPAR LOCALIZAÇÃO', sortingByGPS:'Ordem de distância calculada pelo GPS.', sortingByReference:'Distância aproximada a partir do polo selecionado.',
+    closingTitle:'O PRÓXIMO PASSO<br><span>COMEÇA AQUI.</span>',closingDesc:'Tem alguma dúvida? Fale com a equipe FJU JAPAN.',talkToUs:'FALAR COM A FJU',localEditor:'CONFIGURAR POLOS (DEMO LOCAL)',editorTitle:'Configuração local dos polos',editorWarning:'Esta versão salva dados somente neste navegador. Não é um painel administrativo seguro nem sincroniza outros dispositivos.',addPolo:'+ NOVO POLO',exportJson:'EXPORTAR JSON',importJson:'IMPORTAR JSON',poloName:'Nome do polo',city:'Cidade',prefecture:'Província',address:'Endereço oficial',activeProjects:'Projetos ativos (separados por vírgula)',savePolo:'SALVAR POLO',cancel:'CANCELAR',deletePolo:'EXCLUIR',
+    noResults:'Nenhum polo encontrado.',noCoords:'Ative o GPS para ver a distância',approx:'aprox.',route:'COMO CHEGAR',details:'VER POLO',whatsapp:'WHATSAPP',projectsActive:'PROJETOS ATIVOS',noProjects:'Projetos ainda não informados.',gallery:'GALERIA DE ATIVIDADES',galleryPending:'As fotos aprovadas para publicação aparecerão aqui após a integração com os relatórios.',addressPending:'Endereço oficial ainda não cadastrado.',back:'VOLTAR',
+    geoSearching:'Solicitando acesso ao GPS…',geoSuccess:'GPS autorizado. Todos os polos estão organizados por proximidade da sua posição.',geoDenied:'Não foi possível obter a localização. Você pode buscar pela cidade.',geoUnavailable:'Seu navegador não disponibiliza GPS nesta página. Abra o site em HTTPS e autorize a localização.',geoNone:'As coordenadas dos polos não estão disponíveis. Você ainda pode pesquisar por cidade.',
+    timeDays:'d',timeHours:'h',timeMinutes:'min',timeNow:'A transmissão está prevista para agora (horário do Japão).',
+    editorSaved:'Polo salvo neste navegador.',editorDeleted:'Polo excluído desta cópia local.',editorInvalid:'Preencha nome e cidade e verifique as coordenadas.',editorImported:'Arquivo importado para este navegador.',editorImportError:'Arquivo inválido. Verifique o formato JSON.',editorDeleteConfirm:'Excluir este polo da cópia local?',editorNothing:'Selecione um polo ou crie um novo.',exampleTag:'Exemplo inicial — confirme o endereço',
+    whatsappGeneral:'Olá! Gostaria de conhecer a FJU JAPAN.',whatsappPolo:(name)=>`Olá! Conheci a FJU pelo polo ${name} e gostaria de saber mais.`
+  },
+  ja: {
+    navLive:'ライブ',navMusic:'音楽',navProjects:'プロジェクト',navPoles:'FJUを探す',contact:'お問い合わせ',
+    eyebrow:'新しい世代、新しいスタート',heroTitle:'あなたの物語は<br><em>ここから</em><br>変わる<span>。</span>',
+    heroSub:'本当のつながり、新しい挑戦、新しい一歩。あなたの近くのFJUを見つけよう。',findFju:'近くのFJUを探す',watchLive:'FJUライブを見る',
+    liveDesc:'毎週日曜日19時から。つながり、学び、前へ進む時間。',weeklyLive:'毎週配信',liveHeadline:'日曜日<br><em>19:00</em> JST',liveTimezone:'日本時間 · YouTube FJU JAPAN',nextLive:'次回の配信',goYoutube:'YOUTUBEで見る',
+    musicDesc:'音楽も私たちのストーリーの一部。FJU JAPANの楽曲や新曲をチェック！',openSpotify:'SPOTIFYで聴く',spotifyFallback:'プレーヤーが表示されない場合はSpotifyのリンクからお聴きください。',
+    storiesTitle:'心を動かす<span>ストーリー。</span>',storiesDesc:'FJU JAPANのリアルな体験談やストーリー。',testimonials:'体験談の動画を見る',followUs:'INSTAGRAMでFJUをフォロー',
+    projectsTitle:'あなたの<span>居場所がある。</span>',projectsDesc:'FJUの活動の一部をご紹介。実施中のプロジェクトは各拠点によって異なります。',projectMedia:'メディア',projectMediaDesc:'写真、映像、デザイン、発信。',projectSports:'スポーツ',projectSportsDesc:'体を動かし、仲間と新しい挑戦へ。',projectCulture:'カルチャー',projectCultureDesc:'音楽、アート、表現、才能。',projectsNote:'表示は一例です。正式なプロジェクト一覧と各拠点の活動状況は管理者が登録します。',
+    polesTitle:'近くの<span>FJUを探そう。</span>',polesDesc:'日本全国23か所のFJUを近い順に表示。GPSを許可するか、基準となる拠点を選んでください。',searchPlaceholder:'都市名・拠点名で検索',useLocation:'現在地から探す',locatorNote:'距離は直線距離の目安です。実際の道順は「ルート案内」からGoogleマップで確認できます。',locationsCount:'拠点を登録済み', referencePlaceholder:'GPSなし：基準の拠点を選択', referenceHint:(name)=>`${name}を基準に計算した直線距離です（現在地ではありません）。`, nearest:'一番近い拠点', clearLocation:'位置情報を解除', sortingByGPS:'現在地からの距離順に表示しています。', sortingByReference:'選択した拠点からの距離順に表示しています。',
+    closingTitle:'次の一歩は<br><span>ここから。</span>',closingDesc:'ご質問はFJU JAPANへお気軽にどうぞ。',talkToUs:'FJUに連絡する',localEditor:'拠点を設定（ローカルデモ）',editorTitle:'拠点のローカル設定',editorWarning:'このバージョンはこのブラウザー内だけに保存されます。安全な管理画面ではなく、端末間の同期もありません。',addPolo:'+ 拠点を追加',exportJson:'JSONを書き出す',importJson:'JSONを読み込む',poloName:'拠点名',city:'市区町村',prefecture:'都道府県',address:'正式な住所',activeProjects:'実施中のプロジェクト（カンマ区切り）',savePolo:'保存',cancel:'キャンセル',deletePolo:'削除',
+    noResults:'該当する拠点がありません。',noCoords:'GPSで距離を表示',approx:'約',route:'ルート案内',details:'拠点を見る',whatsapp:'WHATSAPP',projectsActive:'実施中のプロジェクト',noProjects:'プロジェクト情報は準備中です。',gallery:'活動ギャラリー',galleryPending:'週次レポートとの連携後、公開承認された写真がここに表示されます。',addressPending:'正式な住所はまだ登録されていません。',back:'戻る',
+    geoSearching:'GPSへのアクセスをリクエストしています…',geoSuccess:'位置情報を取得しました。23か所の拠点を近い順に並べました。',geoDenied:'位置情報を取得できませんでした。都市名から検索できます。',geoUnavailable:'このページではGPSを使用できません。HTTPSで開き、位置情報を許可してください。',geoNone:'拠点の座標を利用できません。都市名から検索できます。',
+    timeDays:'日',timeHours:'時間',timeMinutes:'分',timeNow:'現在、日本時間の配信予定時刻です。',
+    editorSaved:'このブラウザーに保存しました。',editorDeleted:'このブラウザーから削除しました。',editorInvalid:'拠点名、市区町村、座標を確認してください。',editorImported:'このブラウザーに読み込みました。',editorImportError:'JSONファイルの形式が正しくありません。',editorDeleteConfirm:'このブラウザーの拠点を削除しますか？',editorNothing:'拠点を選ぶか新しく追加してください。',exampleTag:'初期サンプル — 住所を確認してください',
+    whatsappGeneral:'こんにちは！FJU JAPANについて詳しく知りたいです。',whatsappPolo:(name)=>`こんにちは！${name}のページを見ました。FJUについて詳しく知りたいです。`
+  },
+  en: {
+    navLive:'LIVE',navMusic:'MUSIC',navProjects:'PROJECTS',navPoles:'FIND FJU',contact:'CONTACT',
+    eyebrow:'A NEW GENERATION, A NEW BEGINNING',heroTitle:'YOUR STORY<br><em>CAN CHANGE</em><br>HERE<span>.</span>',
+    heroSub:'Real connections. New challenges. A fresh direction. Find the FJU closest to you.',findFju:'FIND MY FJU',watchLive:'DISCOVER FJU LIVE',
+    liveDesc:'Every Sunday at 7 PM Japan time. A space to connect, reflect and move forward.',weeklyLive:'WEEKLY PROGRAM',liveHeadline:'SUNDAY<br><em>19:00</em> JST',liveTimezone:'Japan Standard Time · YouTube FJU JAPAN',nextLive:'NEXT EDITION',goYoutube:'WATCH ON YOUTUBE',
+    musicDesc:'Music is part of our story too. Listen to the latest releases and discover the sound of FJU JAPAN.',openSpotify:'OPEN SPOTIFY',spotifyFallback:'If the player does not load, use the Spotify link.',
+    storiesTitle:'STORIES THAT <span>INSPIRE.</span>',storiesDesc:'Real stories and testimonies from FJU JAPAN.',testimonials:'WATCH TESTIMONIALS',followUs:'FOLLOW FJU ON INSTAGRAM',
+    projectsTitle:'FIND YOUR <span>PLACE.</span>',projectsDesc:'Explore some of FJU’s activities. Each location has its own active projects.',projectMedia:'MEDIA',projectMediaDesc:'Creativity, photography, video and communication.',projectSports:'SPORTS',projectSportsDesc:'Movement, friendship and new challenges.',projectCulture:'CULTURE',projectCultureDesc:'Expression, music, art and talent.',projectsNote:'Illustrative categories. The official project list and active projects at each location will be entered by the administrator.',
+    polesTitle:'FIND FJU <span>NEAR YOU.</span>',polesDesc:'Find all 23 FJU locations in Japan, sorted by distance. Use GPS or select a reference location.',searchPlaceholder:'Search city or location',useLocation:'USE MY LOCATION',locatorNote:'Distances are approximate straight-line measurements, not road travel distances. Use Directions to see the real route in Google Maps.',locationsCount:'locations registered', referencePlaceholder:'NO GPS? SELECT A REFERENCE LOCATION', referenceHint:(name)=>`Approximate distances from ${name} (not your current position).`, nearest:'NEAREST', clearLocation:'CLEAR LOCATION', sortingByGPS:'Sorted by distance from your GPS position.', sortingByReference:'Sorted by distance from the chosen reference location.',
+    closingTitle:'YOUR NEXT STEP<br><span>STARTS HERE.</span>',closingDesc:'Have questions? Talk to the FJU JAPAN team.',talkToUs:'CONTACT FJU',localEditor:'EDIT LOCATIONS (LOCAL DEMO)',editorTitle:'Local location settings',editorWarning:'This version stores data only in this browser. It is not a secure admin panel and does not sync across devices.',addPolo:'+ ADD LOCATION',exportJson:'EXPORT JSON',importJson:'IMPORT JSON',poloName:'Location name',city:'City',prefecture:'Prefecture',address:'Official address',activeProjects:'Active projects (comma-separated)',savePolo:'SAVE LOCATION',cancel:'CANCEL',deletePolo:'DELETE',
+    noResults:'No locations found.',noCoords:'Use GPS to see distance',approx:'approx.',route:'DIRECTIONS',details:'VIEW LOCATION',whatsapp:'WHATSAPP',projectsActive:'ACTIVE PROJECTS',noProjects:'Projects have not been listed yet.',gallery:'ACTIVITY GALLERY',galleryPending:'Approved photos will appear here after weekly report integration.',addressPending:'Official address not entered yet.',back:'BACK',
+    geoSearching:'Requesting GPS permission…',geoSuccess:'Location found. Locations with coordinates appear first, ordered by distance; all others remain listed.',geoDenied:'Could not access your location. You can search by city instead.',geoUnavailable:'GPS is unavailable on this page. Open the site over HTTPS and allow location access.',geoNone:'No locations have coordinates yet. Add them in the local editor to enable distance sorting.',
+    timeDays:'d',timeHours:'h',timeMinutes:'min',timeNow:'The stream is scheduled for this time in Japan.',
+    editorSaved:'Location saved in this browser.',editorDeleted:'Location deleted from this local copy.',editorInvalid:'Enter a name and city, and check the coordinates.',editorImported:'File imported into this browser.',editorImportError:'Invalid JSON file format.',editorDeleteConfirm:'Delete this location from the local copy?',editorNothing:'Select a location or add a new one.',exampleTag:'Initial example — confirm address',
+    whatsappGeneral:'Hello! I would like to learn more about FJU JAPAN.',whatsappPolo:(name)=>`Hello! I found FJU through the ${name} page and would like to learn more.`
+  }
+};
+const el = (id)=>document.getElementById(id);
+function cleanString(v,max=300){return String(v??'').trim().slice(0,max)}
+function normalizePolo(item){
+  if(!item || typeof item!=='object')return null;
+  const name=cleanString(item.name,100),city=cleanString(item.city,100);
+  if(!name||!city)return null;
+  const lat=item.lat===''||item.lat===null||item.lat===undefined?null:Number(item.lat);
+  const lng=item.lng===''||item.lng===null||item.lng===undefined?null:Number(item.lng);
+  const goodCoords=lat!==null&&lng!==null&&Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180;
+  return {id:cleanString(item.id,100)||`polo-${Math.random().toString(36).slice(2,10)}`,name,city,prefecture:cleanString(item.prefecture,100),address:cleanString(item.address,300),lat:goodCoords?lat:null,lng:goodCoords?lng:null,mapsUrl:(typeof item.mapsUrl==='string' && /^https:\/\/maps\.app\.goo\.gl\/[A-Za-z0-9]+$/.test(item.mapsUrl.trim())?item.mapsUrl.trim():null),projects:Array.isArray(item.projects)?item.projects.slice(0,25).map(x=>cleanString(x,60)).filter(Boolean):[]};
+}
+function loadPolos(){
+  const defaults=initialPolos.map(normalizePolo);
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(!raw)return defaults;
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed))throw Error('not array');
+    const saved=parsed.slice(0,100).map(normalizePolo).filter(Boolean);
+    const existing=new Map(saved.map(p=>[p.id,p]));
+    // Keep any manual edits from the old demo, while filling previously blank official addresses.
+    for(const defaultPolo of defaults){
+      const previous=existing.get(defaultPolo.id);
+      if(!previous){saved.push(defaultPolo);continue}
+      if(!previous.address)previous.address=defaultPolo.address;
+      if(!previous.mapsUrl && defaultPolo.mapsUrl)previous.mapsUrl=defaultPolo.mapsUrl;
+      if(previous.lat===null && previous.lng===null && defaultPolo.lat!==null){previous.lat=defaultPolo.lat;previous.lng=defaultPolo.lng}
+      // Migrate the earlier approximate Hamamatsu coordinate to the marker the administrator approved.
+      if(previous.id==='hamamatsu' && Math.abs(previous.lat-34.7036389)<0.0000001 && Math.abs(previous.lng-137.7412164)<0.0000001){previous.lat=defaultPolo.lat;previous.lng=defaultPolo.lng;}
+    }
+    return saved;
+  }catch{return defaults}
+}
+let polos=loadPolos();
+let currentPosition=null;
+let locationMode='none'; // none | gps | reference
+let referencePoloId='';
+let searchText='';
+let editingId=null;
+const locale=()=>translations[lang];
+function browserLanguage(){try{const saved=localStorage.getItem(LANG_KEY);if(saved && translations[saved])return saved}catch{}const l=(navigator.language||'ja').toLowerCase();return l.startsWith('pt')?'pt':l.startsWith('en')?'en':'ja'}
+let lang=browserLanguage();
+function persistPolos(){try{localStorage.setItem(STORE_KEY,JSON.stringify(polos))}catch{setEditorStatus('Browser storage is unavailable. Export your data as JSON.')}}
+function applyLanguage(next){
+  lang=translations[next]?next:'ja';document.documentElement.lang=lang;el('language').value=lang;
+  try{localStorage.setItem(LANG_KEY,lang)}catch{}
+  document.querySelectorAll('[data-i18n]').forEach(n=>{const k=n.dataset.i18n;if(typeof locale()[k]==='string')n.textContent=locale()[k]});
+  // Only hard-coded trusted translation strings are used as HTML.
+  document.querySelectorAll('[data-i18n-html]').forEach(n=>{const k=n.dataset.i18nHtml;if(typeof locale()[k]==='string')n.innerHTML=locale()[k]});
+  document.querySelectorAll('[data-placeholder]').forEach(n=>{const k=n.dataset.placeholder;n.placeholder=locale()[k]||''});
+  el('poloSearch').setAttribute('aria-label',locale().searchPlaceholder);
+  el('headerWhatsApp').href=whatsappLink();el('closingWhatsApp').href=whatsappLink();
+  el('poloCount').textContent=`${polos.length} ${locale().locationsCount}`;
+  renderReferenceChoices();updateGeoMessage();
+  renderPolos();renderEditorEntries();renderDetailIfOpen();updateCountdown();
+}
+function whatsappLink(polo){const message=polo?locale().whatsappPolo(polo.name):locale().whatsappGeneral;return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`}
+function haversine(lat1,lon1,lat2,lon2){const rad=Math.PI/180;const a=Math.sin((lat2-lat1)*rad/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin((lon2-lon1)*rad/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function poloDistance(polo){return currentPosition&&polo.lat!==null&&polo.lng!==null?haversine(currentPosition.lat,currentPosition.lng,polo.lat,polo.lng):null}
+function sortedPolos(){return polos.filter(p=>`${p.name} ${p.city} ${p.prefecture} ${p.address}`.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())).map(p=>({...p,distance:poloDistance(p)})).sort((a,b)=>{if(currentPosition){if(a.distance!==null&&b.distance===null)return -1;if(a.distance===null&&b.distance!==null)return 1;if(a.distance!==null&&b.distance!==null)return a.distance-b.distance}return a.name.localeCompare(b.name,lang)})}
+function node(tag,className,text){const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=text;return n}
+function link(text,href,className){const a=node('a',className,text);a.href=href;if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer'}return a}
+function mapUrl(p){if(p.mapsUrl)return p.mapsUrl;const q=p.address?p.address:`${p.city}, ${p.prefecture}, Japan`;return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`}
+function renderPolos(){
+  const list=el('poloList');list.replaceChildren();const found=sortedPolos();
+  if(!found.length){list.append(node('div','polo-empty',locale().noResults));return}
+  found.forEach((p,index)=>{
+    const item=node('article','polo-item'+(index===0&&currentPosition?' polo-nearest':''));item.append(node('div','polo-rank',String(index+1).padStart(2,'0')));
+    const info=node('div','polo-info');info.append(node('h3','',p.name));info.append(node('p','',`${p.city}${p.prefecture?', '+p.prefecture:''}`));if(p.address)info.append(node('p','polo-address',p.address));
+    info.append(node('span','polo-distance',p.distance!==null?`${locale().approx} ${p.distance.toLocaleString(lang,{maximumFractionDigits:1})} km`:locale().noCoords));
+    if(index===0&&currentPosition)info.append(node('span','polo-nearest-tag',locale().nearest));item.append(info);
+    const actions=node('div','polo-actions');const details=node('a','',locale().details);details.href=`#polo/${encodeURIComponent(p.id)}`;details.addEventListener('click',(ev)=>{ev.preventDefault();showDetail(p.id)});actions.append(details);
+    actions.append(link(locale().route,mapUrl(p)));actions.append(link(locale().whatsapp,whatsappLink(p),'primary-action'));item.append(actions);list.append(item)
+  })
+}
+function setGeoStatus(text){el('geoStatus').textContent=text}
+function renderReferenceChoices(){
+  const selector=el('referencePolo');if(!selector)return;
+  const saved=selector.value||referencePoloId;
+  selector.replaceChildren();
+  const placeholder=node('option','',locale().referencePlaceholder);placeholder.value='';selector.append(placeholder);
+  [...polos].filter(p=>p.lat!==null&&p.lng!==null).sort((a,b)=>a.name.localeCompare(b.name,lang)).forEach(p=>{
+    const o=node('option','',`${p.name} — ${p.prefecture}`);o.value=p.id;selector.append(o)
+  });
+  selector.value=saved && polos.some(p=>p.id===saved)?saved:'';
+}
+function updateGeoMessage(){
+  if(locationMode==='gps')setGeoStatus(locale().geoSuccess);
+  else if(locationMode==='reference'){
+    const p=polos.find(p=>p.id===referencePoloId);
+    if(p)setGeoStatus(locale().referenceHint(p.name));else setGeoStatus('');
+  }
+  el('clearGeoBtn').hidden=locationMode==='none';
+}
+function useReference(id){
+  referencePoloId=id;
+  const p=polos.find(p=>p.id===id);
+  if(p&&p.lat!==null&&p.lng!==null){currentPosition={lat:p.lat,lng:p.lng};locationMode='reference'}
+  else {currentPosition=null;locationMode='none';}
+  updateGeoMessage();renderPolos();
+}
+function clearGeo(){
+  currentPosition=null;locationMode='none';referencePoloId='';el('referencePolo').value='';
+  setGeoStatus('');updateGeoMessage();renderPolos();
+}
+function useGPS(){
+  if(!navigator.geolocation || (!window.isSecureContext && location.hostname!=='localhost' && location.hostname!=='127.0.0.1')){setGeoStatus(locale().geoUnavailable);return}
+  setGeoStatus(locale().geoSearching);el('geoBtn').disabled=true;
+  navigator.geolocation.getCurrentPosition((position)=>{
+    currentPosition={lat:position.coords.latitude,lng:position.coords.longitude};
+    locationMode='gps';referencePoloId='';el('referencePolo').value='';
+    updateGeoMessage();
+    renderPolos();el('geoBtn').disabled=false;
+  },(err)=>{setGeoStatus(err.code===1?locale().geoDenied:locale().geoUnavailable);el('geoBtn').disabled=false},
+  {enableHighAccuracy:false,timeout:12000,maximumAge:120000});
+}
+function nextSundayAt19JST(){const now=Date.now();const japanNow=new Date(now+9*3600000);const day=japanNow.getUTCDay();let days=(7-day)%7;const target=new Date(Date.UTC(japanNow.getUTCFullYear(),japanNow.getUTCMonth(),japanNow.getUTCDate()+days,19-9,0,0));if(target.getTime()<now){target.setUTCDate(target.getUTCDate()+7)}return target.getTime()}
+function updateCountdown(){const diff=nextSundayAt19JST()-Date.now();if(diff<=60000){el('countdown').textContent=locale().timeNow;return}const totalMinutes=Math.floor(diff/60000);const days=Math.floor(totalMinutes/1440);const hours=Math.floor(totalMinutes%1440/60);const minutes=totalMinutes%60;el('countdown').textContent=`${days}${locale().timeDays}  ${hours}${locale().timeHours}  ${minutes}${locale().timeMinutes}`}
+
+// Location details are generated from safe DOM nodes; there are no real gallery uploads in v1.
+let detailDialog=null,activeDetailId=null;
+function ensureDetailDialog(){if(detailDialog)return;detailDialog=node('dialog','editor-dialog detail-dialog');detailDialog.setAttribute('aria-label','FJU location');document.body.append(detailDialog);detailDialog.addEventListener('close',()=>{activeDetailId=null})}
+function showDetail(id){const p=polos.find(x=>x.id===id);if(!p)return;ensureDetailDialog();activeDetailId=id;renderDetailIfOpen();if(!detailDialog.open)detailDialog.showModal()}
+function renderDetailIfOpen(){if(!activeDetailId||!detailDialog)return;const p=polos.find(x=>x.id===activeDetailId);if(!p){detailDialog.close();return}detailDialog.replaceChildren();const head=node('div','editor-head');const titleBox=node('div');titleBox.append(node('span','kicker','FJU CONNECT / JAPAN'));titleBox.append(node('h2','',p.name));titleBox.append(node('p','',`${p.city}${p.prefecture?', '+p.prefecture:''}`));head.append(titleBox);const close=node('button','close-editor','✕');close.type='button';close.setAttribute('aria-label',locale().back);close.addEventListener('click',()=>detailDialog.close());head.append(close);detailDialog.append(head);const body=node('div','editor-body');body.append(node('h3','detail-section-title',locale().address));body.append(node('p','',p.address||locale().addressPending));body.append(node('h3','detail-section-title',locale().projectsActive));body.append(node('p','',p.projects.length?p.projects.join(' • '):locale().noProjects));body.append(node('h3','detail-section-title',locale().gallery));body.append(node('p','',locale().galleryPending));const actions=node('div','form-actions');actions.append(link(locale().route,mapUrl(p),'btn btn-outline'));actions.append(link(locale().whatsapp,whatsappLink(p),'btn btn-primary'));body.append(actions);detailDialog.append(body)}
+
+function setEditorStatus(msg){el('editorStatus').textContent=msg}
+function fillEditor(id){const p=polos.find(x=>x.id===id);editingId=p?p.id:null;el('editId').value=p?.id||'';el('editName').value=p?.name||'';el('editCity').value=p?.city||'';el('editPrefecture').value=p?.prefecture||'';el('editAddress').value=p?.address||'';el('editMapsUrl').value=p?.mapsUrl||'';el('editLat').value=p?.lat??'';el('editLng').value=p?.lng??'';el('editProjects').value=p?.projects.join(', ')||'';el('deletePolo').disabled=!p;setEditorStatus('');renderEditorEntries()}
+function renderEditorEntries(){const target=el('editorEntries');if(!target)return;target.replaceChildren();polos.forEach(p=>{const b=node('button','editor-entry'+(p.id===editingId?' active':''),p.name);b.type='button';b.addEventListener('click',()=>fillEditor(p.id));target.append(b)})}
+function savePolo(ev){ev.preventDefault();const rawLat=el('editLat').value.trim(),rawLng=el('editLng').value.trim();if((rawLat&&!rawLng)||(!rawLat&&rawLng)){setEditorStatus(locale().editorInvalid);return}
+  const proposed=normalizePolo({id:editingId||`polo-${Date.now().toString(36)}`,name:el('editName').value,city:el('editCity').value,prefecture:el('editPrefecture').value,address:el('editAddress').value,mapsUrl:el('editMapsUrl').value.trim(),lat:rawLat?Number(rawLat):null,lng:rawLng?Number(rawLng):null,projects:el('editProjects').value.split(',').map(x=>x.trim()).filter(Boolean)});
+  if(!proposed || (rawLat && (proposed.lat===null||proposed.lng===null))){setEditorStatus(locale().editorInvalid);return}
+  const idx=polos.findIndex(p=>p.id===proposed.id);if(idx>=0)polos[idx]=proposed;else polos.push(proposed);persistPolos();fillEditor(proposed.id);setEditorStatus(locale().editorSaved);renderPolos()
+}
+function deletePolo(){if(!editingId)return;if(!confirm(locale().editorDeleteConfirm))return;polos=polos.filter(p=>p.id!==editingId);persistPolos();fillEditor(null);setEditorStatus(locale().editorDeleted);renderPolos()}
+function exportJson(){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),polos},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='fju-connect-polos.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
+async function importJson(ev){const file=ev.target.files?.[0];if(!file)return;try{if(file.size>1000000)throw Error('too large');const parsed=JSON.parse(await file.text());if(!parsed||!Array.isArray(parsed.polos)||parsed.polos.length>100)throw Error('invalid');const normalized=parsed.polos.map(normalizePolo);if(normalized.some(x=>!x)||new Set(normalized.map(x=>x.id)).size!==normalized.length)throw Error('invalid');polos=normalized;persistPolos();fillEditor(null);renderPolos();setEditorStatus(locale().editorImported)}catch{setEditorStatus(locale().editorImportError)}finally{ev.target.value=''}}
+function init(){
+  el('year').textContent=new Date().getFullYear();el('language').addEventListener('change',ev=>applyLanguage(ev.target.value));
+  el('poloSearch').addEventListener('input',ev=>{searchText=ev.target.value.trim();renderPolos()});el('geoBtn').addEventListener('click',useGPS);
+  el('referencePolo').addEventListener('change',ev=>useReference(ev.target.value));
+  el('clearGeoBtn').addEventListener('click',clearGeo);
+  el('editorToggle').addEventListener('click',()=>{fillEditor(null);el('editorDialog').showModal()});el('closeEditor').addEventListener('click',()=>el('editorDialog').close());
+  el('editorDialog').addEventListener('click',ev=>{if(ev.target===el('editorDialog'))el('editorDialog').close()});
+  el('newPolo').addEventListener('click',()=>{fillEditor(null);el('editName').focus()});el('poloForm').addEventListener('submit',savePolo);el('cancelEdit').addEventListener('click',()=>fillEditor(null));el('deletePolo').addEventListener('click',deletePolo);el('exportData').addEventListener('click',exportJson);el('importData').addEventListener('change',importJson);
+  applyLanguage(lang);setInterval(updateCountdown,60000);
+}
+document.addEventListener('DOMContentLoaded',init);
+
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#inicio" aria-label="FJU Connect Japan">
+        <span class="brand-mark">F<span>J</span>U<span class="brand-dot">.</span></span>
+        <span class="brand-sub">CONNECT <i>JAPAN</i></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#live" data-i18n="navLive">LIVE</a>
+        <a href="#musica" data-i18n="navMusic">MUSIC</a>
+        <a href="#projetos" data-i18n="navProjects">PROJECTS</a>
+        <a href="#polos" data-i18n="navPoles">FIND FJU</a>
+      </nav>
+      <div class="header-actions">
+        <label class="sr-only" for="language">Language</label>
+        <select id="language" aria-label="Idioma / Language / 言語">
+          <option value="ja">日本語</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+        </select>
+        <a class="header-contact" id="headerWhatsApp" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="contact">CONTATO</span><span aria-hidden="true"> ↗</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="inicio">
+      <div class="hero-glow hero-glow-a"></div><div class="hero-glow hero-glow-b"></div><div class="hero-identity" aria-hidden="true">FJU • JAPAN • CONNECT</div>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="live-dot"></span><span data-i18n="eyebrow">UMA NOVA GERAÇÃO, UM NOVO COMEÇO</span></div>
+          <h1 data-i18n-html="heroTitle">SUA HISTÓRIA<br><em>PODE MUDAR</em><br>AQUI<span>.</span></h1>
+          <p data-i18n="heroSub">Conexões de verdade. Novos desafios. Uma nova direção. Encontre a FJU mais perto de você.</p>
+          <div class="hero-actions">
+            <a href="#polos" class="btn btn-primary"><span data-i18n="findFju">ENCONTRAR MINHA FJU</span><span aria-hidden="true"> ↗</span></a>
+            <a href="#live" class="btn btn-ghost"><span class="play-icon">▶</span><span data-i18n="watchLive">CONHEÇA A FJU LIVE</span></a>
+          </div>
+          <div class="hero-meta"><span>JAPAN</span><span class="meta-divider"></span><span>日本全国</span><span class="meta-divider"></span><span>FJU CONNECT</span></div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+          <div class="hero-art-card card-back"><span class="mini-label">FJU / JAPAN</span><span class="art-symbol">✦</span><strong>YOU<br>BELONG<br>HERE.</strong></div>
+          <div class="hero-art-card card-front"><div class="hero-card-top"><span>THE NEXT GENERATION</span><span>↗</span></div><div class="art-burst">FJU<span>!</span></div><div class="hero-card-bottom">CONNECTING PEOPLE<br>CHANGING STORIES</div></div>
+          <span class="floating-word">つながろう。</span><span class="hero-stamp">FJU JAPAN / 2026</span>
+        </div>
+      </div>
+      <div class="ticker" aria-hidden="true"><div>FJU JAPAN <span>✦</span> MUSIC <span>✦</span> LIVE <span>✦</span> COMMUNITY <span>✦</span> CONNECT <span>✦</span> FJU JAPAN <span>✦</span> MUSIC <span>✦</span> LIVE <span>✦</span> COMMUNITY <span>✦</span></div></div>
+    </section>
+
+    <div class="brand-stripe" aria-hidden="true"></div>
+    <section class="section live-section" id="live">
+      <div class="wrap">
+        <div class="section-intro"><div><span class="kicker">01 / ON AIR</span><h2>FJU <span>LIVE</span></h2><p data-i18n="liveDesc">Todo domingo, às 19h, um encontro para você se conectar, refletir e seguir em frente.</p></div><span class="outline-word">LIVE</span></div>
+        <div class="live-panel">
+          <div class="live-panel-copy"><div class="live-label"><span class="live-dot"></span><span data-i18n="weeklyLive">PROGRAMA SEMANAL</span></div><h3 data-i18n-html="liveHeadline">DOMINGO<br><em>19:00</em> JST</h3><p data-i18n="liveTimezone">Horário do Japão · YouTube FJU JAPAN</p><div class="countdown-wrap"><span data-i18n="nextLive">PRÓXIMA EDIÇÃO</span><strong id="countdown">—</strong></div><a href="https://www.youtube.com/FJUJapan/live" target="_blank" rel="noopener noreferrer" class="btn btn-light"><span data-i18n="goYoutube">IR PARA O YOUTUBE</span> ↗</a></div>
+          <div class="live-panel-art"><div class="live-ring"><div class="live-ring-inner"><span>FJU</span><strong>LIVE</strong><small>JAPAN</small></div></div><div class="live-bottom">EVERY SUNDAY <span>•</span> 7:00 PM</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section music-section" id="musica">
+      <div class="wrap two-col">
+        <div class="music-copy"><span class="kicker">02 / SOUNDTRACK</span><h2>FJU <span>MUSIC</span></h2><p data-i18n="musicDesc">A música também faz parte da nossa história. Ouça os lançamentos e descubra o som da FJU JAPAN.</p><a href="https://open.spotify.com/artist/2sau9NCVYFTqSRnMPjnhzT" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><span data-i18n="openSpotify">ABRIR NO SPOTIFY</span> ↗</a></div>
+        <div class="spotify-frame"><div class="embed-label"><span class="spotify-circle">♫</span> SPOTIFY / FJU JAPAN</div><iframe title="FJU JAPAN no Spotify" src="https://open.spotify.com/embed/artist/2sau9NCVYFTqSRnMPjnhzT?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe><p class="embed-note" data-i18n="spotifyFallback">Se o player não carregar, use o botão para abrir o Spotify.</p></div>
+      </div>
+    </section>
+
+    <section class="section stories-section" id="historias"><div class="wrap"><div class="section-intro"><div><span class="kicker">03 / REAL STORIES</span><h2 data-i18n-html="storiesTitle">HISTÓRIAS QUE <span>INSPIRAM.</span></h2><p data-i18n="storiesDesc">Testemunhos e histórias reais da FJU JAPAN.</p></div></div><div class="stories-grid"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-main"><div class="story-visual"><span class="story-symbol">“</span><span class="story-play">▶</span></div><div class="story-content"><span class="story-overline">YOUTUBE / FJU JAPAN</span><strong data-i18n="testimonials">ASSISTA AOS TESTEMUNHOS</strong><span class="story-arrow">↗</span></div></a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer" class="story-card story-card-side"><div class="story-side-symbol">◎</div><div class="story-content"><span class="story-overline">INSTAGRAM / @FJUJAPAN</span><strong data-i18n="followUs">ACOMPANHE A FJU NO INSTAGRAM</strong><span class="story-arrow">↗</span></div></a></div></div></section>
+
+    <section class="section projects-section" id="projetos"><div class="wrap"><div class="section-intro"><div><span class="kicker">04 / GET INVOLVED</span><h2 data-i18n-html="projectsTitle">ENCONTRE SEU <span>ESPAÇO.</span></h2><p data-i18n="projectsDesc">Conheça algumas áreas de atuação da FJU. Cada polo tem seus projetos ativos.</p></div></div><div class="project-grid"><article class="project-card"><div class="project-index">01</div><div class="project-icon">◉</div><h3 data-i18n="projectMedia">MÍDIA</h3><p data-i18n="projectMediaDesc">Criatividade, fotografia, vídeo e comunicação.</p></article><article class="project-card"><div class="project-index">02</div><div class="project-icon">↗</div><h3 data-i18n="projectSports">ESPORTE</h3><p data-i18n="projectSportsDesc">Movimento, amizade e novos desafios.</p></article><article class="project-card"><div class="project-index">03</div><div class="project-icon">✳</div><h3 data-i18n="projectCulture">CULTURA</h3><p data-i18n="projectCultureDesc">Expressão, música, arte e talento.</p></article></div><p class="project-note" data-i18n="projectsNote">Áreas ilustrativas. A lista oficial e os projetos ativos de cada polo serão cadastrados pela administração.</p></div></section>
+
+    <section class="section poles-section" id="polos"><div class="wrap"><div class="section-intro"><div><span class="kicker">05 / FIND YOUR PEOPLE</span><h2 data-i18n-html="polesTitle">A FJU MAIS <span>PERTO DE VOCÊ.</span></h2><p data-i18n="polesDesc">Encontre seu polo no Japão. Com o GPS, todos os 23 polos aparecem do mais próximo ao mais distante.</p></div></div><div class="locator"><p id="poloCount" class="polo-count" aria-live="polite">23 polos cadastrados</p><div class="locator-controls"><div class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input type="search" id="poloSearch" autocomplete="off" data-placeholder="searchPlaceholder" placeholder="Buscar cidade ou polo" aria-label="Buscar polo" /></div><button id="geoBtn" class="btn btn-primary" type="button"><span aria-hidden="true">◎</span> <span data-i18n="useLocation">USAR MEU GPS</span></button></div><div class="reference-row"><label class="sr-only" for="referencePolo">Reference location / 基準地点 / Local de referência</label><select id="referencePolo" aria-label="Local de referência sem GPS"><option value="">SEM GPS? ESCOLHA UM POLO</option></select><button id="clearGeoBtn" class="clear-location" type="button" data-i18n="clearLocation" hidden>LIMPAR LOCALIZAÇÃO</button></div><p id="geoStatus" class="geo-status" role="status" aria-live="polite"></p><div id="poloList" class="polo-list" aria-live="polite"></div><p class="locator-note" data-i18n="locatorNote">Distância aproximada em linha reta. Consulte o Google Maps para ver o percurso real.</p></div></div></section>
+
+    <section class="section closing-section"><div class="wrap closing-inner"><span class="kicker">STAY CONNECTED</span><h2 data-i18n-html="closingTitle">O PRÓXIMO PASSO<br><span>COMEÇA AQUI.</span></h2><p data-i18n="closingDesc">Tem alguma dúvida? Fale com a equipe FJU JAPAN.</p><a id="closingWhatsApp" class="btn btn-primary btn-big" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="talkToUs">FALAR COM A FJU</span> ↗</a><div class="social-row"><a href="https://www.youtube.com/FJUJapan" target="_blank" rel="noopener noreferrer">YOUTUBE ↗</a><a href="https://www.instagram.com/fjujapan" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://open.spotify.com/artist/2sau9NCVYFTqSRnMPjnhzT" target="_blank" rel="noopener noreferrer">SPOTIFY ↗</a></div></div></section>
+  </main>
+
+  <footer class="footer"><div class="wrap footer-inner"><div class="footer-logo">FJU<span>.</span> <small>CONNECT JAPAN</small></div><p>© <span id="year"></span> FJU JAPAN</p><button id="editorToggle" type="button" class="editor-link" data-i18n="localEditor">CONFIGURAR POLOS (DEMO LOCAL)</button></div></footer>
+
+  <dialog id="editorDialog" class="editor-dialog" aria-labelledby="editorTitle"><div class="editor-head"><div><h2 id="editorTitle" data-i18n="editorTitle">Configuração local dos polos</h2><p data-i18n="editorWarning">Esta versão salva dados somente neste navegador. Não é um painel administrativo seguro nem sincroniza outros dispositivos.</p></div><button type="button" id="closeEditor" class="close-editor" aria-label="Fechar">✕</button></div><div class="editor-body"><div class="editor-toolbar"><button type="button" id="newPolo" class="btn btn-primary" data-i18n="addPolo">+ NOVO POLO</button><button type="button" id="exportData" class="btn btn-outline" data-i18n="exportJson">EXPORTAR JSON</button><label class="btn btn-outline import-label"><span data-i18n="importJson">IMPORTAR JSON</span><input id="importData" type="file" accept="application/json,.json" hidden /></label></div><div id="editorEntries" class="editor-entries"></div><form id="poloForm" class="polo-form"><input type="hidden" id="editId" /><div class="form-grid"><label><span data-i18n="poloName">Nome do polo</span><input id="editName" required maxlength="100" placeholder="FJU Hamamatsu" /></label><label><span data-i18n="city">Cidade</span><input id="editCity" required maxlength="100" placeholder="Hamamatsu" /></label><label><span data-i18n="prefecture">Província</span><input id="editPrefecture" maxlength="100" placeholder="Shizuoka" /></label><label><span data-i18n="address">Endereço oficial</span><input id="editAddress" maxlength="300" /></label><label class="full-width"><span>Google Maps — link do ponto exato</span><input id="editMapsUrl" type="url" placeholder="https://maps.app.goo.gl/..." /></label><label><span>Latitude</span><input id="editLat" type="number" step="any" min="-90" max="90" placeholder="34.XXXX" /></label><label><span>Longitude</span><input id="editLng" type="number" step="any" min="-180" max="180" placeholder="137.XXXX" /></label><label class="full-width"><span data-i18n="activeProjects">Projetos ativos (separados por vírgula)</span><input id="editProjects" maxlength="300" placeholder="Mídia, Esporte, Cultura" /></label></div><div class="form-actions"><button class="btn btn-primary" type="submit" data-i18n="savePolo">SALVAR POLO</button><button class="btn btn-outline" id="cancelEdit" type="button" data-i18n="cancel">CANCELAR</button><button class="btn btn-danger" id="deletePolo" type="button" data-i18n="deletePolo">EXCLUIR</button></div><p id="editorStatus" class="editor-status" role="status"></p></form></div></dialog>
+</body>
+</html>
