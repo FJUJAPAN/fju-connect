@@ -559,10 +559,38 @@ function applyLanguage(next){
   renderReferenceChoices();updateGeoMessage();
   renderPolos();renderEditorEntries();renderDetailIfOpen();updateCountdown();
 }
-function whatsappLink(polo){const message=polo?locale().whatsappPolo(polo.name):locale().whatsappGeneral;return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`}
+// Nome e cidade exibidos no idioma escolhido. Mantemos os IDs e endereços originais.
+const poloNamesJa = {
+  hamamatsu:'FJU 浜松', toyohashi:'FJU 豊橋', suzuka:'FJU 鈴鹿',
+  iwata:'FJU 磐田', yaizu:'FJU 焼津', fuji:'FJU 富士',
+  anjo:'FJU 安城', shiga:'FJU 滋賀', nagahama:'FJU 長浜',
+  kani:'FJU 可児', toyota:'FJU 豊田', nagoya:'FJU 名古屋',
+  komaki:'FJU 小牧', takaoka:'FJU 高岡', kanagawa:'FJU 神奈川',
+  yamanashi:'FJU 山梨', nagano:'FJU 長野', chiba:'FJU 千葉',
+  gunma:'FJU 群馬', ibaraki:'FJU 茨城', isesaki:'FJU 伊勢崎',
+  tokyo:'FJU 東京', ryuzenji:'FJU 龍禅寺'
+};
+const poloAreasJa = {
+  hamamatsu:'浜松市・静岡県', toyohashi:'豊橋市・愛知県',
+  suzuka:'鈴鹿市・三重県', iwata:'磐田市・静岡県',
+  yaizu:'焼津市・静岡県', fuji:'富士市・静岡県',
+  anjo:'安城市・愛知県', shiga:'湖南市・滋賀県',
+  nagahama:'長浜市・滋賀県', kani:'可児市・岐阜県',
+  toyota:'豊田市・愛知県', nagoya:'名古屋市・愛知県',
+  komaki:'小牧市・愛知県', takaoka:'高岡市・富山県',
+  kanagawa:'綾瀬市・神奈川県', yamanashi:'中央市・山梨県',
+  nagano:'上田市・長野県', chiba:'千葉市・千葉県',
+  gunma:'大泉町・群馬県', ibaraki:'常総市・茨城県',
+  isesaki:'伊勢崎市・群馬県', tokyo:'新宿区・東京都',
+  ryuzenji:'浜松市・静岡県'
+};
+function displayPoloName(p){return lang==='ja'?(poloNamesJa[p.id]||p.name):p.name}
+function displayPoloArea(p){return lang==='ja'?(poloAreasJa[p.id]||[p.city,p.prefecture].filter(Boolean).join('・')):[p.city,p.prefecture].filter(Boolean).join(', ')}
+
+function whatsappLink(polo){const message=polo?locale().whatsappPolo(displayPoloName(polo)):locale().whatsappGeneral;return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`}
 function haversine(lat1,lon1,lat2,lon2){const rad=Math.PI/180;const a=Math.sin((lat2-lat1)*rad/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin((lon2-lon1)*rad/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 function poloDistance(polo){return currentPosition&&polo.lat!==null&&polo.lng!==null?haversine(currentPosition.lat,currentPosition.lng,polo.lat,polo.lng):null}
-function sortedPolos(){return polos.filter(p=>`${p.name} ${p.city} ${p.prefecture} ${p.address}`.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())).map(p=>({...p,distance:poloDistance(p)})).sort((a,b)=>{if(currentPosition){if(a.distance!==null&&b.distance===null)return -1;if(a.distance===null&&b.distance!==null)return 1;if(a.distance!==null&&b.distance!==null)return a.distance-b.distance}return a.name.localeCompare(b.name,lang)})}
+function sortedPolos(){return polos.filter(p=>`${p.name} ${displayPoloName(p)} ${displayPoloArea(p)} ${p.city} ${p.prefecture} ${p.address}`.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())).map(p=>({...p,distance:poloDistance(p)})).sort((a,b)=>{if(currentPosition){if(a.distance!==null&&b.distance===null)return -1;if(a.distance===null&&b.distance!==null)return 1;if(a.distance!==null&&b.distance!==null)return a.distance-b.distance}return displayPoloName(a).localeCompare(displayPoloName(b),lang)})}
 function node(tag,className,text){const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=text;return n}
 function link(text,href,className){const a=node('a',className,text);a.href=href;if(href.startsWith('https://')){a.target='_blank';a.rel='noopener noreferrer'}return a}
 function mapUrl(p){if(p.mapsUrl)return p.mapsUrl;const q=p.address?p.address:`${p.city}, ${p.prefecture}, Japan`;return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`}
@@ -571,7 +599,7 @@ function renderPolos(){
   if(!found.length){list.append(node('div','polo-empty',locale().noResults));return}
   found.forEach((p,index)=>{
     const item=node('article','polo-item'+(index===0&&currentPosition?' polo-nearest':''));item.append(node('div','polo-rank',String(index+1).padStart(2,'0')));
-    const info=node('div','polo-info');info.append(node('h3','',p.name));info.append(node('p','',`${p.city}${p.prefecture?', '+p.prefecture:''}`));if(p.address)info.append(node('p','polo-address',p.address));
+    const info=node('div','polo-info');info.append(node('h3','',displayPoloName(p)));info.append(node('p','',displayPoloArea(p)));if(p.address)info.append(node('p','polo-address',p.address));
     info.append(node('span','polo-distance',p.distance!==null?`${locale().approx} ${p.distance.toLocaleString(lang,{maximumFractionDigits:1})} km`:locale().noCoords));
     if(index===0&&currentPosition)info.append(node('span','polo-nearest-tag',locale().nearest));item.append(info);
     const actions=node('div','polo-actions');const details=node('a','',locale().details);details.href=`#polo/${encodeURIComponent(p.id)}`;details.addEventListener('click',(ev)=>{ev.preventDefault();showDetail(p.id)});actions.append(details);
@@ -584,8 +612,8 @@ function renderReferenceChoices(){
   const saved=selector.value||referencePoloId;
   selector.replaceChildren();
   const placeholder=node('option','',locale().referencePlaceholder);placeholder.value='';selector.append(placeholder);
-  [...polos].filter(p=>p.lat!==null&&p.lng!==null).sort((a,b)=>a.name.localeCompare(b.name,lang)).forEach(p=>{
-    const o=node('option','',`${p.name} — ${p.prefecture}`);o.value=p.id;selector.append(o)
+  [...polos].filter(p=>p.lat!==null&&p.lng!==null).sort((a,b)=>displayPoloName(a).localeCompare(displayPoloName(b),lang)).forEach(p=>{
+    const o=node('option','',`${displayPoloName(p)} — ${displayPoloArea(p)}`);o.value=p.id;selector.append(o)
   });
   selector.value=saved && polos.some(p=>p.id===saved)?saved:'';
 }
@@ -593,7 +621,7 @@ function updateGeoMessage(){
   if(locationMode==='gps')setGeoStatus(locale().geoSuccess);
   else if(locationMode==='reference'){
     const p=polos.find(p=>p.id===referencePoloId);
-    if(p)setGeoStatus(locale().referenceHint(p.name));else setGeoStatus('');
+    if(p)setGeoStatus(locale().referenceHint(displayPoloName(p)));else setGeoStatus('');
   }
   el('clearGeoBtn').hidden=locationMode==='none';
 }
@@ -626,11 +654,11 @@ function updateCountdown(){const diff=nextSundayAt19JST()-Date.now();if(diff<=60
 let detailDialog=null,activeDetailId=null;
 function ensureDetailDialog(){if(detailDialog)return;detailDialog=node('dialog','editor-dialog detail-dialog');detailDialog.setAttribute('aria-label','FJU location');document.body.append(detailDialog);detailDialog.addEventListener('close',()=>{activeDetailId=null})}
 function showDetail(id){const p=polos.find(x=>x.id===id);if(!p)return;ensureDetailDialog();activeDetailId=id;renderDetailIfOpen();if(!detailDialog.open)detailDialog.showModal()}
-function renderDetailIfOpen(){if(!activeDetailId||!detailDialog)return;const p=polos.find(x=>x.id===activeDetailId);if(!p){detailDialog.close();return}detailDialog.replaceChildren();const head=node('div','editor-head');const titleBox=node('div');titleBox.append(node('span','kicker','FJU CONNECT / JAPAN'));titleBox.append(node('h2','',p.name));titleBox.append(node('p','',`${p.city}${p.prefecture?', '+p.prefecture:''}`));head.append(titleBox);const close=node('button','close-editor','✕');close.type='button';close.setAttribute('aria-label',locale().back);close.addEventListener('click',()=>detailDialog.close());head.append(close);detailDialog.append(head);const body=node('div','editor-body');body.append(node('h3','detail-section-title',locale().address));body.append(node('p','',p.address||locale().addressPending));body.append(node('h3','detail-section-title',locale().projectsActive));body.append(node('p','',p.projects.length?p.projects.join(' • '):locale().noProjects));body.append(node('h3','detail-section-title',locale().gallery));body.append(node('p','',locale().galleryPending));const actions=node('div','form-actions');actions.append(link(locale().route,mapUrl(p),'btn btn-outline'));actions.append(link(locale().whatsapp,whatsappLink(p),'btn btn-primary'));body.append(actions);detailDialog.append(body)}
+function renderDetailIfOpen(){if(!activeDetailId||!detailDialog)return;const p=polos.find(x=>x.id===activeDetailId);if(!p){detailDialog.close();return}detailDialog.replaceChildren();const head=node('div','editor-head');const titleBox=node('div');titleBox.append(node('span','kicker','FJU CONNECT / JAPAN'));titleBox.append(node('h2','',displayPoloName(p)));titleBox.append(node('p','',displayPoloArea(p)));head.append(titleBox);const close=node('button','close-editor','✕');close.type='button';close.setAttribute('aria-label',locale().back);close.addEventListener('click',()=>detailDialog.close());head.append(close);detailDialog.append(head);const body=node('div','editor-body');body.append(node('h3','detail-section-title',locale().address));body.append(node('p','',p.address||locale().addressPending));body.append(node('h3','detail-section-title',locale().projectsActive));body.append(node('p','',p.projects.length?p.projects.join(' • '):locale().noProjects));body.append(node('h3','detail-section-title',locale().gallery));body.append(node('p','',locale().galleryPending));const actions=node('div','form-actions');actions.append(link(locale().route,mapUrl(p),'btn btn-outline'));actions.append(link(locale().whatsapp,whatsappLink(p),'btn btn-primary'));body.append(actions);detailDialog.append(body)}
 
 function setEditorStatus(msg){el('editorStatus').textContent=msg}
 function fillEditor(id){const p=polos.find(x=>x.id===id);editingId=p?p.id:null;el('editId').value=p?.id||'';el('editName').value=p?.name||'';el('editCity').value=p?.city||'';el('editPrefecture').value=p?.prefecture||'';el('editAddress').value=p?.address||'';el('editMapsUrl').value=p?.mapsUrl||'';el('editLat').value=p?.lat??'';el('editLng').value=p?.lng??'';el('editProjects').value=p?.projects.join(', ')||'';el('deletePolo').disabled=!p;setEditorStatus('');renderEditorEntries()}
-function renderEditorEntries(){const target=el('editorEntries');if(!target)return;target.replaceChildren();polos.forEach(p=>{const b=node('button','editor-entry'+(p.id===editingId?' active':''),p.name);b.type='button';b.addEventListener('click',()=>fillEditor(p.id));target.append(b)})}
+function renderEditorEntries(){const target=el('editorEntries');if(!target)return;target.replaceChildren();polos.forEach(p=>{const b=node('button','editor-entry'+(p.id===editingId?' active':''),displayPoloName(p));b.type='button';b.addEventListener('click',()=>fillEditor(p.id));target.append(b)})}
 function savePolo(ev){ev.preventDefault();const rawLat=el('editLat').value.trim(),rawLng=el('editLng').value.trim();if((rawLat&&!rawLng)||(!rawLat&&rawLng)){setEditorStatus(locale().editorInvalid);return}
   const proposed=normalizePolo({id:editingId||`polo-${Date.now().toString(36)}`,name:el('editName').value,city:el('editCity').value,prefecture:el('editPrefecture').value,address:el('editAddress').value,mapsUrl:el('editMapsUrl').value.trim(),lat:rawLat?Number(rawLat):null,lng:rawLng?Number(rawLng):null,projects:el('editProjects').value.split(',').map(x=>x.trim()).filter(Boolean)});
   if(!proposed || (rawLat && (proposed.lat===null||proposed.lng===null))){setEditorStatus(locale().editorInvalid);return}
