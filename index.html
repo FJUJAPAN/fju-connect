@@ -714,7 +714,7 @@ function renderPolos(){
     const info=node('div','polo-info');info.append(node('h3','',displayPoloName(p)));info.append(node('p','',displayPoloArea(p)));if(p.address)info.append(node('p','polo-address',p.address));
     info.append(node('span','polo-distance',p.distance!==null?`${locale().approx} ${p.distance.toLocaleString(lang,{maximumFractionDigits:1})} km`:locale().noCoords));
     if(index===0&&currentPosition)info.append(node('span','polo-nearest-tag',locale().nearest));item.append(info);
-    const actions=node('div','polo-actions');const details=node('a','',locale().details);details.href=`#polo/${encodeURIComponent(p.id)}`;details.addEventListener('click',(ev)=>{ev.preventDefault();showDetail(p.id)});actions.append(details);
+    const actions=node('div','polo-actions');const details=node('a','',locale().details);details.href=p.id==='hamamatsu'?'polos/hamamatsu/':`#polo/${encodeURIComponent(p.id)}`;if(p.id!=='hamamatsu')details.addEventListener('click',(ev)=>{ev.preventDefault();showDetail(p.id)});actions.append(details);
     actions.append(link(locale().route,mapUrl(p)));actions.append(link(locale().whatsapp,whatsappLink(p),'primary-action'));item.append(actions);list.append(item)
   })
 }
