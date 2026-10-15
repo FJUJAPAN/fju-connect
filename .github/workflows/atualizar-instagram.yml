@@ -1,0 +1,55 @@
+name: Atualizar 3 fotos do Instagram FJU
+
+on:
+  schedule:
+    # A cada 3 horas (UTC); o GitHub pode atrasar execuções agendadas.
+    - cron: "23 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fju-instagram-sync
+  cancel-in-progress: false
+
+jobs:
+  sincronizar:
+    if: github.repository == 'FJUJAPAN/fju-connect'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar FJU Connect
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar ferramentas de imagem e criptografia
+        run: python -m pip install --disable-pip-version-check "Pillow>=11,<13" "cryptography>=44,<48"
+
+      - name: Consultar API oficial do Instagram
+        env:
+          FJU_INSTAGRAM_TOKEN: ${{ secrets.FJU_INSTAGRAM_TOKEN }}
+        run: python scripts/sync_instagram.py
+
+      - name: Publicar somente se há novas imagens ou credenciais renovadas
+        shell: bash
+        run: |
+          if [ ! -f instagram/latest.json ]; then
+            echo "Integração aguarda autorização do Instagram; nenhuma foto foi alterada."
+            exit 0
+          fi
+          git add -A instagram/
+          if git diff --cached --quiet; then
+            echo "As três publicações estão atualizadas."
+            exit 0
+          fi
+          git -c user.name="fju-instagram-bot" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Atualizar fotos recentes do Instagram FJU"
+          git push origin HEAD:main
