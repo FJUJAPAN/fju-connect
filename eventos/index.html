@@ -64,7 +64,7 @@ header{background:rgba(8,30,59,.97);border-bottom-color:#284565;color:#fff}
 const IMG=JSON.parse(document.getElementById('imagesData').textContent);
 // Álbum Cultura • Teatro FJU Hamamatsu • MEGA HELP, 12/09/2026
 const MEGA_HELP_IMAGES=Array.from({length:10},(_,i)=>'megaHelp'+String(i+1).padStart(2,'0'));
-MEGA_HELP_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/teatro-mega-help-2026/'+String(i+1).padStart(2,'0')+'.jpg';});
+MEGA_HELP_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/teatro-mega-help-2026/'+String(i+1).padStart(2,'0')+'.webp';});
 const albums=[
 {id:'encontros-hamamatsu',type:'encontros',city:'Hamamatsu',date:'',cover:'group',images:['group','group2'],title:{pt:'Encontros de jovens',ja:'若者たちの集い',en:'Youth gatherings'},description:{pt:'Registros de encontros e atividades da FJU em Hamamatsu.',ja:'浜松で行われたFJUの集まりや活動の記録です。',en:'Scenes from FJU youth gatherings and activities in Hamamatsu.'}},
 {id:'open-mat',type:'esporte',city:'Hamamatsu',date:'',cover:'openmat',images:['openmat'],title:{pt:'Open Mat · Jiu-jitsu',ja:'オープンマット・柔術',en:'Open Mat · Jiu-jitsu'},description:{pt:'Um espaço de amizade, disciplina e superação por meio do jiu-jitsu.',ja:'柔術を通じて仲間と出会い、挑戦する活動です。',en:'Friendship, discipline and personal growth through jiu-jitsu.'}},
