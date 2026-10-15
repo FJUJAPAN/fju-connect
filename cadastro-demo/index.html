@@ -109,10 +109,14 @@ input[type="search"]{min-width:220px}input[type="file"]{padding:8px;font-size:12
 const POLOS=["Hamamatsu","Toyohashi","Suzuka","Iwata","Yaizu","Fuji","Anjo","Shiga","Nagahama","Kani","Toyota","Nagoya","Komaki","Takaoka","Kanagawa","Yamanashi","Nagano","Chiba","Gunma","Ibaraki","Isesaki","Tokyo","Ryuzenji"];
 const STAGES=["Inconstante","Firme","CPO","Colaborador","Obreiro","Coordenador"];
 const ALIAS=["Jovem exemplo A","Jovem exemplo B","Jovem exemplo C","Jovem exemplo D","Jovem exemplo E","Jovem exemplo F","Jovem exemplo G","Jovem exemplo H"];
-const state={role:"admin",polo:"Hamamatsu",page:"overview",stage:"Todos",query:"",detail:null,detailTab:"ficha",records:[],trash:[],weekly:{},weekPolo:"Hamamatsu"};
+const state={role:"admin",polo:"Hamamatsu",page:"overview",stage:"Todos",query:"",detail:null,detailTab:"ficha",records:[],trash:[],weekly:{},weeklyNumbers:{},weekPolo:"Hamamatsu"};
 let serial=1;
 POLOS.forEach((p,pi)=>{let n=pi===0?27:(pi===1?16:8+pi%5*3);for(let i=0;i<n;i++){const stage=STAGES[(i+pi)%6];const id="EX-"+String(serial++).padStart(4,"0");state.records.push({id:id,polo:p,stage:stage,name:stage==="Inconstante"?"":ALIAS[(i+pi)%ALIAS.length]+" "+String(i+1).padStart(2,"0"),phone:"(00) 0000-0000",address:"Endereço fictício para demonstração",birth:stage==="Inconstante"?"":"2005-01-01",joined:stage==="Inconstante"?"":"2024-03-01",water:stage==="Inconstante"?"":"2025-07-01",holy:(stage!=="Inconstante"&&i%3===0)?"2026-01-01":"",testimony:stage==="Inconstante"?"":"Área demonstrativa do testemunho. Nenhum testemunho real está armazenado.",history:[],photo:""});}});
-POLOS.forEach((p,i)=>{state.weekly[p]=i%5===0?"late":i%5===1?"sent":i%5===2?"missing":"pending";});
+POLOS.forEach(p=>{state.weekly[p]="pending";state.weeklyNumbers[p]=null;});
+// Valores exclusivamente FICTÍCIOS, sem relação com as fichas individuais.
+state.weekly.Hamamatsu="late";state.weeklyNumbers.Hamamatsu={firmes:16,novos:3,afastados:2,domingo:18,encontro:12,unicos:24};
+state.weekly.Toyohashi="sent";state.weeklyNumbers.Toyohashi={firmes:9,novos:4,afastados:1,domingo:13,encontro:11,unicos:17};
+state.weekly.Nagoya="missing";
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
 function pill(stage){return '<span class="pill '+stage.toLowerCase()+'">'+esc(stage)+'</span>'}
@@ -178,14 +182,44 @@ function printUI(){
 }
 
 function weekly(){
- const statuses={sent:"Enviado no prazo",late:"ATR · Recebido com atraso",pending:"Pendente",missing:"Não enviado no prazo"};
- const tag=k=>'<span class="'+(k==="sent"?"status-ok":k==="late"?"status-late":"status-no")+'">'+statuses[k]+'</span>';
+ const labels={sent:"Enviado no prazo",late:"ATR · Recebido com atraso",pending:"Pendente",missing:"Não enviado no prazo"};
+ const statusHtml=k=>'<span class="'+(k==="sent"?"status-ok":k==="late"?"status-late":k==="pending"?"status-no":"status-no")+'">'+esc(labels[k]||"Pendente")+'</span>';
  const filtered=state.role==="local"?["Hamamatsu"]:(state.polo==="Todos"?POLOS:[state.polo]);
- const rows=filtered.map(p=>'<tr><td><b>FJU '+esc(p)+'</b></td><td>'+tag(state.weekly[p])+'</td><td>'+esc(state.weekly[p]==="late"?"Exemplo: enviado depois das 22h":state.weekly[p]==="sent"?"Exemplo: antes das 22h":"—")+'</td><td><button class="btn small" data-week="'+esc(p)+'">Simular envio</button></td></tr>').join("");
- return '<div class="inline-note warn-note"><b>Fluxo ilustrativo:</b> nenhuma notificação está ativa e nenhum relatório real será enviado. Os estados abaixo são apenas exemplos.</div>'+
- '<div class="cards">'+stat("Lembrete","17h30","Domingo · horário do Japão")+stat("Prazo","22h00","Domingo · horário do Japão")+stat("Depois do prazo","ATR","Recebido com atraso")+stat("Não enviado","Alerta","Após 22h00, notificar o polo")+'</div>'+
- '<div class="panel"><div class="row between"><div><h2>Relatório semanal por igreja</h2><p class="lead">A coordenação nacional acompanha todos os polos; cada coordenador envia apenas pelo próprio polo.</p></div><span class="pill">SEMANA SIMULADA</span></div><div class="divider"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Polo</th><th>Status fictício</th><th>Horário</th><th>Simulação</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
- '<div class="panel"><h3>Notificações programadas para a versão real</h3><div class="detail"><div class="detail-box"><div class="key">Domingo · 17h30</div><div class="value">Lembrete para entregar o relatório semanal</div></div><div class="detail-box"><div class="key">Domingo · 22h00</div><div class="value">Marcar pendência e notificar quem não enviou</div></div><div class="detail-box"><div class="key">Envio atrasado</div><div class="value">Permitir envio, registrar hora e exibir ATR</div></div><div class="detail-box"><div class="key">Próxima definição</div><div class="value">Campos do relatório e canal da notificação</div></div></div></div>';
+ if(!filtered.includes(state.weekPolo))state.weekPolo=filtered[0];
+ const example=v=>v==null?"—":String(v);
+ const rows=filtered.map(p=>{
+  const n=state.weeklyNumbers[p];
+  return '<tr><td><b>FJU '+esc(p)+'</b></td>'+
+    '<td>'+example(n?.firmes)+'</td><td>'+example(n?.novos)+'</td><td>'+example(n?.afastados)+'</td>'+
+    '<td>'+example(n?.domingo)+'</td><td>'+example(n?.encontro)+'</td><td><b>'+example(n?.unicos)+'</b></td>'+
+    '<td>'+statusHtml(state.weekly[p])+'</td>'+
+    '<td><button type="button" class="btn small" data-week-open="'+esc(p)+'">Preencher / revisar</button></td></tr>';
+ }).join("");
+ const p=state.weekPolo,values=state.weeklyNumbers[p]||{};
+ const num=(key,label)=>'<div class="form-item"><label for="week-'+key+'">'+label+'</label><input type="number" id="week-'+key+'" name="'+key+'" min="0" max="99999" step="1" required placeholder="0" value="'+esc(values[key]??"")+'"></div>';
+ const editor='<div class="panel" id="weeklyEditor"><div class="row between"><div><div class="eyebrow">PREENCHIMENTO DO COORDENADOR · DEMO</div><h2>FJU '+esc(p)+'</h2><p class="lead">Relatório de números da semana. Não utiliza as fichas cadastradas.</p></div><span class="pill">SEMANA FICTÍCIA</span></div>'+
+ '<div class="divider"></div><form id="weeklyForm"><div class="form-grid">'+
+ '<div class="form-item full"><h3>Durante a semana</h3></div>'+
+ num("firmes","Quantidade de jovens firmes")+
+ num("novos","Quantidade de jovens novos")+
+ num("afastados","Quantidade de jovens afastados")+
+ '<div class="form-item full"><h3>Reuniões</h3></div>'+
+ num("domingo","Domingo — 9h30")+
+ num("encontro","Encontro FJU")+
+ '<div class="form-item full"><h3>Total da semana</h3></div>'+
+ '<div class="form-item full">'+num("unicos","TOTAL SEM REPETIR DA SEMANA")+'</div>'+
+ '<div class="form-item full"><div class="inline-note"><b>Sem repetir:</b> informe o número de jovens diferentes que participaram na semana. Uma pessoa que participou de várias reuniões conta apenas uma vez. O total é digitado pelo coordenador e não é soma automática.</div></div>'+
+ '<div class="form-item full"><div class="row"><button type="button" class="btn primary" data-week-submit="sent">Simular envio no prazo</button><button type="button" class="btn" data-week-submit="late">Simular envio após 22h (ATR)</button></div></div>'+
+ '</div></form></div>';
+ return '<div class="inline-note warn-note"><b>Relatório semanal separado das fichas.</b> Somente quantidades preenchidas manualmente pelo coordenador. Todos os exemplos são fictícios e as alterações somem ao recarregar. Nenhuma notificação ou envio real está ativo.</div>'+
+ '<div class="cards">'+stat("Lembrete","Dom. 17h30","Fuso horário do Japão")+
+ stat("Prazo","Dom. 22h00","Após 22h, status ATR")+
+ stat("Enviados",filtered.filter(p=>["sent","late"].includes(state.weekly[p])).length,"Demonstração · polos selecionados")+
+ stat("Sem entrega",filtered.filter(p=>["missing","pending"].includes(state.weekly[p])).length,"Exemplos pendentes")+'</div>'+
+ '<div class="panel"><div class="row between"><div><h2>Resumo semanal por polo</h2><p class="lead">A coordenação nacional acompanha todos os polos; o coordenador local trabalha apenas com o seu. Números não são derivados das fichas.</p></div><span class="pill">EXEMPLOS</span></div>'+
+ '<div class="divider"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Polo</th><th>Firmes</th><th>Novos</th><th>Afastados</th><th>Dom. 9h30</th><th>Encontro FJU</th><th>Sem repetir</th><th>Status</th><th>Ação</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
+ editor+
+ '<div class="panel"><h3>Notificações — previstas para a versão real</h3><div class="detail"><div class="detail-box"><div class="key">Domingo · 17h30</div><div class="value">Lembrar o coordenador de entregar o relatório</div></div><div class="detail-box"><div class="key">Domingo · 22h00</div><div class="value">Prazo de entrega; após ele, avisar quem não enviou</div></div><div class="detail-box"><div class="key">Envio tardio</div><div class="value">Recebido com atraso · ATR</div></div><div class="detail-box"><div class="key">Ainda a definir</div><div class="value">Canal das notificações</div></div></div></div>';
 }
 function render(){
  refreshPolo();
@@ -245,7 +279,8 @@ document.addEventListener("click",e=>{
  if(b.dataset.delete){const r=state.records.find(x=>x.id===b.dataset.delete);if(r&&permitted(r))deleteRecord(r);return}
  if(b.dataset.closeModal){closeModal();return}
  if(b.dataset.print){window.print();return}
- if(b.dataset.week){const p=b.dataset.week;if(state.role==="local"&&p!=="Hamamatsu")return;const late=confirm("SIMULAÇÃO: OK = envio depois das 22h (ATR). Cancelar = envio no prazo.");state.weekly[p]=late?"late":"sent";render();toast("Status fictício atualizado. Nenhuma notificação foi enviada.");return}
+ if(b.dataset.weekOpen){const p=b.dataset.weekOpen;if(state.role==="local"&&p!=="Hamamatsu")return;state.weekPolo=p;render();document.getElementById("weeklyEditor")?.scrollIntoView({block:"start",behavior:"smooth"});return}
+ if(b.dataset.weekSubmit){const form=document.getElementById("weeklyForm");if(!form||!form.reportValidity())return;const data=new FormData(form),keys=["firmes","novos","afastados","domingo","encontro","unicos"],counts={};for(const key of keys){const raw=String(data.get(key)??"").trim(),n=Number(raw);if(raw===""||!Number.isSafeInteger(n)||n<0||n>99999){toast("Informe quantidades inteiras e não negativas nos seis campos.");return}counts[key]=n;}const p=state.weekPolo;if(state.role==="local"&&p!=="Hamamatsu")return;state.weeklyNumbers[p]=counts;state.weekly[p]=b.dataset.weekSubmit==="late"?"late":"sent";render();toast("Relatório fictício atualizado nesta sessão. Nada foi enviado.");return}
  if(b.dataset.restore){restoreRecord();return}
 });
 document.addEventListener("click",e=>{if(e.target.id==="modalBg")closeModal()});
