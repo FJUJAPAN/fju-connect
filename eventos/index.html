@@ -72,6 +72,9 @@ MEGA_HELP_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/teatro-mega-help-2026/'+Str
 // Galeria Esporte FJU — oito fotos já publicadas no portal.
 const SPORT_FJU_IMAGES=Array.from({length:8},(_,i)=>'sportFju'+String(i+1).padStart(2,'0'));
 SPORT_FJU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/esporte-fju-home-2026/'+String(i+1).padStart(2,'0')+'.webp';});
+// Fotos Encontro Jovem Domingo — FJU JAPAN (10 imagens)
+const FJU_SUNDAY_IMAGES=Array.from({length:10},(_,i)=>'fjuSunday'+String(i+1).padStart(2,'0'));
+FJU_SUNDAY_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/encontro-jovem-domingo-2026/'+String(i+1).padStart(2,'0')+'.webp';});
 const albums=[
 {id:'esporte-fju-2026',type:'esporte',city:'JAPAN',date:'',cover:'sportFju01',images:SPORT_FJU_IMAGES,title:{pt:'Esporte FJU JAPAN',ja:'FJU JAPAN スポーツ',en:'FJU JAPAN Sports'},description:{pt:'Oito fotos de atividades esportivas da FJU JAPAN. Esporte, amizade e superação.',ja:'FJU JAPANのスポーツ活動の写真8枚。スポーツ、友情、そして挑戦。',en:'Eight photos of FJU JAPAN sports activities, friendship and personal growth.'}},
 {id:'encontros-hamamatsu',type:'encontros',city:'Hamamatsu',date:'',cover:'group',images:['group','group2'],title:{pt:'Encontros de jovens',ja:'若者たちの集い',en:'Youth gatherings'},description:{pt:'Registros de encontros e atividades da FJU em Hamamatsu.',ja:'浜松で行われたFJUの集まりや活動の記録です。',en:'Scenes from FJU youth gatherings and activities in Hamamatsu.'}},
@@ -82,6 +85,8 @@ const albums=[
 // Exibe o álbum apenas quando os dez arquivos já estiverem presentes,
 // evitando fotografias quebradas na página pública durante o envio ao GitHub.
 // O álbum original permanece até que todas as fotos novas estejam publicadas.
+const fjuSundayAlbum={id:'encontro-jovem-domingo-2026',type:'encontros',city:'JAPAN',date:'',cover:'fjuSunday01',images:FJU_SUNDAY_IMAGES,title:{pt:'ENCONTRO JOVEM DOMINGO',ja:'日曜日 FJUミーティング',en:'SUNDAY FJU MEETING'},description:{pt:'Encontros de domingo da FJU em diferentes polos do Japão. Momentos de amizade, fé e novas experiências.',ja:'日本各地のFJUで行われる日曜日のミーティング。友情、信仰、新たな経験を分かち合うひととき。',en:'Sunday FJU youth gatherings across Japan: friendship, faith, and new experiences.'}};
+albums.unshift(fjuSundayAlbum);
 const openMatAlbum=albums.find(a=>a.id==='open-mat');
 Promise.all(OPEN_MAT_HAMAMATSU_IMAGES.map(key=>new Promise(resolve=>{const photo=new Image();photo.onload=()=>resolve(true);photo.onerror=()=>resolve(false);photo.src=IMG[key];}))).then(statuses=>{if(statuses.every(Boolean)&&openMatAlbum){openMatAlbum.cover=OPEN_MAT_HAMAMATSU_IMAGES[0];openMatAlbum.images=OPEN_MAT_HAMAMATSU_IMAGES;openMatAlbum.description={pt:'Open Mat — Jiu-jitsu em Hamamatsu. Momentos de treino, amizade e superação no tatame.',ja:'浜松のオープンマット・柔術。練習、仲間との交流、挑戦の記録です。',en:'Open Mat jiu-jitsu in Hamamatsu — training, friendship and growth on the mats.'};renderTranslations();onHash();}});
 const megaHelpAlbum={id:'mega-help-teatro-2026',type:'cultura',city:'Hamamatsu',date:'12/09/2026',cover:'megaHelp01',images:MEGA_HELP_IMAGES,title:{pt:'TEATRO FJU HAMAMATSU',ja:'FJU浜松 演劇',en:'FJU HAMAMATSU THEATER'},description:{pt:'Apresentação teatral da FJU Hamamatsu no evento Mega Help 2026, realizado em 12 de setembro.',ja:'2026年9月12日のMEGA HELP 2026で披露されたFJU浜松の演劇。',en:'The FJU Hamamatsu theater performance at Mega Help 2026 on September 12.'}};
