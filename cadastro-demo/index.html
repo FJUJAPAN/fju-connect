@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FJU Connect — Protótipo do Cadastro de Jovens</title>
+<meta name="description" content="Protótipo visual com dados fictícios, sem cadastro real.">
+<style>
+:root{--navy:#0d1f3a;--navy2:#142f55;--red:#e32243;--muted:#637289;--bg:#f4f6fa;--line:#e1e7ef;--white:#fff;--green:#087f5b;--orange:#9a5900}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--navy);background:var(--bg)}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit}
+.demo-banner{background:#fff3db;color:#724400;text-align:center;padding:10px 16px;font-size:12px;font-weight:750;letter-spacing:.1px;border-bottom:1px solid #ead5a1}
+.top{background:var(--navy);color:white;padding:15px min(4vw,38px);display:flex;align-items:center;gap:15px;justify-content:space-between}
+.brand{font-size:21px;font-weight:1000;letter-spacing:-.9px}.brand b{color:#ff4566}.brand small{display:block;font-size:9px;letter-spacing:2px;font-weight:750;color:#bcc9dc}
+.public-link{text-decoration:none;font-size:12px;font-weight:800;background:#ffffff15;border:1px solid #ffffff49;padding:10px 13px;border-radius:9px}
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 110px)}aside{background:#112845;color:#c1cde0;padding:26px 15px;display:flex;flex-direction:column;gap:7px}
+.aside-label{color:#8ba3c1;letter-spacing:1.1px;font-size:10px;font-weight:800;padding:4px 13px 12px}
+.nav{border:0;background:transparent;color:inherit;text-align:left;border-radius:10px;padding:13px;font-weight:750;font-size:13px;display:flex;gap:10px;align-items:center}
+.nav:hover,.nav.active{background:#e32443;color:#fff}.nav span{font-size:18px;width:23px;text-align:center}
+.aside-bottom{margin-top:auto;border-top:1px solid #ffffff26;padding:16px 10px 0;font-size:11px;line-height:1.6;color:#a7bbd2}
+main{min-width:0;padding:30px min(4vw,44px) 60px}.topline{display:flex;flex-wrap:wrap;justify-content:space-between;gap:15px;margin-bottom:24px;align-items:end}
+h1{font-size:clamp(26px,3vw,34px);margin:3px 0 8px;letter-spacing:-1.2px}h2{font-size:19px;letter-spacing:-.5px;margin:0 0 13px}h3{font-size:16px;margin:0 0 10px}
+.eyebrow{font-size:11px;letter-spacing:1.4px;color:#e32243;font-weight:1000}.lead{color:var(--muted);font-size:13px;line-height:1.6;margin:0}
+.controls{display:flex;gap:9px;flex-wrap:wrap}.field label{display:block;font-size:11px;color:#596b81;margin:0 0 6px;font-weight:800}
+select,input,textarea{border:1px solid #ced8e5;border-radius:9px;padding:10px 11px;background:#fff;color:var(--navy);outline:none;max-width:100%}
+select:focus,input:focus,textarea:focus{border-color:#db2544;box-shadow:0 0 0 3px #db254420}
+input[type="search"]{min-width:220px}input[type="file"]{padding:8px;font-size:12px}
+.btn{border:1px solid #d3dbe5;background:#fff;color:var(--navy);padding:10px 14px;border-radius:9px;font-size:12px;font-weight:850;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{border-color:#ed4f67}.btn.primary{background:var(--red);color:white;border-color:var(--red)}.btn.navy{background:var(--navy);color:white;border-color:var(--navy)}.btn.ghost{background:#f2f4f8}.btn.small{padding:6px 9px;font-size:11px}.btn:disabled{opacity:.55;cursor:not-allowed}
+.stack{display:grid;gap:18px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:21px;box-shadow:0 2px 12px #14274208}
+.stat-label{font-size:11px;font-weight:800;color:#607186}.stat-number{font-size:33px;font-weight:1000;letter-spacing:-1.1px;margin:11px 0 0}.stat-foot{font-size:11px;color:#8794a7}
+.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.pill{font-size:10px;font-weight:950;letter-spacing:.3px;border-radius:999px;padding:5px 9px;background:#e7ecf4;color:#344b67;display:inline-block;white-space:nowrap}
+.pill.inconstante{background:#fff0e0;color:#a45b0d}.pill.firme{background:#e4f5eb;color:#167647}.pill.cpo{background:#e5ecff;color:#345ec4}.pill.colaborador{background:#ecedff;color:#5b4ab1}.pill.obreiro{background:#eaeef5;color:#1b3e6d}.pill.coordenador{background:#fae7eb;color:#b62641}
+.bar-row{display:grid;grid-template-columns:105px 1fr 34px;gap:10px;align-items:center;padding:9px 0;font-size:12px}.bar-track{height:9px;border-radius:99px;background:#edf0f5;overflow:hidden}.bar{height:100%;border-radius:99px;background:#eb3350}
+.inline-note{padding:11px 13px;background:#f2f6fb;border-left:3px solid #b6c9e2;border-radius:5px;color:#51637b;font-size:12px;line-height:1.6}
+.warn-note{background:#fff6e4;border-left-color:#ffbd52;color:#745011}
+.table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}
+.data-table th{font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#78879b;padding:13px 11px;border-bottom:1px solid var(--line)}
+.data-table td{padding:12px 11px;border-bottom:1px solid #ebeff3}.data-table tr:last-child td{border-bottom:0}.data-table tr:hover td{background:#f8fafc}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a9b9cc,#576e8d);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:1000;font-size:11px;flex-shrink:0}
+.mini{color:#78889a;font-size:11px}.bold{font-weight:850}.divider{height:1px;background:var(--line);margin:15px 0}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:15px}.detail-box{padding:12px;border:1px solid var(--line);border-radius:10px}
+.detail-box .key{font-size:10px;color:#7c8c9e;letter-spacing:.5px;text-transform:uppercase}.detail-box .value{font-size:13px;font-weight:780;margin-top:6px;overflow-wrap:anywhere}
+.help{font-size:11px;color:#6e7e92;line-height:1.6}
+.vgap{display:flex;flex-direction:column;gap:10px}
+.modal-cover{position:fixed;inset:0;z-index:40;background:#061629ad;display:flex;justify-content:center;align-items:center;padding:15px}
+.modal{width:min(100%,590px);background:#fff;border-radius:17px;max-height:95vh;overflow-y:auto;padding:23px;box-shadow:0 25px 75px #0005}
+.modal-top{display:flex;align-items:start;justify-content:space-between;gap:15px;margin-bottom:17px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-item{display:flex;flex-direction:column;gap:6px;min-width:0}.form-item.full{grid-column:span 2}
+.form-item label{font-size:11px;font-weight:800;color:#586b80}.form-item input,.form-item select,.form-item textarea{width:100%}
+.form-item textarea{min-height:85px;resize:vertical}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:17px}
+.tabrow{display:flex;gap:8px;margin:12px 0 16px}.tab{border:1px solid #d4dce7;background:#fff;padding:9px 15px;border-radius:9px;font-size:12px;font-weight:800}.tab.active{background:#122c4c;color:white}
+.chip{border:1px solid #d3dbe5;border-radius:9px;background:#fff;font-size:11px;padding:7px 10px;cursor:pointer}.chip.current{border-color:#e32243;background:#fff0f3;color:#a31330}
+.notice{padding:12px 16px;background:#e4f5eb;border:1px solid #b9e0ca;color:#0b5e3f;border-radius:9px;font-size:12px;font-weight:700;margin-bottom:18px}
+.status-ok{color:#078159;font-weight:900}.status-late{color:#a05e00;font-weight:900}.status-no{color:#ba3453;font-weight:900}
+.print-pages{display:none}.print-sheet{background:white;border:1px solid #d8dee8;width:210mm;max-width:100%;min-height:297mm;padding:12mm;margin:0 auto 15px;box-shadow:0 4px 25px #00000015}
+.print-head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:8px}
+.print-head h2{font-size:18px;margin:0}.print-head small{font-size:10px}
+.print-summary{display:flex;gap:15px;flex-wrap:wrap;margin:9px 0 12px;font-size:10px}
+.print-table{width:100%;border-collapse:collapse;font-size:9.5px;table-layout:fixed}
+.print-table td,.print-table th{border-bottom:1px solid #d9dfe7;padding:6px 5px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:9mm}
+.print-table th{color:#56667d;font-size:9px;background:#f0f3f7}
+.print-foot{font-size:9px;margin-top:14px;border-top:1px solid #cbd4df;padding-top:8px;display:flex;justify-content:space-between;color:#66758a}
+#toast{position:fixed;z-index:80;bottom:20px;right:20px;max-width:360px;background:#112845;color:white;padding:13px 18px;border-radius:12px;box-shadow:0 10px 40px #0004;font-size:12px;display:none}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+@media(max-width:760px){.shell{display:block}aside{padding:8px;display:flex;flex-direction:row;overflow-x:auto;gap:6px}.aside-label,.aside-bottom{display:none}.nav{flex-shrink:0;padding:10px 12px;font-size:11px}.nav span{font-size:15px;width:auto}main{padding:23px 15px 45px}.top{padding:13px 15px}.brand{font-size:17px}.public-link{padding:8px;font-size:10px}.controls{width:100%}.controls .field{flex:1}.controls .field select{width:100%}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.panel{padding:15px}.stat-number{font-size:27px}.detail{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-item.full{grid-column:span 1}.print-sheet{padding:8mm;min-height:0}}
+@page{size:A4 portrait;margin:0}
+@media print{
+ body{background:#fff;color:#111} .demo-banner,.top,aside,.topline,.stack,.controls,#toast,.no-print{display:none!important}
+ .shell,main{display:block;padding:0;margin:0}
+ #printPreview{display:block!important}.print-pages{display:block!important}
+ .print-sheet{width:210mm;height:297mm;min-height:297mm;margin:0;border:0;border-radius:0;box-shadow:none;padding:13mm 12mm 11mm;break-after:page;page-break-after:always;overflow:hidden}
+ .print-sheet:last-child{break-after:auto;page-break-after:auto}
+ .print-table tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="demo-banner">DEMONSTRAÇÃO / デモ — Somente dados fictícios. Não cadastre informações reais. Sem login, banco de dados ou notificações ativas.</div>
+<header class="top"><div class="brand">FJU <b>CONNECT</b><small>ADMINISTRAÇÃO DOS JOVENS · DEMO</small></div><a class="public-link" href="../">↗ Portal público</a></header>
+<div class="shell">
+<aside id="sidebar">
+<div class="aside-label">ÁREA ADMINISTRATIVA</div>
+<button class="nav active" data-page="overview"><span>◫</span> Visão geral</button>
+<button class="nav" data-page="young"><span>♧</span> Fichas dos jovens</button>
+<button class="nav" data-page="print"><span>▤</span> Relatório A4</button>
+<button class="nav" data-page="weekly"><span>◷</span> Relatório semanal</button>
+<div class="aside-bottom">Simulação sem armazenamento de dados.<br>As alterações desaparecem ao recarregar a página.<br><br><strong>FJU JAPAN · 23 polos</strong></div>
+</aside>
+<main>
+<div class="topline no-print">
+<div><div class="eyebrow">FJU JAPAN / PAINEL DE CONTROLE</div><h1 id="pageTitle">Visão geral</h1><p class="lead" id="pageLead"></p></div>
+<div class="controls"><div class="field"><label for="role">Simular perfil</label><select id="role"><option value="admin">Administrador nacional</option><option value="local">Coordenador local</option></select></div>
+<div class="field"><label for="polo">Polo visualizado</label><select id="polo"></select></div></div>
+</div>
+<div id="flash"></div>
+<div id="app" class="stack"></div>
+<div id="printPreview" class="print-pages"></div>
+</main>
+</div>
+<div id="modalRoot"></div><div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+// FJU Connect demo: all people, reports and profile roles are simulated in memory.
+// No login, server calls, analytics, localStorage, uploads or real personal information.
+const POLOS=["Hamamatsu","Toyohashi","Suzuka","Iwata","Yaizu","Fuji","Anjo","Shiga","Nagahama","Kani","Toyota","Nagoya","Komaki","Takaoka","Kanagawa","Yamanashi","Nagano","Chiba","Gunma","Ibaraki","Isesaki","Tokyo","Ryuzenji"];
+const STAGES=["Inconstante","Firme","CPO","Colaborador","Obreiro","Coordenador"];
+const ALIAS=["Jovem exemplo A","Jovem exemplo B","Jovem exemplo C","Jovem exemplo D","Jovem exemplo E","Jovem exemplo F","Jovem exemplo G","Jovem exemplo H"];
+const state={role:"admin",polo:"Hamamatsu",page:"overview",stage:"Todos",query:"",detail:null,detailTab:"ficha",records:[],trash:[],weekly:{},weekPolo:"Hamamatsu"};
+let serial=1;
+POLOS.forEach((p,pi)=>{let n=pi===0?27:(pi===1?16:8+pi%5*3);for(let i=0;i<n;i++){const stage=STAGES[(i+pi)%6];const id="EX-"+String(serial++).padStart(4,"0");state.records.push({id:id,polo:p,stage:stage,name:stage==="Inconstante"?"":ALIAS[(i+pi)%ALIAS.length]+" "+String(i+1).padStart(2,"0"),phone:"(00) 0000-0000",address:"Endereço fictício para demonstração",birth:stage==="Inconstante"?"":"2005-01-01",joined:stage==="Inconstante"?"":"2024-03-01",water:stage==="Inconstante"?"":"2025-07-01",holy:(stage!=="Inconstante"&&i%3===0)?"2026-01-01":"",testimony:stage==="Inconstante"?"":"Área demonstrativa do testemunho. Nenhum testemunho real está armazenado.",history:[],photo:""});}});
+POLOS.forEach((p,i)=>{state.weekly[p]=i%5===0?"late":i%5===1?"sent":i%5===2?"missing":"pending";});
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+function pill(stage){return '<span class="pill '+stage.toLowerCase()+'">'+esc(stage)+'</span>'}
+function permitted(r){return state.role==="admin"||r.polo==="Hamamatsu"}
+function visible(){return state.records.filter(r=>permitted(r)&&(state.role==="local"||state.polo==="Todos"||r.polo===state.polo))}
+function targetPolo(){return state.role==="local"?"Hamamatsu":(state.polo==="Todos"?"Hamamatsu":state.polo)}
+function toast(message){const t=$("#toast");t.textContent=message;t.style.display="block";setTimeout(()=>t.style.display="none",3400)}
+function setPage(p){state.page=p;state.detail=null;$(".nav.active")?.classList.remove("active");document.querySelector('[data-page="'+p+'"]')?.classList.add("active");render();}
+function refreshPolo(){const options=state.role==="admin"?["Todos"].concat(POLOS):["Hamamatsu"];if(!options.includes(state.polo))state.polo="Hamamatsu";$("#polo").innerHTML=options.map(p=>'<option value="'+esc(p)+'">'+(p==="Todos"?"Todos os polos": "FJU "+esc(p))+"</option>").join("");$("#polo").value=state.polo;$("#polo").disabled=state.role==="local";}
+function stat(title,num,foot){return '<div class="panel"><div class="stat-label">'+title+'</div><div class="stat-number">'+num+'</div><div class="stat-foot">'+foot+'</div></div>'}
+function overview(){
+ const records=visible();const counts=STAGES.map(x=>records.filter(r=>r.stage===x).length);const max=Math.max(...counts,1);
+ const rows=STAGES.map((x,i)=>'<div class="bar-row"><span>'+pill(x)+'</span><span class="bar-track"><span class="bar" style="display:block;width:'+(counts[i]/max*100)+'%"></span></span><b>'+counts[i]+'</b></div>').join("");
+ const displayPolo=state.role==="local"?"Hamamatsu":state.polo;
+ return '<div class="inline-note warn-note"><b>Atenção:</b> números, fichas e perfis abaixo são fictícios. Não representam os jovens cadastrados na FJU.</div>'+
+ '<div class="cards">'+stat("Fichas demonstrativas",records.length,"Somente dados fictícios")+stat("Inconstantes",counts[0],"Foto, telefone e endereço")+stat("Firmes e etapas seguintes",records.length-counts[0],"Ficha completa + testemunho")+stat("Polos no sistema",state.role==="admin"?(state.polo==="Todos"?23:1):1,"Acesso definido por permissão")+'</div>'+
+ '<div class="grid2"><div class="panel"><div class="row between"><h2>Distribuição por patente</h2><button class="btn small" data-go="young">Ver fichas →</button></div>'+rows+'</div><div class="panel"><h2>Como o cadastro funcionará</h2><p class="lead">Inconstante → Firme → CPO → Colaborador → Obreiro → Coordenador.</p><div class="divider"></div><div class="vgap"><p class="lead"><b>Inconstante:</b> cadastro simplificado com fotografia, telefone e endereço.</p><p class="lead"><b>Firme:</b> após o batismo nas águas. Passa a ter data do batismo, dados completos e aba Testemunho.</p><p class="lead"><b>Permissões:</b> coordenador local vê apenas seu polo; administração nacional controla todos.</p></div><div class="divider"></div><button class="btn primary" data-go="young">Explorar fichas dos jovens →</button></div></div>';
+}
+function young(){
+ if(state.detail){const r=state.records.find(v=>v.id===state.detail);if(!r||!permitted(r)) {state.detail=null;return young()}return detail(r)}
+ let rows=visible().filter(r=>state.stage==="Todos"||r.stage===state.stage).filter(r=>!state.query||(r.id+" "+r.name+" "+r.polo).toLowerCase().includes(state.query.toLowerCase()));
+ const filters=['<button class="chip '+(state.stage==="Todos"?"current":"")+'" data-stage="Todos">Todos</button>'].concat(STAGES.map(stage=>'<button class="chip '+(state.stage===stage?"current":"")+'" data-stage="'+stage+'">'+stage+'</button>')).join("");
+ const trs=rows.slice(0,65).map(r=>'<tr><td><div class="row"><span class="avatar">◉</span><div><div class="bold">'+esc(r.name||"Sem nome · "+r.id)+'</div><div class="mini">'+esc(r.id)+'</div></div></div></td><td>FJU '+esc(r.polo)+'</td><td>'+pill(r.stage)+'</td><td>'+esc(r.stage==="Inconstante"?"Ficha simples":"Ficha completa")+'</td><td><button class="btn small" data-detail="'+r.id+'">Abrir ficha ↗</button></td></tr>').join("");
+ return '<div class="panel"><div class="row between"><div><h2>Fichas individuais</h2><p class="lead">Visualização e edição simuladas, sem banco de dados.</p></div><button class="btn primary" data-modal="new">+ Novo cadastro (demo)</button></div><div class="divider"></div><div class="row between"><div class="row">'+filters+'</div><input id="searchYoung" type="search" value="'+esc(state.query)+'" placeholder="Pesquisar nome ou código"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Jovem / Código</th><th>Polo</th><th>Patente</th><th>Tipo</th><th>Ação</th></tr></thead><tbody>'+trs+'</tbody></table></div><p class="help">'+rows.length+' fichas fictícias encontradas'+(rows.length>65?" — mostrando as primeiras 65. Use a pesquisa para refinar.":".")+'</p></div>';
+}
+function detail(r){
+ const simple=r.stage==="Inconstante",name=r.name||"Inconstante · "+r.id;
+ const fields=(simple?[
+ ["Foto","◉ (ilustrativa)"],["Telefone",r.phone],["Endereço",r.address],["Polo","FJU "+r.polo]
+ ]:[["Nome completo",r.name],["Data de nascimento",r.birth||"—"],["Telefone",r.phone],["Endereço",r.address],["Polo","FJU "+r.polo],["Data de ingresso",r.joined||"—"],["Batismo nas águas",r.water||"—"],["Batismo com Espírito Santo",r.holy||"Ainda não informado"]]);
+ const content=state.detailTab==="testemunho"?'<div class="panel"><h3>Testemunho</h3><p class="lead">'+esc(r.testimony||"Sem testemunho cadastrado")+'</p><p class="help">Apenas firme e etapas posteriores. Dados verdadeiros deverão ficar em armazenamento privado e protegido.</p></div>':
+ '<div class="panel"><h3>Informações da ficha</h3><div class="detail">'+fields.map(([k,v])=>'<div class="detail-box"><div class="key">'+esc(k)+'</div><div class="value">'+esc(v)+'</div></div>').join('')+'</div></div>';
+ const history=r.history.length?'<div class="panel"><h3>Histórico de alterações (somente demo)</h3>'+r.history.map(h=>'<div class="help">• '+esc(h)+'</div>').join('')+'</div>':'';
+ return '<div class="row between"><button class="btn" data-close-detail="yes">← Voltar às fichas</button><div class="row"><button class="btn" data-modal="edit" data-id="'+r.id+'">Editar (demo)</button><button class="btn primary" data-modal="promote" data-id="'+r.id+'">Avançar patente →</button><button class="btn" data-delete="'+r.id+'">Excluir (demo)</button></div></div>'+
+ '<div class="panel"><div class="row"><span class="avatar" style="width:55px;height:55px;font-size:23px">◉</span><div><h2 style="margin:0">'+esc(name)+'</h2><div class="row" style="margin-top:6px">'+pill(r.stage)+' <span class="mini">FJU '+esc(r.polo)+' · '+esc(r.id)+'</span></div></div></div>'+
+ '<div class="tabrow"><button class="tab '+(state.detailTab==="ficha"?"active":"")+'" data-tab="ficha">Ficha</button>'+(!simple?'<button class="tab '+(state.detailTab==="testemunho"?"active":"")+'" data-tab="testemunho">Testemunho</button>':"")+'</div>'+(!simple?'<div class="inline-note">Histórico espiritual e testemunho: visível apenas em área privada na versão real.</div>':'<div class="inline-note warn-note">Cadastro de inconstante: somente foto, telefone e endereço. Ao registrar o batismo nas águas, passa para Jovem Firme.</div>')+'</div>'+content+history;
+}
+function printUI(){
+ const p=targetPolo(),list=state.records.filter(r=>r.polo===p&&permitted(r));
+ const pages=[];for(let i=0;i<list.length;i+=20)pages.push(list.slice(i,i+20));
+ if(!pages.length)pages.push([]);
+ const htmlPages=pages.map((page,pageNo)=>'<section class="print-sheet"><div class="print-head"><div><h2>FJU CONNECT JAPAN</h2><small>RELATÓRIO RESUMIDO DE JOVENS · FJU '+esc(p)+'</small></div><small>MODELO FICTÍCIO<br>'+esc(new Date().toLocaleDateString("pt-BR"))+'</small></div><div class="print-summary"><span><b>Total:</b> '+list.length+'</span>'+STAGES.map(s=>'<span><b>'+esc(s)+':</b> '+list.filter(r=>r.stage===s).length+'</span>').join('')+'</div><table class="print-table"><thead><tr><th style="width:8%">Nº</th><th style="width:35%">Identificação</th><th style="width:19%">Patente</th><th style="width:20%">Batismo nas águas</th><th style="width:18%">Espírito Santo</th></tr></thead><tbody>'+page.map((r,i)=>'<tr><td>'+String(pageNo*20+i+1).padStart(2,"0")+'</td><td>'+esc(r.name||r.id)+'</td><td>'+esc(r.stage)+'</td><td>'+esc(r.water||"—")+'</td><td>'+esc(r.holy||"—")+'</td></tr>').join('')+'</tbody></table><div class="print-foot"><span>USO INTERNO · MODELO COM DADOS FICTÍCIOS</span><span>Página '+(pageNo+1)+' de '+pages.length+'</span></div></section>').join('');
+ $("#printPreview").innerHTML=htmlPages;
+ return '<div class="inline-note warn-note">Esta é uma amostra de impressão A4, não um relatório real. Endereços e testemunhos completos não são impressos por padrão.</div>'+
+ '<div class="panel"><div class="row between"><div><h2>Relatório A4 da igreja</h2><p class="lead">Selecione um polo acima e imprima aproximadamente 20 jovens por folha. Páginas geradas: <b>'+pages.length+'</b>.</p></div><button class="btn primary" data-print="yes">▤ Imprimir A4 (demo)</button></div></div><div class="panel"><h3>Prévia compacta · FJU '+esc(p)+'</h3><p class="help">Mostrando até 20 fichas desta página de amostra. O botão de impressão inclui todas as páginas.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Nº</th><th>Identificação</th><th>Patente</th><th>Batismo</th></tr></thead><tbody>'+list.slice(0,20).map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.name||r.id)+'</td><td>'+pill(r.stage)+'</td><td>'+esc(r.water||"—")+'</td></tr>').join('')+'</tbody></table></div></div>';
+}
+function weekly(){
+ const statuses={sent:"Enviado no prazo",late:"ATR · Recebido com atraso",pending:"Pendente",missing:"Não enviado no prazo"};
+ const tag=k=>'<span class="'+(k==="sent"?"status-ok":k==="late"?"status-late":"status-no")+'">'+statuses[k]+'</span>';
+ const filtered=state.role==="local"?["Hamamatsu"]:(state.polo==="Todos"?POLOS:[state.polo]);
+ const rows=filtered.map(p=>'<tr><td><b>FJU '+esc(p)+'</b></td><td>'+tag(state.weekly[p])+'</td><td>'+esc(state.weekly[p]==="late"?"Exemplo: enviado depois das 22h":state.weekly[p]==="sent"?"Exemplo: antes das 22h":"—")+'</td><td><button class="btn small" data-week="'+esc(p)+'">Simular envio</button></td></tr>').join("");
+ return '<div class="inline-note warn-note"><b>Fluxo ilustrativo:</b> nenhuma notificação está ativa e nenhum relatório real será enviado. Os estados abaixo são apenas exemplos.</div>'+
+ '<div class="cards">'+stat("Lembrete","17h30","Domingo · horário do Japão")+stat("Prazo","22h00","Domingo · horário do Japão")+stat("Depois do prazo","ATR","Recebido com atraso")+stat("Não enviado","Alerta","Após 22h00, notificar o polo")+'</div>'+
+ '<div class="panel"><div class="row between"><div><h2>Relatório semanal por igreja</h2><p class="lead">A coordenação nacional acompanha todos os polos; cada coordenador envia apenas pelo próprio polo.</p></div><span class="pill">SEMANA SIMULADA</span></div><div class="divider"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Polo</th><th>Status fictício</th><th>Horário</th><th>Simulação</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
+ '<div class="panel"><h3>Notificações programadas para a versão real</h3><div class="detail"><div class="detail-box"><div class="key">Domingo · 17h30</div><div class="value">Lembrete para entregar o relatório semanal</div></div><div class="detail-box"><div class="key">Domingo · 22h00</div><div class="value">Marcar pendência e notificar quem não enviou</div></div><div class="detail-box"><div class="key">Envio atrasado</div><div class="value">Permitir envio, registrar hora e exibir ATR</div></div><div class="detail-box"><div class="key">Próxima definição</div><div class="value">Campos do relatório e canal da notificação</div></div></div></div>';
+}
+function render(){
+ refreshPolo();
+ const names={overview:["Visão geral","Distribuição por polos e patentes, com números fictícios."],young:["Fichas dos jovens","Demonstração de perfis, patentes e testemunhos."],print:["Relatório A4","Modelo compacto com até 20 jovens por folha."],weekly:["Relatório semanal","Acompanhamento de domingos: 17h30, prazo 22h e atraso ATR."]};
+ $("#pageTitle").textContent=names[state.page][0];$("#pageLead").textContent=names[state.page][1];$("#printPreview").innerHTML="";
+ $("#app").innerHTML=state.page==="overview"?overview():state.page==="young"?young():state.page==="print"?printUI():weekly();
+}
+function modal(content){$("#modalRoot").innerHTML='<div class="modal-cover" id="modalBg"><div class="modal" role="dialog" aria-modal="true" aria-label="Ficha demonstrativa">'+content+'</div></div>';}
+function closeModal(){$("#modalRoot").innerHTML="";}
+function field(label,name,type,value,extra){return '<div class="form-item '+(extra||"")+'"><label for="form-'+name+'">'+esc(label)+'</label><input id="form-'+name+'" name="'+name+'" type="'+(type||"text")+'" value="'+esc(value||"")+'"></div>';}
+function editModal(r){
+ const isNew=!r;const stage=r?r.stage:"Inconstante"; const simple=stage==="Inconstante";
+ let form='<form id="recordForm" class="form-grid"><input type="hidden" name="originalId" value="'+(r?r.id:"")+'"><div class="form-item full"><label for="form-stage">Patente</label><select name="stage" id="form-stage">'+STAGES.map(x=>'<option '+(x===stage?"selected":"")+'>'+x+'</option>').join("")+'</select></div><div class="form-item full"><label for="form-polo">Polo</label><select name="polo" id="form-polo">'+(state.role==="local"?["Hamamatsu"]:POLOS).map(x=>'<option '+(x===(r?r.polo:targetPolo())?"selected":"")+'>'+x+'</option>').join("")+'</select></div>'+
+ '<div class="form-item full"><label>Foto de demonstração (não enviada)</label><div class="inline-note">◉ Imagem ilustrativa. Na versão real, fotos ficarão em armazenamento privado.</div></div>'+
+ field("Telefone","phone","text",r?r.phone:"")+field("Endereço","address","text",r?r.address:"","full")+
+ '<div id="firmFields" class="form-item full"><div class="form-grid">'+field("Nome completo","name","text",r?r.name:"","full")+field("Nascimento","birth","date",r?r.birth:"")+field("Data de ingresso","joined","date",r?r.joined:"")+field("Batismo nas águas","water","date",r?r.water:"")+field("Batismo com Espírito Santo","holy","date",r?r.holy:"")+'</div></div>'+
+ '<div class="form-item full"><div class="inline-note warn-note">Só use dados inventados aqui. Este formulário não transmite nem salva cadastros em servidor; alterações somem ao recarregar.</div></div><div class="form-item full"><div class="modal-actions"><button type="button" class="btn" data-close-modal="yes">Cancelar</button><button type="submit" class="btn primary">Salvar simulação</button></div></div></form>';
+ modal('<div class="modal-top"><div><div class="eyebrow">CADASTRO DEMONSTRATIVO</div><h2>'+(isNew?"Novo jovem (demo)":"Editar ficha (demo)")+'</h2></div><button class="btn small" data-close-modal="yes">✕</button></div>'+form);
+ function toggle(){const el=$("#firmFields"); if(el)el.style.display=$("#form-stage").value==="Inconstante"?"none":""}
+ $("#form-stage").addEventListener("change",toggle);toggle();
+ $("#recordForm").addEventListener("submit",event=>{
+  event.preventDefault();const data=Object.fromEntries(new FormData(event.target).entries());const inconstante=data.stage==="Inconstante";
+  if(!data.phone.trim()||!data.address.trim()){toast("Preencha telefone e endereço fictícios para testar.");return}
+  if(!inconstante&&(!data.name.trim()||!data.water)){toast("Para Firme ou acima, informe nome e data do batismo nas águas (dados fictícios).");return}
+  let record=r||{id:"EX-"+String(serial++).padStart(4,"0"),history:[],photo:""};const old=record.stage;
+  record.polo=data.polo;record.stage=data.stage;record.phone=data.phone;record.address=data.address;record.name=inconstante?"":data.name||"";record.birth=inconstante?"":data.birth||"";record.joined=inconstante?"":data.joined||"";record.water=inconstante?"":data.water||"";record.holy=inconstante?"":data.holy||"";
+  if(!r){record.testimony="";state.records.unshift(record)}else if(old!==record.stage)record.history.push("Simulação: "+old+" → "+record.stage);
+  closeModal();state.page="young";state.detail=record.id;state.detailTab="ficha";render();toast("Ficha demonstrativa alterada apenas nesta sessão.");
+ });
+}
+function promotion(r){
+ const idx=STAGES.indexOf(r.stage);if(idx>=STAGES.length-1){toast("Esta é a etapa mais alta definida.");return}
+ const next=STAGES[idx+1];let inner='<div class="modal-top"><div><div class="eyebrow">PATENTES · DEMONSTRAÇÃO</div><h2>'+pill(r.stage)+' → '+pill(next)+'</h2></div><button class="btn small" data-close-modal="yes">✕</button></div><p class="lead">Somente para testar o fluxo; a mudança não é gravada em servidor.</p>';
+ if(idx===0)inner+='<div class="form-item" style="margin-top:16px"><label for="promoteWater">Data de batismo nas águas (obrigatória para Firme)</label><input type="date" id="promoteWater" value=""></div>';
+ inner+='<div class="modal-actions"><button class="btn" data-close-modal="yes">Cancelar</button><button class="btn primary" id="confirmPromotion">Simular promoção</button></div>';
+ modal(inner);
+ $("#confirmPromotion").onclick=()=>{
+ if(idx===0){const d=$("#promoteWater").value;if(!d){toast("Informe a data de batismo nas águas para promover a Firme.");return}r.water=d;r.name="Jovem exemplo "+r.id;r.birth="2005-01-01";r.joined="2024-01-01";r.testimony="Área demonstrativa do testemunho."}
+ r.history.push("Simulação de promoção: "+r.stage+" → "+next);
+ r.stage=next;closeModal();state.detailTab="ficha";render();toast("Patente alterada apenas para demonstração.");
+ };
+}
+function deleteRecord(r){if(!confirm("Excluir esta ficha FICTÍCIA da demonstração? Você poderá restaurá-la até recarregar."))return;state.records=state.records.filter(x=>x.id!==r.id);state.trash.unshift(r);state.detail=null;render();toast("Ficha fictícia removida. Pode restaurar na visão geral.");}
+function restoreRecord(){if(!state.trash.length){toast("Nenhuma ficha demonstrativa na lixeira.");return;}state.records.unshift(state.trash.shift());render();toast("Ficha fictícia recuperada.");}
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
+$("#role").addEventListener("change",e=>{state.role=e.target.value;state.polo=state.role==="local"?"Hamamatsu":"Todos";state.detail=null;state.query="";render()});
+$("#polo").addEventListener("change",e=>{state.polo=e.target.value;state.detail=null;render()});
+document.addEventListener("input",e=>{if(e.target.id==="searchYoung"){state.query=e.target.value;const pos=e.target.selectionStart;render();const input=$("#searchYoung");if(input){input.focus();input.setSelectionRange(pos,pos)}}});
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.go)return setPage(b.dataset.go);
+ if(b.dataset.stage){state.stage=b.dataset.stage;return render()}
+ if(b.dataset.detail){state.detail=b.dataset.detail;state.detailTab="ficha";return render()}
+ if(b.dataset.closeDetail){state.detail=null;return render()}
+ if(b.dataset.tab){state.detailTab=b.dataset.tab;return render()}
+ if(b.dataset.modal){const r=b.dataset.id?state.records.find(x=>x.id===b.dataset.id):null;if(r&&!permitted(r))return;return b.dataset.modal==="promote"?promotion(r):editModal(r)}
+ if(b.dataset.delete){const r=state.records.find(x=>x.id===b.dataset.delete);if(r&&permitted(r))deleteRecord(r);return}
+ if(b.dataset.closeModal){closeModal();return}
+ if(b.dataset.print){window.print();return}
+ if(b.dataset.week){const p=b.dataset.week;if(state.role==="local"&&p!=="Hamamatsu")return;const late=confirm("SIMULAÇÃO: OK = envio depois das 22h (ATR). Cancelar = envio no prazo.");state.weekly[p]=late?"late":"sent";render();toast("Status fictício atualizado. Nenhuma notificação foi enviada.");return}
+ if(b.dataset.restore){restoreRecord();return}
+});
+document.addEventListener("click",e=>{if(e.target.id==="modalBg")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+const oldOverview=overview;
+overview=function(){return oldOverview()+(state.trash.length?'<div class="panel"><div class="row between"><span>'+state.trash.length+' ficha(s) fictícia(s) na lixeira da sessão.</span><button class="btn" data-restore="yes">Restaurar última excluída</button></div></div>':"")};
+state.polo="Todos";render();
+</script>
+</body></html>
