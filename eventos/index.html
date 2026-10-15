@@ -69,14 +69,14 @@ OPEN_MAT_HAMAMATSU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/open-mat-hamamatsu
 // Álbum Cultura • Teatro FJU Hamamatsu • MEGA HELP, 12/09/2026
 const MEGA_HELP_IMAGES=Array.from({length:10},(_,i)=>'megaHelp'+String(i+1).padStart(2,'0'));
 MEGA_HELP_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/teatro-mega-help-2026/'+String(i+1).padStart(2,'0')+'.webp';});
-// Galeria Esporte FJU — oito fotos já publicadas no portal.
-const SPORT_FJU_IMAGES=Array.from({length:8},(_,i)=>'sportFju'+String(i+1).padStart(2,'0'));
-SPORT_FJU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/esporte-fju-home-2026/'+String(i+1).padStart(2,'0')+'.webp';});
+// Galeria Esporte FJU — sete fotos publicadas no portal (a primeira imagem foi removida).
+const SPORT_FJU_IMAGES=Array.from({length:7},(_,i)=>'sportFju'+String(i+2).padStart(2,'0'));
+SPORT_FJU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/esporte-fju-home-2026/'+String(i+2).padStart(2,'0')+'.webp';});
 // Fotos Encontro Jovem Domingo — FJU JAPAN (10 imagens)
 const FJU_SUNDAY_IMAGES=Array.from({length:10},(_,i)=>'fjuSunday'+String(i+1).padStart(2,'0'));
 FJU_SUNDAY_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/encontro-jovem-domingo-2026/'+String(i+1).padStart(2,'0')+'.webp';});
 const albums=[
-{id:'esporte-fju-2026',type:'esporte',city:'JAPAN',date:'',cover:'sportFju01',images:SPORT_FJU_IMAGES,title:{pt:'Esporte FJU JAPAN',ja:'FJU JAPAN スポーツ',en:'FJU JAPAN Sports'},description:{pt:'Oito fotos de atividades esportivas da FJU JAPAN. Esporte, amizade e superação.',ja:'FJU JAPANのスポーツ活動の写真8枚。スポーツ、友情、そして挑戦。',en:'Eight photos of FJU JAPAN sports activities, friendship and personal growth.'}},
+{id:'esporte-fju-2026',type:'esporte',city:'JAPAN',date:'',cover:'sportFju02',images:SPORT_FJU_IMAGES,title:{pt:'Esporte FJU JAPAN',ja:'FJU JAPAN スポーツ',en:'FJU JAPAN Sports'},description:{pt:'Sete fotos de atividades esportivas da FJU JAPAN. Esporte, amizade e superação.',ja:'FJU JAPANのスポーツ活動の写真7枚。スポーツ、友情、そして挑戦。',en:'Seven photos of FJU JAPAN sports activities, friendship and personal growth.'}},
 {id:'encontros-hamamatsu',type:'encontros',city:'Hamamatsu',date:'',cover:'group',images:['group','group2'],title:{pt:'Encontros de jovens',ja:'若者たちの集い',en:'Youth gatherings'},description:{pt:'Registros de encontros e atividades da FJU em Hamamatsu.',ja:'浜松で行われたFJUの集まりや活動の記録です。',en:'Scenes from FJU youth gatherings and activities in Hamamatsu.'}},
 {id:'open-mat',type:'esporte',city:'Hamamatsu',date:'',cover:'openmat',images:['openmat'],title:{pt:'Open Mat · Jiu-jitsu',ja:'オープンマット・柔術',en:'Open Mat · Jiu-jitsu'},description:{pt:'Um espaço de amizade, disciplina e superação por meio do jiu-jitsu.',ja:'柔術を通じて仲間と出会い、挑戦する活動です。',en:'Friendship, discipline and personal growth through jiu-jitsu.'}},
 {id:'esporte-hamamatsu',type:'esporte',city:'Hamamatsu',date:'',cover:'sport',images:['sport'],title:{pt:'Esporte e amizade',ja:'スポーツと友情',en:'Sports and friendship'},description:{pt:'Jovens reunidos em uma atividade esportiva da FJU.',ja:'FJUのスポーツ活動に集まった若者たち。',en:'Young people together at an FJU sports activity.'}},
