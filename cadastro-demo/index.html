@@ -150,15 +150,33 @@ function detail(r){
  '<div class="panel"><div class="row"><span class="avatar" style="width:55px;height:55px;font-size:23px">◉</span><div><h2 style="margin:0">'+esc(name)+'</h2><div class="row" style="margin-top:6px">'+pill(r.stage)+' <span class="mini">FJU '+esc(r.polo)+' · '+esc(r.id)+'</span></div></div></div>'+
  '<div class="tabrow"><button class="tab '+(state.detailTab==="ficha"?"active":"")+'" data-tab="ficha">Ficha</button>'+(!simple?'<button class="tab '+(state.detailTab==="testemunho"?"active":"")+'" data-tab="testemunho">Testemunho</button>':"")+'</div>'+(!simple?'<div class="inline-note">Histórico espiritual e testemunho: visível apenas em área privada na versão real.</div>':'<div class="inline-note warn-note">Cadastro de inconstante: somente foto, telefone e endereço. Ao registrar o batismo nas águas, passa para Jovem Firme.</div>')+'</div>'+content+history;
 }
+function ageFromBirth(birth){
+ if(!birth || !/^\d{4}-\d{2}-\d{2}$/.test(birth))return "—";
+ const [y,m,d]=birth.split("-").map(Number);
+ const date=new Date(y,m-1,d);
+ if(date.getFullYear()!==y||date.getMonth()+1!==m||date.getDate()!==d)return "—";
+ const now=new Date();
+ let age=now.getFullYear()-y;
+ if(now.getMonth()+1<m||(now.getMonth()+1===m&&now.getDate()<d))age--;
+ return age>=0&&age<=120?String(age):"—";
+}
 function printUI(){
  const p=targetPolo(),list=state.records.filter(r=>r.polo===p&&permitted(r));
  const pages=[];for(let i=0;i<list.length;i+=20)pages.push(list.slice(i,i+20));
  if(!pages.length)pages.push([]);
- const htmlPages=pages.map((page,pageNo)=>'<section class="print-sheet"><div class="print-head"><div><h2>FJU CONNECT JAPAN</h2><small>RELATÓRIO RESUMIDO DE JOVENS · FJU '+esc(p)+'</small></div><small>MODELO FICTÍCIO<br>'+esc(new Date().toLocaleDateString("pt-BR"))+'</small></div><div class="print-summary"><span><b>Total:</b> '+list.length+'</span>'+STAGES.map(s=>'<span><b>'+esc(s)+':</b> '+list.filter(r=>r.stage===s).length+'</span>').join('')+'</div><table class="print-table"><thead><tr><th style="width:8%">Nº</th><th style="width:35%">Identificação</th><th style="width:19%">Patente</th><th style="width:20%">Batismo nas águas</th><th style="width:18%">Espírito Santo</th></tr></thead><tbody>'+page.map((r,i)=>'<tr><td>'+String(pageNo*20+i+1).padStart(2,"0")+'</td><td>'+esc(r.name||r.id)+'</td><td>'+esc(r.stage)+'</td><td>'+esc(r.water||"—")+'</td><td>'+esc(r.holy||"—")+'</td></tr>').join('')+'</tbody></table><div class="print-foot"><span>USO INTERNO · MODELO COM DADOS FICTÍCIOS</span><span>Página '+(pageNo+1)+' de '+pages.length+'</span></div></section>').join('');
+ const today=new Date().toLocaleDateString("pt-BR",{timeZone:"Asia/Tokyo"});
+ const heading='<thead><tr><th style="width:9%">Nº</th><th style="width:55%">Nome / Identificação</th><th style="width:24%">Patente</th><th style="width:12%">Idade</th></tr></thead>';
+ const item=(r,n)=>'<tr><td>'+String(n).padStart(2,"0")+'</td><td>'+esc(r.name||r.id)+'</td><td>'+esc(r.stage)+'</td><td>'+ageFromBirth(r.birth)+'</td></tr>';
+ const htmlPages=pages.map((page,pageNo)=>'<section class="print-sheet"><div class="print-head"><div><h2>FJU CONNECT JAPAN</h2><small>RELATÓRIO DE JOVENS · FJU '+esc(p)+'</small></div><small>MODELO FICTÍCIO<br>'+esc(today)+'</small></div><div class="print-summary"><span><b>Polo:</b> FJU '+esc(p)+'</span><span><b>Total:</b> '+list.length+' jovens</span><span><b>Data:</b> '+esc(today)+'</span></div><table class="print-table">'+heading+'<tbody>'+page.map((r,i)=>item(r,pageNo*20+i+1)).join('')+'</tbody></table><div class="print-foot"><span>USO INTERNO · MODELO COM DADOS FICTÍCIOS</span><span>Página '+(pageNo+1)+' de '+pages.length+'</span></div></section>').join('');
  $("#printPreview").innerHTML=htmlPages;
- return '<div class="inline-note warn-note">Esta é uma amostra de impressão A4, não um relatório real. Endereços e testemunhos completos não são impressos por padrão.</div>'+
- '<div class="panel"><div class="row between"><div><h2>Relatório A4 da igreja</h2><p class="lead">Selecione um polo acima e imprima aproximadamente 20 jovens por folha. Páginas geradas: <b>'+pages.length+'</b>.</p></div><button class="btn primary" data-print="yes">▤ Imprimir A4 (demo)</button></div></div><div class="panel"><h3>Prévia compacta · FJU '+esc(p)+'</h3><p class="help">Mostrando até 20 fichas desta página de amostra. O botão de impressão inclui todas as páginas.</p><div class="table-wrap"><table class="data-table"><thead><tr><th>Nº</th><th>Identificação</th><th>Patente</th><th>Batismo</th></tr></thead><tbody>'+list.slice(0,20).map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.name||r.id)+'</td><td>'+pill(r.stage)+'</td><td>'+esc(r.water||"—")+'</td></tr>').join('')+'</tbody></table></div></div>';
+ return '<div class="inline-note warn-note">Amostra para impressão A4 com dados fictícios. Informações de contato, batismos e testemunhos ficam apenas na ficha protegida, não na impressão.</div>'+
+ '<div class="panel"><div class="row between"><div><h2>Relatório A4 por igreja</h2><p class="lead">Selecione o polo acima. Até 20 jovens por página A4; total de páginas: <b>'+pages.length+'</b>.</p></div><button class="btn primary" data-print="yes">▤ Imprimir A4 (demo)</button></div></div>'+
+ '<div class="panel"><h3>Prévia · FJU '+esc(p)+'</h3><p class="help">Colunas aprovadas: Nº · Nome / Identificação · Patente · Idade (calculada pela data de nascimento; sem data, aparece “—”).</p>'+
+ '<div class="table-wrap"><table class="data-table"><thead><tr><th>Nº</th><th>Nome / Identificação</th><th>Patente</th><th>Idade</th></tr></thead><tbody>'+
+ list.slice(0,20).map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.name||r.id)+'</td><td>'+pill(r.stage)+'</td><td>'+ageFromBirth(r.birth)+'</td></tr>').join('')+
+ '</tbody></table></div></div>';
 }
+
 function weekly(){
  const statuses={sent:"Enviado no prazo",late:"ATR · Recebido com atraso",pending:"Pendente",missing:"Não enviado no prazo"};
  const tag=k=>'<span class="'+(k==="sent"?"status-ok":k==="late"?"status-late":"status-no")+'">'+statuses[k]+'</span>';
