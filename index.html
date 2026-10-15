@@ -1073,5 +1073,53 @@ document.addEventListener('DOMContentLoaded',init);
   });
 })();
 </script>
+
+<script id="fju-official-instagram-latest">
+/* The public page contains NO private token; photos are synced by GitHub Actions.
+ * If sync is not configured or fails, preserve the original three FJU photos.
+ */
+(() => {
+  'use strict';
+  const feedFile = new URL('instagram/latest.json', document.baseURI);
+  const cards = [...document.querySelectorAll('#acao .action-photo-instagram')].slice(0, 3);
+  if (cards.length !== 3) return;
+  const imageBase = new URL('instagram/media/', document.baseURI);
+  const allowedPosts = /^https:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/[A-Za-z0-9_-]+\/?(?:\?.*)?$/;
+
+  fetch(feedFile, { cache: 'no-cache', credentials: 'omit' })
+    .then(r => {
+      if (!r.ok) throw new Error('Instagram feed not initialized');
+      return r.json();
+    })
+    .then(async data => {
+      if (!data || data.source !== '@fjujapan' || !Array.isArray(data.posts) || data.posts.length !== 3) return;
+      const validated = data.posts.map((p, i) => {
+        if (typeof p?.permalink !== 'string' || !allowedPosts.test(p.permalink)) return null;
+        if (p.image !== 'instagram/media/' + String(i + 1).padStart(2, '0') + '.webp') return null;
+        const url = new URL(String(i + 1).padStart(2, '0') + '.webp', imageBase);
+        if (data.updated_at) url.searchParams.set('v', data.updated_at);
+        return { src: url.href, href: p.permalink };
+      });
+      if (validated.some(x => !x)) return;
+      // Avoid broken image slots: only activate after all images are accessible.
+      const loaded = await Promise.all(validated.map(p => new Promise(resolve => {
+        const preview = new Image();
+        preview.onload = () => resolve(true);
+        preview.onerror = () => resolve(false);
+        preview.src = p.src;
+      })));
+      if (!loaded.every(Boolean)) return;
+      cards.forEach((card, i) => {
+        const img = card.querySelector('img');
+        if (!img) return;
+        img.src = validated[i].src;
+        img.alt = 'Publicação recente do Instagram @fjujapan — ' + (i + 1);
+        card.href = validated[i].href;
+        card.setAttribute('aria-label', 'Abrir postagem ' + (i + 1) + ' no Instagram @fjujapan');
+      });
+    })
+    .catch(() => {/* Retain the last known FJU images. */});
+})();
+</script>
 </body>
 </html>
