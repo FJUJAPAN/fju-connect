@@ -50,16 +50,38 @@ Campos definidos até aqui:
 - Para ficha de **inconstante sem nome**, utilizar identificador interno no campo “Nome / Identificação”, sem inventar nome.
 - Total geral do polo e paginação automática; layout legível para aproximadamente 20 registros por folha A4.
 
-## Relatório semanal dos coordenadores
-- **Quando:** todos os domingos, fuso do Japão `Asia/Tokyo`.
-- **17h30:** notificação de lembrete ao coordenador.
-- **22h00:** prazo final da entrega sem atraso.
-- **Após 22h00:** ainda aceita envio, com indicador **ATR (atrasado)** e horário real registrado.
-- **22h00:** polos que não enviaram recebem notificação de pendência; estado **NÃO ENVIADO**, depois **ATR** se enviado tardiamente.
-- A coordenação nacional acompanha situação de todos os 23 polos; os coordenadores só o seu.
-- A **lista de perguntas/campos do relatório semanal está pendente**; não confundir com marcação de presença.
-- **Canal das notificações está pendente**: e-mail, push, WhatsApp etc. Cada canal tem autorização e limites próprios.
-- Evitar notificações duplicadas, registrar horário e histórico de submissão.
+## Relatório semanal dos coordenadores — separado das fichas
+
+**O relatório semanal NÃO é calculado pelas fichas individuais.** O coordenador informa apenas seis quantidades referentes à sua igreja/polo durante a semana. **Não haverá controle nominal de presença.**
+
+### Campos do relatório semanal
+**Durante a semana**
+1. **Jovens firmes** (quantidade).
+2. **Jovens novos** (quantidade).
+3. **Jovens afastados** (quantidade).
+
+**Reuniões / encontros**
+4. **Domingo, 9h30** (quantidade).
+5. **Encontro FJU** (quantidade).
+
+**Resultado**
+6. **TOTAL SEM REPETIR DA SEMANA** (quantidade de jovens distintos considerados na semana, contando cada jovem uma só vez, mesmo que participe de mais de uma reunião/atividade).
+
+O total sem repetir é digitado pelo coordenador; **não somar automaticamente** os demais números, porque pode haver repetição entre reuniões. Os seis campos são **contadores agregados**, sem nome/telefone/vínculo nominal com as fichas.
+
+### Entrega / notificações
+- **Frequência:** todo domingo, fuso horário do Japão (Asia/Tokyo).
+- **17h30:** aviso para preencher e enviar o relatório.
+- **22h00:** prazo de entrega sem atraso.
+- **Após 22h00:** continua aceitando envio com indicador **ATR** e horário real do envio.
+- **22h00:** quem não enviou recebe aviso de pendência; status **NÃO ENVIADO NO PRAZO**, até entregar.
+- Um relatório por polo e semana; coordenador local edita somente seu polo; coordenação nacional visualiza os 23.
+- **Canal das notificações ainda não definido:** e-mail, push, WhatsApp etc. Não considerar notificações funcionando até implementação e testes.
+- Registro de data/hora e usuário, evitar duplicação de avisos, histórico de edições.
+
+### Separação de dados
+- **Cadastro de jovens**: fichas individuais, patentes e testemunhos, relatório A4 de visita.
+- **Relatório semanal**: seis números e metadados de envio. **Nenhum cálculo ou consulta depende das fichas**.
 
 ## Protótipo e implantação
 1. Revisar a demonstração visual com dados fictícios, sem coletar dados reais.
@@ -70,6 +92,5 @@ Campos definidos até aqui:
 
 ## Decisões em aberto
 - Identificação nominal do **inconstante** sem contrariar a instrução “somente foto, telefone e endereço”.
-- Campos e perguntas do relatório semanal.
 - Canal das notificações.
 - Política de exclusão e retenção, regras de alterações de patente, medidas de proteção dos dados e de menores.
