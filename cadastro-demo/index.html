@@ -38,7 +38,14 @@ input[type="search"]{min-width:220px}input[type="file"]{padding:8px;font-size:12
 .table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}
 .data-table th{font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#78879b;padding:13px 11px;border-bottom:1px solid var(--line)}
 .data-table td{padding:12px 11px;border-bottom:1px solid #ebeff3}.data-table tr:last-child td{border-bottom:0}.data-table tr:hover td{background:#f8fafc}
-.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a9b9cc,#576e8d);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:1000;font-size:11px;flex-shrink:0}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a9b9cc,#576e8d);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:1000;font-size:11px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar-large{width:65px;height:65px;font-size:23px}
+.photo-picker{display:flex;align-items:center;gap:15px;flex-wrap:wrap;padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}
+.photo-picker .avatar{width:76px;height:76px;font-size:23px}
+.photo-picker input[type=file]{max-width:280px;font-size:11px}
+.photo-picker .photo-actions{flex:1;min-width:190px}
+.photo-picker .help{margin-top:5px}
 .mini{color:#78889a;font-size:11px}.bold{font-weight:850}.divider{height:1px;background:var(--line);margin:15px 0}
 .detail{display:grid;grid-template-columns:1fr 1fr;gap:15px}.detail-box{padding:12px;border:1px solid var(--line);border-radius:10px}
 .detail-box .key{font-size:10px;color:#7c8c9e;letter-spacing:.5px;text-transform:uppercase}.detail-box .value{font-size:13px;font-weight:780;margin-top:6px;overflow-wrap:anywhere}
@@ -105,7 +112,7 @@ input[type="search"]{min-width:220px}input[type="file"]{padding:8px;font-size:12
 <script>
 "use strict";
 // FJU Connect demo: all people, reports and profile roles are simulated in memory.
-// No login, server calls, analytics, localStorage, uploads or real personal information.
+// No login, server calls, analytics, localStorage, remote uploads or real personal information. Test photo previews remain only in memory until refresh.
 const POLOS=["Hamamatsu","Toyohashi","Suzuka","Iwata","Yaizu","Fuji","Anjo","Shiga","Nagahama","Kani","Toyota","Nagoya","Komaki","Takaoka","Kanagawa","Yamanashi","Nagano","Chiba","Gunma","Ibaraki","Isesaki","Tokyo","Ryuzenji"];
 const STAGES=["Inconstante","Firme","CPO","Colaborador","Obreiro","Coordenador"];
 const ALIAS=["Jovem exemplo A","Jovem exemplo B","Jovem exemplo C","Jovem exemplo D","Jovem exemplo E","Jovem exemplo F","Jovem exemplo G","Jovem exemplo H"];
@@ -123,6 +130,7 @@ state.weekly.Toyohashi="sent";state.weeklyNumbers.Toyohashi={firmes:9,novos:4,af
 state.weekly.Nagoya="missing";
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+function avatar(r,large=false){const photo=r?.photo||"";return '<span class="avatar'+(large?' avatar-large':'')+'">'+(/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(photo)?'<img src="'+esc(photo)+'" alt="Foto demonstrativa do jovem">':'◉')+'</span>'}
 function pill(stage){return '<span class="pill '+stage.toLowerCase()+'">'+esc(stage)+'</span>'}
 function permitted(r){return state.role==="admin"||r.polo==="Hamamatsu"}
 function visible(){return state.records.filter(r=>permitted(r)&&(state.role==="local"||state.polo==="Todos"||r.polo===state.polo))}
@@ -143,19 +151,19 @@ function young(){
  if(state.detail){const r=state.records.find(v=>v.id===state.detail);if(!r||!permitted(r)) {state.detail=null;return young()}return detail(r)}
  let rows=visible().filter(r=>state.stage==="Todos"||r.stage===state.stage).filter(r=>!state.query||(r.id+" "+r.name+" "+r.polo).toLowerCase().includes(state.query.toLowerCase()));
  const filters=['<button class="chip '+(state.stage==="Todos"?"current":"")+'" data-stage="Todos">Todos</button>'].concat(STAGES.map(stage=>'<button class="chip '+(state.stage===stage?"current":"")+'" data-stage="'+stage+'">'+stage+'</button>')).join("");
- const trs=rows.slice(0,65).map(r=>'<tr><td><div class="row"><span class="avatar">◉</span><div><div class="bold">'+esc(r.name||"Sem nome · "+r.id)+'</div><div class="mini">'+esc(r.id)+'</div><div class="mini">'+esc(nationalityLabel(r.nationality))+' · '+esc(r.languages||"Idiomas não informados")+'</div></div></div></td><td>FJU '+esc(r.polo)+'</td><td>'+pill(r.stage)+'</td><td>'+esc(r.stage==="Inconstante"?"Ficha simples":"Ficha completa")+'</td><td><button class="btn small" data-detail="'+r.id+'">Abrir ficha ↗</button></td></tr>').join("");
+ const trs=rows.slice(0,65).map(r=>'<tr><td><div class="row">'+avatar(r)+'<div><div class="bold">'+esc(r.name||"Sem nome · "+r.id)+'</div><div class="mini">'+esc(r.id)+'</div><div class="mini">'+esc(nationalityLabel(r.nationality))+' · '+esc(r.languages||"Idiomas não informados")+'</div></div></div></td><td>FJU '+esc(r.polo)+'</td><td>'+pill(r.stage)+'</td><td>'+esc(r.stage==="Inconstante"?"Ficha simples":"Ficha completa")+'</td><td><button class="btn small" data-detail="'+r.id+'">Abrir ficha ↗</button></td></tr>').join("");
  return '<div class="panel"><div class="row between"><div><h2>Fichas individuais</h2><p class="lead">Visualização e edição simuladas, sem banco de dados.</p></div><button class="btn primary" data-modal="new">+ Novo cadastro (demo)</button></div><div class="divider"></div><div class="row between"><div class="row">'+filters+'</div><input id="searchYoung" type="search" value="'+esc(state.query)+'" placeholder="Pesquisar nome ou código"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Jovem / Código</th><th>Polo</th><th>Patente</th><th>Tipo</th><th>Ação</th></tr></thead><tbody>'+trs+'</tbody></table></div><p class="help">'+rows.length+' fichas fictícias encontradas'+(rows.length>65?" — mostrando as primeiras 65. Use a pesquisa para refinar.":".")+'</p></div>';
 }
 function detail(r){
  const simple=r.stage==="Inconstante",name=r.name||"Inconstante · "+r.id;
  const fields=(simple?[
- ["Foto","◉ (ilustrativa)"],["Nacionalidade",nationalityLabel(r.nationality)],["Idiomas",r.languages||"Não informados"],["Telefone",r.phone],["Endereço",r.address],["Polo","FJU "+r.polo]
+ ["Nacionalidade",nationalityLabel(r.nationality)],["Idiomas",r.languages||"Não informados"],["Telefone",r.phone],["Endereço",r.address],["Polo","FJU "+r.polo]
  ]:[["Nome completo",r.name],["Nacionalidade",nationalityLabel(r.nationality)],["Idiomas",r.languages||"Não informados"],["Data de nascimento",r.birth||"—"],["Telefone",r.phone],["Endereço",r.address],["Polo","FJU "+r.polo],["Data de ingresso",r.joined||"—"],["Batismo nas águas",r.water||"—"],["Batismo com Espírito Santo",r.holy||"Ainda não informado"]]);
  const content=state.detailTab==="testemunho"?'<div class="panel"><h3>Testemunho</h3><p class="lead">'+esc(r.testimony||"Sem testemunho cadastrado")+'</p><p class="help">Apenas firme e etapas posteriores. Dados verdadeiros deverão ficar em armazenamento privado e protegido.</p></div>':
  '<div class="panel"><h3>Informações da ficha</h3><div class="detail">'+fields.map(([k,v])=>'<div class="detail-box"><div class="key">'+esc(k)+'</div><div class="value">'+esc(v)+'</div></div>').join('')+'</div></div>';
  const history=r.history.length?'<div class="panel"><h3>Histórico de alterações (somente demo)</h3>'+r.history.map(h=>'<div class="help">• '+esc(h)+'</div>').join('')+'</div>':'';
  return '<div class="row between"><button class="btn" data-close-detail="yes">← Voltar às fichas</button><div class="row"><button class="btn" data-modal="edit" data-id="'+r.id+'">Editar (demo)</button><button class="btn primary" data-modal="promote" data-id="'+r.id+'">Avançar patente →</button><button class="btn" data-delete="'+r.id+'">Excluir (demo)</button></div></div>'+
- '<div class="panel"><div class="row"><span class="avatar" style="width:55px;height:55px;font-size:23px">◉</span><div><h2 style="margin:0">'+esc(name)+'</h2><div class="row" style="margin-top:6px">'+pill(r.stage)+' <span class="mini">FJU '+esc(r.polo)+' · '+esc(r.id)+'</span></div></div></div>'+
+ '<div class="panel"><div class="row">'+avatar(r,true)+'<div><h2 style="margin:0">'+esc(name)+'</h2><div class="row" style="margin-top:6px">'+pill(r.stage)+' <span class="mini">FJU '+esc(r.polo)+' · '+esc(r.id)+'</span></div></div></div>'+
  '<div class="tabrow"><button class="tab '+(state.detailTab==="ficha"?"active":"")+'" data-tab="ficha">Ficha</button>'+(!simple?'<button class="tab '+(state.detailTab==="testemunho"?"active":"")+'" data-tab="testemunho">Testemunho</button>':"")+'</div>'+(!simple?'<div class="inline-note">Histórico espiritual e testemunho: visível apenas em área privada na versão real.</div>':'<div class="inline-note warn-note">Cadastro de inconstante: somente foto, telefone e endereço. Ao registrar o batismo nas águas, passa para Jovem Firme.</div>')+'</div>'+content+history;
 }
 function ageFromBirth(birth){
@@ -237,7 +245,7 @@ function field(label,name,type,value,extra){return '<div class="form-item '+(ext
 function editModal(r){
  const isNew=!r;const stage=r?r.stage:"Inconstante"; const simple=stage==="Inconstante";
  let form='<form id="recordForm" class="form-grid"><input type="hidden" name="originalId" value="'+(r?r.id:"")+'"><div class="form-item full"><label for="form-stage">Patente</label><select name="stage" id="form-stage">'+STAGES.map(x=>'<option '+(x===stage?"selected":"")+'>'+x+'</option>').join("")+'</select></div><div class="form-item full"><label for="form-polo">Polo</label><select name="polo" id="form-polo">'+(state.role==="local"?["Hamamatsu"]:POLOS).map(x=>'<option '+(x===(r?r.polo:targetPolo())?"selected":"")+'>'+x+'</option>').join("")+'</select></div>'+
- '<div class="form-item full"><label>Foto de demonstração (não enviada)</label><div class="inline-note">◉ Imagem ilustrativa. Na versão real, fotos ficarão em armazenamento privado.</div></div>'+
+ '<div class="form-item full"><label for="photoInput">Foto para prévia (teste)</label><div class="photo-picker"><div id="photoPreview">'+avatar(r||{photo:""},true)+'</div><div class="photo-actions"><input id="photoInput" type="file" accept="image/*"><div class="help" id="photoStatus">Escolha uma imagem de teste. Ela fica somente neste navegador até recarregar a página.</div><button class="btn small" id="removePhoto" type="button" style="margin-top:7px" '+(r?.photo?"":"disabled")+'>Remover foto</button></div></div></div>'+
  '<div class="form-item"><label for="form-nationality">Nacionalidade / bandeira</label><select name="nationality" id="form-nationality">'+NATIONALITIES.map(([code,label])=>'<option value="'+code+'" '+((r?r.nationality:"JP")===code?"selected":"")+'>'+countryFlag(code)+' '+esc(label)+'</option>').join("")+'</select></div>'+
  field("Idiomas falados (separados por vírgula)","languages","text",r?r.languages:"","full")+
  field("Telefone","phone","text",r?r.phone:"")+field("Endereço","address","text",r?r.address:"","full")+
@@ -246,12 +254,55 @@ function editModal(r){
  modal('<div class="modal-top"><div><div class="eyebrow">CADASTRO DEMONSTRATIVO</div><h2>'+(isNew?"Novo jovem (demo)":"Editar ficha (demo)")+'</h2></div><button class="btn small" data-close-modal="yes">✕</button></div>'+form);
  function toggle(){const el=$("#firmFields"); if(el)el.style.display=$("#form-stage").value==="Inconstante"?"none":""}
  $("#form-stage").addEventListener("change",toggle);toggle();
+  let selectedPhoto=r?.photo||"",photoBusy=false,photoRequest=0;
+  const showPhoto=()=>{
+   const preview=$("#photoPreview");
+   if(preview)preview.innerHTML=avatar({photo:selectedPhoto},true);
+   const remove=$("#removePhoto");if(remove)remove.disabled=!selectedPhoto;
+  };
+  $("#removePhoto").addEventListener("click",()=>{
+   photoRequest++;photoBusy=false;selectedPhoto="";$("#photoInput").value="";
+   $("#photoStatus").textContent="Foto removida desta simulação. Salve a ficha para confirmar.";
+   showPhoto();
+  });
+  $("#photoInput").addEventListener("change",e=>{
+   const file=e.target.files?.[0];if(!file)return;
+   const request=++photoRequest;
+   if((file.type&&!file.type.startsWith("image/"))||file.size>12*1024*1024){
+    toast("Escolha uma imagem de até 12 MB.");e.target.value="";return;
+   }
+   photoBusy=true;$("#photoStatus").textContent="Preparando prévia da foto...";
+   const url=URL.createObjectURL(file),img=new Image();
+   img.onload=()=>{
+    URL.revokeObjectURL(url);
+    if(request!==photoRequest)return;
+    try{
+     const canvas=document.createElement("canvas");canvas.width=320;canvas.height=320;
+     const ctx=canvas.getContext("2d");
+     if(!ctx)throw Error("Canvas indisponível");
+     const side=Math.min(img.naturalWidth,img.naturalHeight);
+     if(!side)throw Error("Imagem inválida");
+     ctx.fillStyle="#fff";ctx.fillRect(0,0,320,320);
+     ctx.drawImage(img,(img.naturalWidth-side)/2,(img.naturalHeight-side)/2,side,side,0,0,320,320);
+     selectedPhoto=canvas.toDataURL("image/jpeg",0.78);
+     $("#photoStatus").textContent="Prévia pronta. A imagem não foi enviada a nenhum servidor.";
+     showPhoto();
+    }catch(err){$("#photoStatus").textContent="Não foi possível usar esta imagem. Tente JPG ou PNG.";toast("Erro ao preparar imagem de teste.");}
+    photoBusy=false;
+   };
+   img.onerror=()=>{
+    URL.revokeObjectURL(url);if(request!==photoRequest)return;
+    photoBusy=false;$("#photoStatus").textContent="Formato não suportado. Tente uma imagem JPG ou PNG.";
+    toast("Não foi possível abrir a imagem.");
+   };
+   img.src=url;
+  });
  $("#recordForm").addEventListener("submit",event=>{
-  event.preventDefault();const data=Object.fromEntries(new FormData(event.target).entries());const inconstante=data.stage==="Inconstante";
+  event.preventDefault();if(photoBusy){toast("Aguarde a foto terminar de carregar.");return}const data=Object.fromEntries(new FormData(event.target).entries());const inconstante=data.stage==="Inconstante";
   if(!data.phone.trim()||!data.address.trim()){toast("Preencha telefone e endereço fictícios para testar.");return}
   if(!inconstante&&(!data.name.trim()||!data.water)){toast("Para Firme ou acima, informe nome e data do batismo nas águas (dados fictícios).");return}
   let record=r||{id:"EX-"+String(serial++).padStart(4,"0"),history:[],photo:""};const old=record.stage;
-  record.polo=data.polo;record.stage=data.stage;record.nationality=NATIONALITIES.some(x=>x[0]===data.nationality)?data.nationality:"OTHER";record.languages=(data.languages||"").trim().slice(0,160);record.phone=data.phone;record.address=data.address;record.name=inconstante?"":data.name||"";record.birth=inconstante?"":data.birth||"";record.joined=inconstante?"":data.joined||"";record.water=inconstante?"":data.water||"";record.holy=inconstante?"":data.holy||"";
+  record.photo=selectedPhoto;record.polo=data.polo;record.stage=data.stage;record.nationality=NATIONALITIES.some(x=>x[0]===data.nationality)?data.nationality:"OTHER";record.languages=(data.languages||"").trim().slice(0,160);record.phone=data.phone;record.address=data.address;record.name=inconstante?"":data.name||"";record.birth=inconstante?"":data.birth||"";record.joined=inconstante?"":data.joined||"";record.water=inconstante?"":data.water||"";record.holy=inconstante?"":data.holy||"";
   if(!r){record.testimony="";state.records.unshift(record)}else if(old!==record.stage)record.history.push("Simulação: "+old+" → "+record.stage);
   closeModal();state.page="young";state.detail=record.id;state.detailTab="ficha";render();toast("Ficha demonstrativa alterada apenas nesta sessão.");
  });
