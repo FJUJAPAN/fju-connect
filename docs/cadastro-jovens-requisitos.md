@@ -44,10 +44,11 @@ Campos definidos até aqui:
 ## Visita por igreja — impressão A4
 - Selecionar um polo → **Imprimir relatório A4**.
 - Uma versão compacta, diferente da ficha na tela, com **aproximadamente 20 jovens por página A4** (com páginas seguintes quando necessário).
-- Cabeçalho com polo, data e total de registros; rodapé com número de página, uso interno e confidencial.
-- Sugestão visual inicial (a confirmar): número, identificação/nome, patente, telefone abreviado e informações de batismo resumidas. Evitar endereço completo e testemunho na impressão.
-- Contagem por patente e total geral; paginação.
-- A escolha de campos no relatório deverá ser confirmada antes da publicação.
+- Cabeçalho com **polo, data e total de jovens**; rodapé com número da página, uso interno e confidencial.
+- **Campos definitivos e enxutos do A4:** **Nº | Nome / Identificação | Patente | Idade**. Sem colunas de telefone, endereço, batismos, testemunho ou situação.
+- **Idade calculada automaticamente** a partir da data de nascimento; exibir **—** se esse campo não estiver preenchido.
+- Para ficha de **inconstante sem nome**, utilizar identificador interno no campo “Nome / Identificação”, sem inventar nome.
+- Total geral do polo e paginação automática; layout legível para aproximadamente 20 registros por folha A4.
 
 ## Relatório semanal dos coordenadores
 - **Quando:** todos os domingos, fuso do Japão `Asia/Tokyo`.
@@ -70,6 +71,5 @@ Campos definidos até aqui:
 ## Decisões em aberto
 - Identificação nominal do **inconstante** sem contrariar a instrução “somente foto, telefone e endereço”.
 - Campos e perguntas do relatório semanal.
-- Campos exatos que aparecerão no A4.
 - Canal das notificações.
 - Política de exclusão e retenção, regras de alterações de patente, medidas de proteção dos dados e de menores.
