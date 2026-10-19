@@ -169,7 +169,7 @@ async function loadAccount(){
     if(current!==updateSequence||passwordRecovery)return;
     if(profileError){
       setFeedback(t('profileError'),true);
-    }else if(profile?.ativo&&['nacional','coordenador'].includes(profile.papel)){
+    }else if(profile?.ativo&&['nacional','coordenador'].includes(profile.papel)&&(profile.papel!=='coordenador'||Boolean(profile.polo_id))){
       lastRole=profile.papel==='nacional'?'national':'coordinator';
       verifiedAdmin=true;
       if(profile.papel==='coordenador'&&profile.polo_id){
