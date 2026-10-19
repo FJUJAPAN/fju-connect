@@ -878,7 +878,25 @@ document.addEventListener('DOMContentLoaded',init);
 }
 @media(min-width:741px){.fju-app-bottom{display:none}}
 </style>
-</head>
+<style id="fju-mobile-header-tools">
+.fju-mobile-tools,.fju-search-panel{display:none}
+@media(max-width:740px){
+.site-header .header-inner{position:relative}
+.fju-mobile-tools{display:flex;align-items:center;gap:5px}
+.fju-mobile-tools button,.fju-mobile-tools a{display:grid;place-items:center;width:35px;height:39px;padding:0;border:1px solid #ffffff30;border-radius:10px;background:#ffffff10;color:#fff;font-size:23px;text-decoration:none;flex-shrink:0}
+.fju-mobile-tools a:last-child{font-size:18px}
+.header-actions .header-contact{display:none}
+.fju-search-panel:not([hidden]){display:block;position:absolute;top:100%;left:0;right:0;background:#151522;border-bottom:1px solid #ffffff30;padding:14px 16px;box-shadow:0 12px 20px #0006}
+.fju-search-panel label{font-size:12px;display:block;margin-bottom:7px}
+.fju-search-panel input{width:100%;padding:12px;border-radius:9px;border:1px solid #ffffff50;background:#242437;color:#fff;font-size:16px}
+.fju-search-panel a{display:block;padding:10px 4px;border-bottom:1px solid #ffffff20;color:#fff;font-size:13px}
+.fju-search-panel p{font-size:12px;color:#c8c2d3}
+.header-actions{gap:5px}
+.header-actions select{max-width:74px}
+.header-actions .coordinator-login{padding:8px;font-size:10px}
+}
+@media(max-width:380px){.fju-mobile-tools button,.fju-mobile-tools a{width:30px}.header-actions select{max-width:65px}}
+</style></head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -893,7 +911,11 @@ document.addEventListener('DOMContentLoaded',init);
         <a href="#projetos" data-i18n="navProjects">PROJECTS</a>
         <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a>
       </nav>
-      <div class="header-actions">
+      <div class="fju-mobile-tools" aria-label="Ferramentas do site">
+<button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel">⌕</button>
+<a href="https://fjujapan.github.io/fju-connect-admin/" aria-label="Abrir notificações no FJU Connect" title="Notificações">♧</a>
+<a href="https://fjujapan.github.io/fju-connect-admin/" aria-label="Entrar ou abrir My Page" title="My Page"><span aria-hidden="true">👤</span></a>
+</div><div id="fju-search-panel" class="fju-search-panel" hidden><label for="fju-search-input">Buscar no site</label><input id="fju-search-input" type="search" placeholder="Buscar projetos, músicas, polos..." autocomplete="off"><div id="fju-search-results" role="status" aria-live="polite"></div></div><div class="header-actions">
         <label class="sr-only" for="language">Language</label>
         <select id="language" aria-label="Idioma / Language / 言語">
           <option value="ja">日本語</option>
@@ -1047,5 +1069,11 @@ document.addEventListener('DOMContentLoaded',init);
 <a href="encontre-a-fju/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg>Polos</a>
 <a href="#projetos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Projetos</a>
 </nav>
-</body>
+<script id="fju-mobile-site-search">
+(()=>{const toggle=document.getElementById('fju-search-toggle'),panel=document.getElementById('fju-search-panel'),input=document.getElementById('fju-search-input'),results=document.getElementById('fju-search-results');if(!toggle||!panel||!input||!results)return;
+const pages=[['Início','#inicio'],['Projetos','#projetos'],['Músicas','#musica'],['Galeria','#galeria'],['Eventos','eventos/'],['Polos FJU','encontre-a-fju/'],['FJU em ação','#acao'],['Live','#live'],['My Page / Login','https://fjujapan.github.io/fju-connect-admin/']];
+function render(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();if(!q)return;const matches=pages.filter(([name])=>name.toLocaleLowerCase().includes(q));if(!matches.length){const p=document.createElement('p');p.textContent='Nenhum resultado encontrado.';results.append(p);return}matches.forEach(([name,href])=>{const a=document.createElement('a');a.href=href;a.textContent=name;results.append(a)})}
+toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.focus()});input.addEventListener('input',render);results.addEventListener('click',e=>{if(e.target.closest('a')){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}})
+})();
+</script></body>
 </html>
