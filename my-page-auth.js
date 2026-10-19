@@ -295,7 +295,8 @@ client.auth.onAuthStateChange(event=>{
     showView('login');
     localize();
   }else if(event==='SIGNED_IN'&&!passwordRecovery){
-    queueMicrotask(()=>{void loadAccount();});
+    // Agendar para depois que o SDK liberar o lock interno do auth.
+    setTimeout(()=>{void loadAccount();},0);
   }
 });
 localeSelect?.addEventListener('change',localize);
