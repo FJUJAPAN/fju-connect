@@ -99,3 +99,12 @@
   .fju-account-top{padding:20px 18px 17px}
   .fju-account-body{padding:18px 19px 23px}
 }
+
+/* Login social: Google + LINE, visível somente na tela de login. */
+.fju-social-login{margin-top:17px;display:grid;gap:10px}
+.fju-social-divider{display:flex;align-items:center;gap:12px;color:#9faecc;font-size:12px;text-align:center}
+.fju-social-divider:before,.fju-social-divider:after{content:'';height:1px;background:#405373;flex:1}
+#fju-account-dialog .fju-social-button{width:100%;min-height:46px;margin:0;padding:11px 14px;border-radius:11px;border:1px solid #d7dce8;background:#fff;color:#202733;font:700 13px/1.4 'Space Grotesk','Noto Sans JP',sans-serif;cursor:pointer}
+#fju-account-dialog .fju-social-line{background:#06c755;border-color:#06c755;color:#fff}
+#fju-account-dialog .fju-social-button:disabled{opacity:.6;cursor:wait}
+#fju-account-dialog .fju-social-button:focus-visible{outline:2px solid #f5cf94;outline-offset:3px}
