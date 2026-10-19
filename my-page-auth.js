@@ -46,7 +46,7 @@ const translations={
     passwordMismatch:'As senhas precisam ser iguais e ter pelo menos 8 caracteres.',
     updatingPassword:'Atualizando senha...',passwordUpdated:'Senha alterada. Entre novamente.',
     passwordUpdateError:'Não foi possível alterar a senha.',
-    socialGoogle:'Continuar com Google',socialDivider:'ou',socialError:'Não foi possível iniciar o login. Verifique se o provedor está configurado.',
+    socialGoogle:'Continuar com Google',socialFacebook:'Continuar com Facebook',socialDivider:'ou',socialError:'Não foi possível iniciar o login. Verifique se o provedor está configurado.',
     close:'Fechar'
   },
   ja:{
@@ -75,7 +75,7 @@ const translations={
     passwordMismatch:'8文字以上の同じパスワードを2回入力してください。',
     updatingPassword:'保存しています...',passwordUpdated:'パスワードを変更しました。再度ログインしてください。',
     passwordUpdateError:'パスワードを変更できませんでした。',
-    socialGoogle:'Googleでログイン',socialDivider:'または',socialError:'ログインを開始できませんでした。認証設定をご確認ください。',
+    socialGoogle:'Googleでログイン',socialFacebook:'Facebookでログイン',socialDivider:'または',socialError:'ログインを開始できませんでした。認証設定をご確認ください。',
     close:'閉じる'
   },
   en:{
@@ -104,7 +104,7 @@ const translations={
     passwordMismatch:'Enter matching passwords of at least 8 characters.',
     updatingPassword:'Saving password...',passwordUpdated:'Password updated. Please sign in again.',
     passwordUpdateError:'Could not update the password.',
-    socialGoogle:'Continue with Google',socialDivider:'or',socialError:'Could not start sign-in. Check the provider configuration.',
+    socialGoogle:'Continue with Google',socialFacebook:'Continue with Facebook',socialDivider:'or',socialError:'Could not start sign-in. Check the provider configuration.',
     close:'Close'
   }
 };
@@ -114,7 +114,8 @@ const translations={
 const socialBox=document.createElement('div');
 socialBox.className='fju-social-login';
 socialBox.innerHTML='<div class="fju-social-divider" data-fju-auth-i18n="socialDivider"></div>'+
-  '<button type="button" class="fju-social-button fju-social-google" data-fju-social="google" data-fju-auth-i18n="socialGoogle"></button>';
+  '<button type="button" class="fju-social-button fju-social-google" data-fju-social="google" data-fju-auth-i18n="socialGoogle"></button>'+ 
+  '<button type="button" class="fju-social-button fju-social-facebook" data-fju-social="facebook" data-fju-auth-i18n="socialFacebook"></button>';
 
 loginForm.append(socialBox);
 socialBox.addEventListener('click',async event=>{
