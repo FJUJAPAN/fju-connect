@@ -866,6 +866,18 @@ document.addEventListener('DOMContentLoaded',init);
 @media(max-width:850px){.action-section .action-photos{grid-auto-rows:240px;gap:10px}}
 @media(max-width:740px){.action-section .action-photos{grid-template-columns:1fr;grid-auto-rows:235px;gap:13px}.action-section .action-photo:nth-child(n){grid-column:auto;grid-row:auto}.action-section .action-photo figcaption{padding:20px 22px}.action-section .action-photo:nth-child(1) figcaption strong{font-size:23px}}
 </style>
+<style id="fju-mobile-app-navigation">
+@media(max-width:740px){
+ body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px));overflow-x:hidden}
+ input,select,textarea{font-size:16px}
+ .fju-app-bottom{position:fixed;bottom:0;left:0;right:0;z-index:1000;display:flex;align-items:stretch;justify-content:space-around;background:#10192beF;border-top:1px solid #ffffff2b;padding:8px 6px calc(9px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(18px)}
+ .fju-app-bottom a{color:#bfc8df;display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:700;min-height:46px;text-align:center}
+ .fju-app-bottom a svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+ .fju-app-bottom a[aria-current="page"],.fju-app-bottom a:focus-visible{color:#dca9ff}
+ .fju-app-bottom a:focus-visible{outline:2px solid #dca9ff;outline-offset:-2px;border-radius:8px}
+}
+@media(min-width:741px){.fju-app-bottom{display:none}}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -1028,5 +1040,12 @@ document.addEventListener('DOMContentLoaded',init);
     .catch(() => {/* Retain the last known FJU images. */});
 })();
 </script>
+<nav class="fju-app-bottom" aria-label="Navegação inferior FJU JAPAN">
+<a href="#inicio" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 21v-8h6v8"/></svg>Início</a>
+<a href="eventos/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>Eventos</a>
+<a href="https://fjujapan.github.io/fju-connect-admin/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>My Page</a>
+<a href="encontre-a-fju/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg>Polos</a>
+<a href="#projetos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Projetos</a>
+</nav>
 </body>
 </html>
