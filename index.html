@@ -896,7 +896,9 @@ document.addEventListener('DOMContentLoaded',init);
 .header-actions .coordinator-login{padding:8px;font-size:10px}
 }
 @media(max-width:380px){.fju-mobile-tools button,.fju-mobile-tools a{width:30px}.header-actions select{max-width:65px}}
-</style></head>
+</style>
+<link rel="stylesheet" href="./my-page-auth.css">
+</head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -913,8 +915,8 @@ document.addEventListener('DOMContentLoaded',init);
       </nav>
       <div class="fju-mobile-tools" aria-label="Ferramentas do site">
 <button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel">⌕</button>
-<a href="https://fjujapan.github.io/fju-connect-admin/" aria-label="Abrir notificações no FJU Connect" title="Notificações">♧</a>
-<a href="https://fjujapan.github.io/fju-connect-admin/" aria-label="Entrar ou abrir My Page" title="My Page"><span aria-hidden="true">👤</span></a>
+<button type="button" data-fju-account-open aria-label="Abrir My Page para acessar notificações administrativas" title="Notificações">♧</button>
+<button type="button" data-fju-account-open aria-label="Entrar ou abrir My Page" title="My Page"><span aria-hidden="true">👤</span></button>
 </div><div id="fju-search-panel" class="fju-search-panel" hidden><label for="fju-search-input">Buscar no site</label><input id="fju-search-input" type="search" placeholder="Buscar projetos, músicas, polos..." autocomplete="off"><div id="fju-search-results" role="status" aria-live="polite"></div></div><div class="header-actions">
         <label class="sr-only" for="language">Language</label>
         <select id="language" aria-label="Idioma / Language / 言語">
@@ -922,7 +924,7 @@ document.addEventListener('DOMContentLoaded',init);
           <option value="en">English</option>
           <option value="pt">Português</option>
         </select>
-        <a class="coordinator-login" href="https://fjujapan.github.io/fju-connect-admin/" aria-label="Login dos coordenadores / コーディネーターログイン">🔐 <span>LOGIN</span></a>
+        <button type="button" class="coordinator-login" data-fju-account-open aria-label="Login ou My Page / ログイン"><span aria-hidden="true">🔐</span> <span id="fju-header-login-label">LOGIN</span></button>
         <a class="header-contact" id="headerWhatsApp" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="contact">CONTATO</span><span aria-hidden="true"> ↗</span></a>
       </div>
     </div>
@@ -1062,18 +1064,76 @@ document.addEventListener('DOMContentLoaded',init);
     .catch(() => {/* Retain the last known FJU images. */});
 })();
 </script>
+<dialog id="fju-account-dialog" aria-labelledby="fju-account-title">
+<div class="fju-account-top">
+<div>
+  <small>FJU CONNECT · JAPAN</small>
+  <h2 id="fju-account-title">MY PAGE</h2>
+  <p id="fju-account-subtitle" data-fju-auth-i18n="subtitle">Sua conta FJU Connect JAPAN, sem sair do site oficial.</p>
+</div>
+<button type="button" id="fju-account-close" aria-label="Fechar">×</button>
+</div>
+<div class="fju-account-body">
+<p id="fju-account-loading" class="fju-account-loading" data-fju-auth-i18n="loading">Verificando sua conta...</p>
+
+<form id="fju-account-login-form" hidden>
+<label for="fju-account-login-email" data-fju-auth-i18n="email">E-mail</label>
+<input id="fju-account-login-email" type="email" autocomplete="username" required>
+<label for="fju-account-login-password" data-fju-auth-i18n="password">Senha</label>
+<input id="fju-account-login-password" type="password" autocomplete="current-password" required>
+<button type="submit" id="fju-account-login-button" class="fju-account-primary" data-fju-auth-i18n="loginButton">Entrar</button>
+<button type="button" id="fju-account-forgot-open" class="fju-account-secondary" data-fju-auth-i18n="forgotLink">Esqueci minha senha</button>
+</form>
+
+<form id="fju-account-forgot-form" hidden>
+<label for="fju-account-forgot-email" data-fju-auth-i18n="email">E-mail</label>
+<input id="fju-account-forgot-email" type="email" autocomplete="email" required>
+<button type="submit" id="fju-account-forgot-button" class="fju-account-primary" data-fju-auth-i18n="sendRecovery">Enviar recuperação</button>
+<button type="button" id="fju-account-back-login" class="fju-account-secondary" data-fju-auth-i18n="backLogin">Voltar ao login</button>
+</form>
+
+<form id="fju-account-reset-form" hidden>
+<label for="fju-account-new-password" data-fju-auth-i18n="newPassword">Nova senha</label>
+<input id="fju-account-new-password" type="password" autocomplete="new-password" minlength="8" required>
+<label for="fju-account-confirm-password" data-fju-auth-i18n="confirmPassword">Confirmar senha</label>
+<input id="fju-account-confirm-password" type="password" autocomplete="new-password" minlength="8" required>
+<button type="submit" id="fju-account-reset-button" class="fju-account-primary" data-fju-auth-i18n="savePassword">Salvar nova senha</button>
+</form>
+
+<section id="fju-account-my-page" hidden>
+<div class="fju-account-identity">
+  <div class="fju-account-avatar" aria-hidden="true">👤</div>
+  <p class="fju-account-identity-title" data-fju-auth-i18n="loggedIn">Você está conectado</p>
+  <div id="fju-account-email" class="fju-account-email"></div>
+  <div class="fju-account-pill"><span id="fju-account-role-label">Acesso</span>: <span id="fju-account-role-value">Membro</span></div>
+  <p id="fju-account-church" class="fju-account-church" hidden><span id="fju-account-church-name"></span></p>
+</div>
+<div id="fju-account-admin-access" class="fju-account-admin-box" hidden>
+  <h3 data-fju-auth-i18n="adminTitle">Área administrativa</h3>
+  <p data-fju-auth-i18n="adminDescription">Acesse as fichas, os relatórios e as autorizações de sua responsabilidade.</p>
+  <a id="fju-account-admin-link" class="fju-account-admin" href="https://fjujapan.github.io/fju-connect-admin/" data-fju-auth-i18n="openAdmin">Entrar no painel administrativo</a>
+</div>
+<p id="fju-account-member-note" class="fju-account-member-note" data-fju-auth-i18n="memberDescription" hidden>Sua MY PAGE de jovem está em preparação. Você pode continuar usando o site da FJU normalmente.</p>
+<button type="button" id="fju-account-logout" class="fju-account-secondary" data-fju-auth-i18n="logout">Sair da conta</button>
+</section>
+<p id="fju-account-feedback" role="status" aria-live="polite"></p>
+</div>
+</dialog>
+
 <nav class="fju-app-bottom" aria-label="Navegação inferior FJU JAPAN">
 <a href="#inicio" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 21v-8h6v8"/></svg>Início</a>
 <a href="eventos/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>Eventos</a>
-<a href="https://fjujapan.github.io/fju-connect-admin/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>My Page</a>
+<button type="button" data-fju-account-open aria-label="My Page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>My Page</button>
 <a href="encontre-a-fju/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg>Polos</a>
 <a href="#projetos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Projetos</a>
 </nav>
 <script id="fju-mobile-site-search">
 (()=>{const toggle=document.getElementById('fju-search-toggle'),panel=document.getElementById('fju-search-panel'),input=document.getElementById('fju-search-input'),results=document.getElementById('fju-search-results');if(!toggle||!panel||!input||!results)return;
-const pages=[['Início','#inicio'],['Projetos','#projetos'],['Músicas','#musica'],['Galeria','#galeria'],['Eventos','eventos/'],['Polos FJU','encontre-a-fju/'],['FJU em ação','#acao'],['Live','#live'],['My Page / Login','https://fjujapan.github.io/fju-connect-admin/']];
+const pages=[['Início','#inicio'],['Projetos','#projetos'],['Músicas','#musica'],['Galeria','#galeria'],['Eventos','eventos/'],['Polos FJU','encontre-a-fju/'],['FJU em ação','#acao'],['Live','#live'],['My Page / Login','#my-page']];
 function render(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();if(!q)return;const matches=pages.filter(([name])=>name.toLocaleLowerCase().includes(q));if(!matches.length){const p=document.createElement('p');p.textContent='Nenhum resultado encontrado.';results.append(p);return}matches.forEach(([name,href])=>{const a=document.createElement('a');a.href=href;a.textContent=name;results.append(a)})}
 toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.focus()});input.addEventListener('input',render);results.addEventListener('click',e=>{if(e.target.closest('a')){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}})
 })();
-</script></body>
+</script>
+<script type="module" src="./my-page-auth.js"></script>
+</body>
 </html>
