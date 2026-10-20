@@ -110,3 +110,17 @@
 #fju-account-dialog .fju-social-button:focus-visible{outline:2px solid #f5cf94;outline-offset:3px}
 
 #fju-account-dialog .fju-social-facebook{background:#1877f2;border-color:#1877f2;color:#fff}
+
+/* Mobile header: keep logo/tools and language/account in two deliberate rows. */
+@media(max-width:740px){
+ .site-header .header-inner{height:auto;min-height:68px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px;row-gap:8px;padding-top:10px;padding-bottom:10px;align-items:center}
+ .site-header .brand{min-width:0;max-width:100%}
+ .site-header .fju-mobile-tools{grid-column:2;grid-row:1;justify-self:end;min-width:0}
+ .site-header .header-actions{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;width:100%;gap:8px;min-width:0}
+ .site-header .header-actions select{max-width:none;width:132px;min-width:0;flex:0 1 132px;padding:9px 8px;font-size:12px}
+ .site-header .header-actions .coordinator-login{flex:0 0 auto;min-height:38px;padding:9px 12px;font-size:11px;white-space:nowrap}
+}
+@media(max-width:380px){
+ .site-header .header-actions select{width:115px;flex-basis:115px}
+ .site-header .header-actions .coordinator-login{padding:9px 10px}
+}
