@@ -113,23 +113,54 @@ let passwordRecovery=false;
 const headerAvatar=byId('fju-header-avatar');
 const headerGuest=document.querySelector('.fju-profile-guest');
 const headerNotify=byId('fju-notification-toggle');
+let headerAvatarObjectUrl='';
+function clearHeaderAvatarObjectUrl(){
+  if(headerAvatarObjectUrl){
+    URL.revokeObjectURL(headerAvatarObjectUrl);
+    headerAvatarObjectUrl='';
+  }
+}
+function setHeaderAvatarSource(src=''){
+  if(!headerAvatar)return;
+  clearHeaderAvatarObjectUrl();
+  if(src){
+    headerAvatar.src=src;
+    headerAvatar.hidden=false;
+    if(headerGuest)headerGuest.hidden=true;
+  }else{
+    headerAvatar.removeAttribute('src');
+    headerAvatar.hidden=true;
+    if(headerGuest)headerGuest.hidden=false;
+  }
+}
+async function loadStoredHeaderAvatar(user,current){
+  if(!user||!headerAvatar)return;
+  try{
+    const {data:card,error:cardError}=await client
+      .from('fju_coordenador_cards')
+      .select('foto_path')
+      .eq('usuario_id',user.id)
+      .maybeSingle();
+    if(cardError||current!==updateSequence||passwordRecovery||!card?.foto_path)return;
+    const {data:blob,error:photoError}=await client.storage
+      .from('fju-coordenadores')
+      .download(card.foto_path);
+    if(photoError||!blob||current!==updateSequence||passwordRecovery)return;
+    clearHeaderAvatarObjectUrl();
+    headerAvatarObjectUrl=URL.createObjectURL(blob);
+    headerAvatar.src=headerAvatarObjectUrl;
+    headerAvatar.hidden=false;
+    if(headerGuest)headerGuest.hidden=true;
+  }catch(_){}
+}
 function renderHeaderAccount(user=null){
   const signedIn=Boolean(user);
   document.documentElement.dataset.fjuAuthenticated=String(signedIn);
   if(headerNotify)headerNotify.hidden=!signedIn;
   const meta=user?.user_metadata||{};
   const avatar=meta.avatar_url||meta.picture||meta.photo_url||'';
-  if(headerAvatar){
-    if(signedIn&&avatar){
-      headerAvatar.src=avatar;
-      headerAvatar.hidden=false;
-      if(headerGuest)headerGuest.hidden=true;
-    }else{
-      headerAvatar.removeAttribute('src');
-      headerAvatar.hidden=true;
-      if(headerGuest)headerGuest.hidden=false;
-    }
-  }
+  if(signedIn&&avatar)setHeaderAvatarSource(avatar);
+  else setHeaderAvatarSource('');
 }
 let updateSequence=0;
 function lang(){return ['ja','en','pt'].includes(localeSelect?.value)?localeSelect.value:'pt';}
@@ -189,6 +220,8 @@ async function loadAccount(){
       .select('papel,polo_id,ativo')
       .eq('usuario_id',user.id)
       .maybeSingle();
+    if(current!==updateSequence||passwordRecovery)return;
+    await loadStoredHeaderAvatar(user,current);
     if(current!==updateSequence||passwordRecovery)return;
     if(profileError){
       setFeedback(t('profileError'),true);
