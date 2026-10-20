@@ -980,6 +980,15 @@ document.addEventListener('DOMContentLoaded',init);
   .fju-profile-guest,.fju-header-avatar{display:none!important}
 }
 </style>
+<style id="fju-fixed-top-header">
+html{scroll-padding-top:88px}
+body{padding-top:78px}
+.site-header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important}
+@media(max-width:740px){
+  html{scroll-padding-top:92px}
+  body{padding-top:82px}
+}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
