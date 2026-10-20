@@ -9,7 +9,7 @@
  const dots=root.querySelector('[data-universal-dots]');
  const translations={
   pt:{more:'Clique aqui e saiba mais',loading:'Carregando notícias...',unavailable:'Confira as últimas notícias da Igreja Universal',label:'Destaques da Igreja Universal'},
-  ja:{more:'詳しくはこちら',loading:'ニュースを読み込み中...',unavailable:'世界平和統一ではなく、ユニバーサル教会の最新ニュースを見る',label:'ユニバーサル教会の最新情報'},
+  ja:{more:'詳しくはこちら',loading:'ニュースを読み込み中...',unavailable:'ユニバーサル教会の最新ニュースをご覧ください',label:'ユニバーサル教会の最新情報'},
   en:{more:'Click here to learn more',loading:'Loading news...',unavailable:'See the latest Universal Church news',label:'Universal Church highlights'}
  };
  // Only the three newest public posts; shuffle display order without repetition per cycle.
