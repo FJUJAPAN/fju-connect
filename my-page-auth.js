@@ -110,6 +110,27 @@ let authenticated=false;
 let userEmail='';
 let lastRole='';
 let passwordRecovery=false;
+const headerAvatar=byId('fju-header-avatar');
+const headerGuest=document.querySelector('.fju-profile-guest');
+const headerNotify=byId('fju-notification-toggle');
+function renderHeaderAccount(user=null){
+  const signedIn=Boolean(user);
+  document.documentElement.dataset.fjuAuthenticated=String(signedIn);
+  if(headerNotify)headerNotify.hidden=!signedIn;
+  const meta=user?.user_metadata||{};
+  const avatar=meta.avatar_url||meta.picture||meta.photo_url||'';
+  if(headerAvatar){
+    if(signedIn&&avatar){
+      headerAvatar.src=avatar;
+      headerAvatar.hidden=false;
+      if(headerGuest)headerGuest.hidden=true;
+    }else{
+      headerAvatar.removeAttribute('src');
+      headerAvatar.hidden=true;
+      if(headerGuest)headerGuest.hidden=false;
+    }
+  }
+}
 let updateSequence=0;
 function lang(){return ['ja','en','pt'].includes(localeSelect?.value)?localeSelect.value:'pt';}
 function t(key){return translations[lang()][key]||translations.pt[key]||key;}
@@ -153,10 +174,12 @@ async function loadAccount(){
     if(current!==updateSequence||passwordRecovery)return;
     if(error||!user){
       authenticated=false;userEmail='';lastRole='';
+      renderHeaderAccount(null);
       showView('login');
       return;
     }
     authenticated=true;userEmail=user.email||'';
+    renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     lastRole='member';
     let verifiedAdmin=false;
@@ -189,6 +212,7 @@ async function loadAccount(){
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';
+    renderHeaderAccount(null);
     showView('login');
     setFeedback(t('sessionError'),true);
   }
@@ -268,6 +292,7 @@ resetForm.addEventListener('submit',async event=>{
     resetForm.reset();
     await client.auth.signOut();
     authenticated=false;userEmail='';lastRole='';
+    renderHeaderAccount(null);
     showView('login');
     setFeedback(t('passwordUpdated'));
   }catch(e){setFeedback(t('passwordUpdateError'),true);}
@@ -277,6 +302,7 @@ byId('fju-account-logout').addEventListener('click',async()=>{
   try{
     await client.auth.signOut();
     authenticated=false;userEmail='';lastRole='';
+    renderHeaderAccount(null);
     showView('login');
     setFeedback(t('signedOut'));
   }catch(e){setFeedback(t('sessionError'),true);}
@@ -292,6 +318,7 @@ client.auth.onAuthStateChange(event=>{
     passwordRecovery=false;
     updateSequence++;
     authenticated=false;userEmail='';lastRole='';
+    renderHeaderAccount(null);
     showView('login');
     localize();
   }else if(event==='SIGNED_IN'&&!passwordRecovery){
@@ -300,5 +327,6 @@ client.auth.onAuthStateChange(event=>{
   }
 });
 localeSelect?.addEventListener('change',localize);
+renderHeaderAccount(null);
 localize();
 void loadAccount();

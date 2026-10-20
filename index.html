@@ -928,6 +928,58 @@ document.addEventListener('DOMContentLoaded',init);
 }
 @media(max-width:390px){.header-actions .coordinator-login{max-width:88px}.fju-mobile-tools #fju-search-toggle{width:30px}.fju-language-flags .fju-current-flag{width:30px}}
 </style>
+<style id="fju-app-auth-header-v1">
+.fju-header-icon,.fju-profile-guest,.fju-header-avatar,.fju-header-popover{display:none}
+@media(max-width:740px){
+  .site-header{background:#0b2b55f7;border-bottom:0!important;box-shadow:0 2px 12px #06172d22}
+  .site-header .header-inner{height:82px!important;width:calc(100% - 24px)!important;max-width:none!important;display:flex;align-items:center;gap:7px!important;position:relative}
+  .site-header .brand{margin-right:auto;flex:0 1 auto;min-width:0}
+  .site-header .brand-official-logo{width:72px!important;max-width:72px!important;max-height:46px!important;object-fit:contain}
+  .desktop-nav{display:none!important}
+  .fju-mobile-tools{display:flex!important;flex:none!important;margin-left:auto}
+  .fju-mobile-tools #fju-search-toggle,
+  .fju-header-icon,
+  .header-actions .fju-profile-button{
+    width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;
+    display:grid!important;place-items:center!important;padding:0!important;margin:0!important;
+    border:0!important;border-radius:50%!important;background:transparent!important;color:#fff!important;
+    box-shadow:none!important;overflow:hidden!important;
+  }
+  .fju-mobile-tools #fju-search-toggle svg,.fju-header-icon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .header-actions{display:flex!important;align-items:center!important;gap:5px!important;flex:none!important}
+  .header-actions .header-contact{display:none!important}
+  .header-actions .fju-profile-button #fju-header-login-label,.fju-profile-desktop-lock{display:none!important}
+  .fju-profile-guest{display:grid!important;place-items:center;width:36px;height:36px;border:1.7px solid #fff;border-radius:50%}
+  .fju-profile-guest svg{width:25px;height:25px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round}
+  .fju-header-avatar{display:block;width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.7px solid #fff}
+  .fju-header-avatar[hidden]{display:none!important}
+  .fju-profile-guest[hidden]{display:none!important}
+  .fju-language-flags .fju-current-flag{width:34px!important;height:36px!important;min-width:34px!important;border-radius:8px!important;font-size:21px!important;padding:0!important}
+  .fju-other-flags{top:calc(100% + 10px)!important;right:0!important}
+  .fju-notification-button[hidden]{display:none!important}
+  .fju-header-popover{position:absolute;right:0;top:calc(100% + 8px);z-index:80;width:min(285px,calc(100vw - 24px));background:#0b2342;color:#fff;border:1px solid #ffffff35;border-radius:13px;box-shadow:0 18px 40px #0007;padding:13px}
+  .fju-header-popover:not([hidden]){display:block}
+  .fju-notification-panel strong{font-size:14px}
+  .fju-notification-panel p{margin:7px 0 0;color:#cbd9ea;font-size:12px;line-height:1.5}
+  .fju-header-menu{padding:8px}
+  .fju-header-menu a,.fju-header-menu button{display:flex;width:100%;align-items:center;text-align:left;padding:12px 13px;border:0;border-bottom:1px solid #ffffff18;background:transparent;color:#fff;font:700 13px/1.2 'DM Sans','Noto Sans JP',sans-serif;text-decoration:none}
+  .fju-header-menu a:last-of-type,.fju-header-menu button:last-child{border-bottom:0}
+  .fju-search-panel:not([hidden]){top:100%!important;left:-12px!important;right:-12px!important;background:#0b2342!important;border-bottom:1px solid #ffffff30!important}
+  .fju-search-panel input{background:#ffffff0f!important}
+}
+@media(max-width:390px){
+  .site-header .header-inner{gap:4px!important;width:calc(100% - 18px)!important}
+  .site-header .brand-official-logo{width:62px!important;max-width:62px!important}
+  .fju-mobile-tools #fju-search-toggle,.fju-header-icon,.header-actions .fju-profile-button{width:34px!important;height:36px!important;min-width:34px!important;min-height:36px!important}
+  .fju-mobile-tools #fju-search-toggle svg,.fju-header-icon svg{width:25px;height:25px}
+  .fju-language-flags .fju-current-flag{width:31px!important;min-width:31px!important}
+  .fju-profile-guest,.fju-header-avatar{width:34px;height:34px}
+}
+@media(min-width:741px){
+  .fju-menu-button,.fju-notification-button{display:none!important}
+  .fju-profile-guest,.fju-header-avatar{display:none!important}
+}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -944,7 +996,7 @@ document.addEventListener('DOMContentLoaded',init);
         <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a>
       </nav>
       <div class="fju-mobile-tools" aria-label="Ferramentas do site">
-<button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel">⌕</button>
+<button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
 
 </div><div id="fju-search-panel" class="fju-search-panel" hidden><label for="fju-search-input">Buscar no site</label><input id="fju-search-input" type="search" placeholder="Buscar projetos, músicas, polos..." autocomplete="off"><div id="fju-search-results" role="status" aria-live="polite"></div></div><div class="header-actions">
         <label class="sr-only" for="language">Language</label>
@@ -961,9 +1013,31 @@ document.addEventListener('DOMContentLoaded',init);
             <button type="button" data-fju-lang="en" aria-label="English" title="English">🇺🇸</button>
           </div>
         </div>
-        <button type="button" class="coordinator-login" data-fju-account-open aria-label="Login ou My Page / ログイン"><span aria-hidden="true">🔐</span> <span id="fju-header-login-label">LOGIN</span></button>
+        <button type="button" id="fju-notification-toggle" class="fju-header-icon fju-notification-button" aria-label="Notificações" aria-expanded="false" aria-controls="fju-notification-panel" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+        </button>
+        <button type="button" class="coordinator-login fju-profile-button" data-fju-account-open aria-label="Login ou My Page / ログイン">
+          <span class="fju-profile-desktop-lock" aria-hidden="true">🔐</span>
+          <span class="fju-profile-guest" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4.8 20c.9-4.1 3.3-6 7.2-6s6.3 1.9 7.2 6"></path></svg></span>
+          <img id="fju-header-avatar" class="fju-header-avatar" alt="" hidden>
+          <span id="fju-header-login-label">LOGIN</span>
+        </button>
+        <button type="button" id="fju-menu-toggle" class="fju-header-icon fju-menu-button" aria-label="Abrir menu" aria-expanded="false" aria-controls="fju-header-menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
         <a class="header-contact" id="headerWhatsApp" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="contact">CONTATO</span><span aria-hidden="true"> ↗</span></a>
       </div>
+      <div id="fju-notification-panel" class="fju-header-popover fju-notification-panel" hidden>
+        <strong>Notificações</strong>
+        <p>As atualizações da sua conta aparecerão aqui.</p>
+      </div>
+      <nav id="fju-header-menu" class="fju-header-popover fju-header-menu" aria-label="Menu rápido" hidden>
+        <a href="#inicio">Início</a>
+        <a href="eventos/">Eventos</a>
+        <a href="encontre-a-fju/">Polos</a>
+        <a href="#projetos">Projetos</a>
+        <button type="button" data-fju-account-open>My Page</button>
+      </nav>
     </div>
   </header>
 
@@ -1223,6 +1297,33 @@ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttrib
  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
  window.addEventListener('pageshow',sync);
  sync();close();
+})();
+</script>
+<script id="fju-app-auth-header-ui">
+(function(){
+  const menuToggle=document.getElementById('fju-menu-toggle');
+  const menu=document.getElementById('fju-header-menu');
+  const notifyToggle=document.getElementById('fju-notification-toggle');
+  const notify=document.getElementById('fju-notification-panel');
+  const searchToggle=document.getElementById('fju-search-toggle');
+  const searchPanel=document.getElementById('fju-search-panel');
+  function closeMenu(){if(menu){menu.hidden=true;menuToggle?.setAttribute('aria-expanded','false');}}
+  function closeNotify(){if(notify){notify.hidden=true;notifyToggle?.setAttribute('aria-expanded','false');}}
+  menuToggle?.addEventListener('click',function(e){
+    e.stopPropagation(); closeNotify();
+    menu.hidden=!menu.hidden; menuToggle.setAttribute('aria-expanded',String(!menu.hidden));
+  });
+  notifyToggle?.addEventListener('click',function(e){
+    e.stopPropagation(); closeMenu();
+    notify.hidden=!notify.hidden; notifyToggle.setAttribute('aria-expanded',String(!notify.hidden));
+  });
+  searchToggle?.addEventListener('click',function(){closeMenu();closeNotify();});
+  document.addEventListener('click',function(e){
+    if(menu&&!menu.hidden&&!menu.contains(e.target)&&e.target!==menuToggle)closeMenu();
+    if(notify&&!notify.hidden&&!notify.contains(e.target)&&e.target!==notifyToggle)closeNotify();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMenu();closeNotify();}});
+  menu?.addEventListener('click',function(e){if(e.target.closest('a,button'))closeMenu();});
 })();
 </script>
 </body>
