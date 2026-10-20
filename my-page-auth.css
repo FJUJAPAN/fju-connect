@@ -99,3 +99,12 @@
   .fju-account-top{padding:20px 18px 17px}
   .fju-account-body{padding:18px 19px 23px}
 }
+
+/* FJU JAPAN — mobile viewport and fixed navigation stability */
+html,body{max-width:100%;overflow-x:clip}
+@media(max-width:740px){
+  .fju-app-bottom{position:fixed;left:0;right:0;bottom:0;width:100%;max-width:100vw;z-index:1000;transform:none}
+  body{min-width:0;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  input,textarea,select{font-size:16px}
+  #fju-account-dialog{max-width:calc(100vw - 24px)}
+}
