@@ -899,7 +899,16 @@ document.addEventListener('DOMContentLoaded',init);
 </style>
 <link rel="stylesheet" href="./my-page-auth.css">
 <link rel="stylesheet" href="./universal-highlights.css">
-<style id="fju-ios-viewport-fix">html{width:100%;max-width:100%;overflow-x:clip;-webkit-text-size-adjust:100%}body{width:100%;max-width:100%;overflow-x:clip}img,video,iframe{max-width:100%}@media(max-width:740px){input,textarea,select{font-size:16px!important}}</style></head>
+<style id="fju-ios-viewport-fix">html{width:100%;max-width:100%;overflow-x:clip;-webkit-text-size-adjust:100%}body{width:100%;max-width:100%;overflow-x:clip}img,video,iframe{max-width:100%}@media(max-width:740px){input,textarea,select{font-size:16px!important}}</style><style id="fju-header-flags-style">
+.header-actions .fju-language-native{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;opacity:0!important;pointer-events:none!important;padding:0!important;border:0!important}
+.fju-language-flags{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.fju-language-flags button{display:grid;place-items:center;flex:none;width:35px;height:35px;padding:0;border:1px solid #ffffff45;border-radius:9px;background:#ffffff10;font-size:23px;line-height:1;cursor:pointer}
+.fju-language-flags button[aria-pressed="true"]{border:2px solid #fff;background:#ffffff30;box-shadow:0 0 0 1px #e51f3d}
+.fju-language-flags button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(max-width:740px){.header-actions{display:flex;align-items:center;flex-wrap:nowrap!important;gap:5px!important}.header-actions .coordinator-login{white-space:nowrap;min-height:35px;padding:7px 8px!important}.fju-language-flags{gap:2px}.fju-language-flags button{width:29px;height:33px;font-size:20px}.header-actions .header-contact{display:none}}
+@media(max-width:390px){.fju-language-flags button{width:27px;height:31px;font-size:19px}.header-actions .coordinator-login{font-size:9px!important;padding:6px!important}}
+</style>
+</head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -920,11 +929,16 @@ document.addEventListener('DOMContentLoaded',init);
 <button type="button" data-fju-account-open aria-label="Entrar ou abrir My Page" title="My Page"><span aria-hidden="true">👤</span></button>
 </div><div id="fju-search-panel" class="fju-search-panel" hidden><label for="fju-search-input">Buscar no site</label><input id="fju-search-input" type="search" placeholder="Buscar projetos, músicas, polos..." autocomplete="off"><div id="fju-search-results" role="status" aria-live="polite"></div></div><div class="header-actions">
         <label class="sr-only" for="language">Language</label>
-        <select id="language" aria-label="Idioma / Language / 言語">
+        <select id="language" class="fju-language-native" aria-label="Idioma / Language / 言語">
           <option value="ja">日本語</option>
           <option value="en">English</option>
           <option value="pt">Português</option>
         </select>
+        <div class="fju-language-flags" role="group" aria-label="Selecionar idioma">
+          <button type="button" data-fju-lang="pt" aria-label="Português" title="Português">🇧🇷</button>
+          <button type="button" data-fju-lang="ja" aria-label="日本語" title="日本語">🇯🇵</button>
+          <button type="button" data-fju-lang="en" aria-label="English" title="English">🇺🇸</button>
+        </div>
         <button type="button" class="coordinator-login" data-fju-account-open aria-label="Login ou My Page / ログイン"><span aria-hidden="true">🔐</span> <span id="fju-header-login-label">LOGIN</span></button>
         <a class="header-contact" id="headerWhatsApp" href="https://wa.me/819099471661" target="_blank" rel="noopener noreferrer"><span data-i18n="contact">CONTATO</span><span aria-hidden="true"> ↗</span></a>
       </div>
@@ -1164,6 +1178,21 @@ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttrib
     var now=Date.now();
     if(now-lastTap<300){e.preventDefault();lastTap=0;}else lastTap=now;
   },{passive:false});
+})();
+</script>
+<script id="fju-header-flags-script">
+(function(){
+  const select=document.getElementById('language');
+  const buttons=Array.from(document.querySelectorAll('[data-fju-lang]'));
+  if(!select||!buttons.length)return;
+  function sync(){buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fjuLang===select.value)));}
+  buttons.forEach(b=>b.addEventListener('click',function(){
+    if(select.value!==b.dataset.fjuLang){select.value=b.dataset.fjuLang;select.dispatchEvent(new Event('change',{bubbles:true}));}
+    sync();
+  }));
+  select.addEventListener('change',sync);
+  sync();
+  window.addEventListener('pageshow',sync);
 })();
 </script>
 </body>
