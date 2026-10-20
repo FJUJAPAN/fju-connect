@@ -1,0 +1,17 @@
+/* Universal JP rotating highlights — isolated from header and account styles. */
+.fju-universal-section{padding:62px 0;background:#121020}
+.fju-universal-section .fju-universal-kicker{color:#c7a0ff;font-size:11px;letter-spacing:2px;font-weight:800}
+.fju-universal-section h2{font-size:clamp(26px,4vw,40px);letter-spacing:-1px;margin:10px 0 24px}
+.fju-universal-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:#201a31;border:1px solid #4d3c69;border-radius:20px;overflow:hidden;min-height:290px}
+.fju-universal-visual{background:linear-gradient(135deg,#41205d,#181527);min-height:240px;display:grid;place-items:center;overflow:hidden}
+.fju-universal-visual img{width:100%;height:100%;object-fit:cover;display:block}
+.fju-universal-visual img[hidden]{display:none}
+.fju-universal-content{padding:32px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:16px}
+.fju-universal-content h3{font-size:clamp(21px,3vw,31px);line-height:1.25;margin:0;overflow-wrap:anywhere}
+.fju-universal-content a{display:inline-flex;padding:12px 17px;border-radius:9px;background:#a678ff;color:#171020;font-size:13px;font-weight:800}
+.fju-universal-content a:hover{background:#c09cff}
+.fju-universal-status{color:#b9a8d3;font-size:12px}
+.fju-universal-dots{display:flex;gap:7px;min-height:8px}
+.fju-universal-dot{width:7px;height:7px;border-radius:50%;background:#675779}
+.fju-universal-dot.is-active{background:#c69aff}
+@media(max-width:740px){.fju-universal-section{padding:42px 0}.fju-universal-card{grid-template-columns:1fr}.fju-universal-visual{min-height:200px;max-height:260px}.fju-universal-content{padding:24px}}
