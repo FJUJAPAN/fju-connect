@@ -58,8 +58,46 @@ html{scroll-padding-top:94px}
 body{padding-top:84px}
 body>header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important}
 </style>
+<style id="fju-shared-mobile-topbar-v2">
+@media(min-width:741px){.fju-topbar-button,.fju-topbar-language,.fju-topbar-menu{display:none!important}}
+@media(max-width:740px){
+ body>header{height:82px!important;min-height:82px!important;background:#102e56!important;border-bottom:0!important;z-index:1200!important;box-shadow:0 3px 14px #0002}
+ body>header .header-in{width:calc(100% - 24px)!important;max-width:none!important;height:82px!important;min-height:82px!important;gap:5px!important;display:flex!important;align-items:center!important}
+ body>header .brand{flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;gap:5px!important}
+ body>header .brand img{width:73px!important;height:48px!important;object-fit:contain!important}
+ body>header .brand-text{min-width:0}
+ body>header .brand-text b{font-size:10px!important;letter-spacing:.08em!important;white-space:nowrap}
+ body>header .brand-text small{font-size:8px!important;letter-spacing:.08em!important}
+ body>header .header-side{display:flex!important;align-items:center!important;gap:5px!important;flex:none!important}
+ body>header .top-link,body>header .back{display:none!important}
+ body>header #lang{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important}
+ .fju-topbar-button{display:grid;place-items:center;flex:none;width:34px;height:38px;padding:0;border:0;background:transparent;color:#fff;text-decoration:none}
+ .fju-topbar-button svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+ .fju-topbar-profile svg{border:1.7px solid #fff;border-radius:50%;padding:3px;width:35px;height:35px}
+ .fju-topbar-language{position:relative}
+ .fju-topbar-language>.fju-topbar-button{border:1px solid #ffffff50;border-radius:8px;font-size:22px}
+ .fju-topbar-languages{position:absolute;right:0;top:calc(100% + 8px);display:flex;gap:5px;padding:7px;background:#0b2342;border:1px solid #ffffff50;border-radius:11px;box-shadow:0 12px 28px #0006}
+ .fju-topbar-languages[hidden]{display:none!important}
+ .fju-topbar-languages button{border:0;border-radius:6px;background:#ffffff14;color:white;padding:4px;font-size:23px;width:38px;height:38px}
+ .fju-topbar-languages button[hidden]{display:none!important}
+ .fju-topbar-menu{position:absolute;top:calc(100% + 5px);right:12px;width:min(270px,calc(100vw - 24px));background:#0b2342;border:1px solid #ffffff35;border-radius:12px;box-shadow:0 18px 40px #0007;padding:8px}
+ .fju-topbar-menu[hidden]{display:none!important}
+ .fju-topbar-menu a{display:block;color:#fff;text-decoration:none;padding:12px;border-bottom:1px solid #ffffff1a;font-weight:700;font-size:13px}
+ .fju-topbar-menu a:last-child{border-bottom:0}
+}
+@media(max-width:390px){
+ body>header .header-in{width:calc(100% - 16px)!important;gap:3px!important}
+ body>header .brand img{width:60px!important}
+ body>header .brand-text b{font-size:9px!important}
+ body>header .brand-text small{font-size:7px!important}
+ body>header .header-side{gap:3px!important}
+ .fju-topbar-button{width:30px;height:36px}
+ .fju-topbar-button svg{width:24px;height:24px}
+ .fju-topbar-profile svg{width:32px;height:32px}
+}
+</style>
 </head><body>
-<header><div class="wrap header-in"><a class="brand" href="../" aria-label="FJU CONNECT JAPAN"><img id="officialLogo" alt="FJU JAPAN logo"><div class="brand-text"><b>FJU CONNECT</b><small>JAPAN · GALLERY</small></div></a><div class="header-side"><a class="top-link" href="../" data-t="back">VOLTAR AO PORTAL</a><select id="lang" aria-label="Language"><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select></div></div></header>
+<header><div class="wrap header-in"><a class="brand" href="../" aria-label="FJU CONNECT JAPAN"><img id="officialLogo" alt="FJU JAPAN logo"><div class="brand-text"><b>FJU CONNECT</b><small>JAPAN · GALLERY</small></div></a><div class="header-side"><a class="top-link" href="../" data-t="back">VOLTAR AO PORTAL</a><select id="lang" aria-label="Language"><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select><button type="button" class="fju-topbar-button" id="fju-sub-search" aria-label="Buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 5 5"/></svg></button><div class="fju-topbar-language"><button type="button" class="fju-topbar-button" id="fju-sub-language" aria-label="Selecionar idioma" aria-expanded="false">🇧🇷</button><div class="fju-topbar-languages" id="fju-sub-languages" hidden><button type="button" data-lang="pt" aria-label="Português">🇧🇷</button><button type="button" data-lang="ja" aria-label="日本語">🇯🇵</button><button type="button" data-lang="en" aria-label="English">🇺🇸</button></div></div><a class="fju-topbar-button fju-topbar-profile" href="../#my-page" aria-label="My Page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.8 20c.9-4.1 3.3-6 7.2-6s6.3 1.9 7.2 6"/></svg></a><button type="button" class="fju-topbar-button" id="fju-sub-menu-toggle" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div></div><nav class="fju-topbar-menu" id="fju-sub-menu" hidden aria-label="Menu"><a href="../">Início</a><a href="../eventos/">Eventos</a><a href="../#my-page">My Page</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a></nav></header>
 <main><section class="hero"><div class="hero-photo" id="heroBackground"></div><div class="wrap"><span class="eyebrow" data-t="eyebrow">FJU JAPAN / GALERIA NACIONAL</span><h1 data-th="heroTitle">NOSSOS ENCONTROS. <span>NOSSAS HISTÓRIAS.</span></h1><p data-t="heroDesc">Uma única galeria para reunir os momentos da FJU em todo o Japão.</p><div class="hero-cta"><a class="btn btn-red" href="#galeria" data-t="explore">EXPLORAR EVENTOS</a><a class="btn btn-plain" href="#enviar" data-t="send">ENVIAR FOTOS</a></div></div></section>
 <section id="galeria" class="wrap"><div class="intro"><span class="tag"><i></i><span data-t="section">ÁLBUNS PUBLICADOS</span></span><div class="intro-head"><div><h2 data-th="heading">MOMENTOS <em>REAIS.</em></h2><p data-t="sectionDesc">Fotos aprovadas em um lugar para os encontros de todo o Japão.</p></div><span class="count" id="counter"></span></div></div><div class="filters"><input class="filter-input" id="search" type="search" data-placeholder="search" placeholder="Buscar evento ou cidade..." aria-label="Buscar eventos"><select class="filter-select" id="type" aria-label="Filtrar categoria"><option value="" data-t="all">Todas as atividades</option><option value="encontros" data-t="encontros">Encontros</option><option value="esporte" data-t="esporte">Esporte</option><option value="cultura" data-t="cultura">Cultura</option></select></div><div class="albums" id="albums"></div><div class="no-results" id="noResults" data-t="noResults">Nenhum álbum corresponde à busca.</div></section>
 <section class="workflow" id="enviar"><div class="wrap"><div class="workflow-head"><span class="tag"><i></i><span data-t="workflow">ENVIO DE MATERIAL</span></span><h2 data-th="workflowTitle">VOCÊ ENVIA. <em>NÓS APROVAMOS.</em></h2><p data-t="workflowDesc">Os organizadores compartilham os registros. Só serão publicados após aprovação da coordenação nacional.</p></div><div class="steps"><div class="step"><strong>01</strong><h3 data-t="step1">O organizador envia</h3><p data-t="step1p">Evento, cidade e fotos.</p></div><div class="step"><strong>02</strong><h3 data-t="step2">A coordenação avalia</h3><p data-t="step2p">Material pendente não é publicado.</p></div><div class="step"><strong>03</strong><h3 data-t="step3">O álbum entra no ar</h3><p data-t="step3p">Álbum público e link compartilhável.</p></div></div><form id="sendForm" class="send-form"><h3 data-t="formTitle">Enviar um evento para avaliação</h3><p data-t="formDesc">As fotos são enviadas pelo WhatsApp oficial, não diretamente pelo site.</p><div class="form-grid"><div class="field"><label for="f-event" data-t="labelEvent">Nome do evento</label><input id="f-event" name="event" maxlength="120" required></div><div class="field"><label for="f-city" data-t="labelCity">Cidade / polo</label><input id="f-city" name="city" maxlength="100" required></div><div class="field"><label for="f-date" data-t="labelDate">Data do evento</label><input id="f-date" name="date" type="date" required></div><div class="field"><label for="f-name" data-t="labelName">Nome do organizador</label><input id="f-name" name="name" maxlength="100" required></div><div class="field full"><label for="f-link" data-t="labelLink">Link das fotos (opcional)</label><input id="f-link" name="link" type="url" placeholder="https://drive.google.com/..." maxlength="1500"></div><div class="field full"><label for="f-note" data-t="labelNote">Observações (opcional)</label><textarea id="f-note" name="note" maxlength="700"></textarea></div></div><button class="btn btn-red" type="submit" data-t="submit">ABRIR WHATSAPP PARA ENVIAR</button><div class="form-warning" data-th="disclaimer">As fotos não são enviadas automaticamente por este formulário. <strong>A publicação depende da aprovação do administrador nacional.</strong></div></form></div></section></main>
@@ -149,6 +187,30 @@ const requestedType=new URLSearchParams(window.location.search).get('tipo');if([
     var now=Date.now();
     if(now-lastTap<300){e.preventDefault();lastTap=0;}else lastTap=now;
   },{passive:false});
+})();
+</script>
+<script id="fju-shared-mobile-topbar-script">
+(function(){
+ const select=document.getElementById('lang');
+ const toggle=document.getElementById('fju-sub-language');
+ const list=document.getElementById('fju-sub-languages');
+ const menu=document.getElementById('fju-sub-menu');
+ const menuToggle=document.getElementById('fju-sub-menu-toggle');
+ const search=document.getElementById('fju-sub-search');
+ const flags={pt:'🇧🇷',ja:'🇯🇵',en:'🇺🇸'};
+ function sync(){if(!select)return;toggle.textContent=flags[select.value]||'🌐';list.querySelectorAll('[data-lang]').forEach(b=>{b.hidden=b.dataset.lang===select.value;});}
+ function close(){list.hidden=true;toggle.setAttribute('aria-expanded','false');menu.hidden=true;menuToggle.setAttribute('aria-expanded','false');}
+ toggle.addEventListener('click',()=>{const open=list.hidden;close();list.hidden=!open;toggle.setAttribute('aria-expanded',String(open));});
+ list.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{
+   select.value=b.dataset.lang;select.dispatchEvent(new Event('change',{bubbles:true}));sync();close();
+ }));
+ select?.addEventListener('change',sync);
+ menuToggle.addEventListener('click',()=>{const open=menu.hidden;close();menu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));});
+ search.addEventListener('click',()=>{close();const field=document.getElementById('search');if(field){field.scrollIntoView({behavior:'smooth',block:'center'});field.focus({preventScroll:true});}else location.href='../#inicio';});
+ document.addEventListener('click',e=>{if(!e.target.closest('.fju-topbar-language,#fju-sub-menu-toggle,#fju-sub-menu'))close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+ window.addEventListener('pageshow',sync);
+ sync();
 })();
 </script>
 </body></html>

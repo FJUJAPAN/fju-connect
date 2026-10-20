@@ -35,9 +35,47 @@ html{scroll-padding-top:94px}
 body{padding-top:84px}
 body>header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;z-index:20}
 </style>
+<style id="fju-shared-mobile-topbar-v2">
+@media(min-width:741px){.fju-topbar-button,.fju-topbar-language,.fju-topbar-menu{display:none!important}}
+@media(max-width:740px){
+ body>header{height:82px!important;min-height:82px!important;background:#102e56!important;border-bottom:0!important;z-index:1200!important;box-shadow:0 3px 14px #0002}
+ body>header .header-in{width:calc(100% - 24px)!important;max-width:none!important;height:82px!important;min-height:82px!important;gap:5px!important;display:flex!important;align-items:center!important}
+ body>header .brand{flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;gap:5px!important}
+ body>header .brand img{width:73px!important;height:48px!important;object-fit:contain!important}
+ body>header .brand-text{min-width:0}
+ body>header .brand-text b{font-size:10px!important;letter-spacing:.08em!important;white-space:nowrap}
+ body>header .brand-text small{font-size:8px!important;letter-spacing:.08em!important}
+ body>header .header-side{display:flex!important;align-items:center!important;gap:5px!important;flex:none!important}
+ body>header .top-link,body>header .back{display:none!important}
+ body>header #lang{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important}
+ .fju-topbar-button{display:grid;place-items:center;flex:none;width:34px;height:38px;padding:0;border:0;background:transparent;color:#fff;text-decoration:none}
+ .fju-topbar-button svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+ .fju-topbar-profile svg{border:1.7px solid #fff;border-radius:50%;padding:3px;width:35px;height:35px}
+ .fju-topbar-language{position:relative}
+ .fju-topbar-language>.fju-topbar-button{border:1px solid #ffffff50;border-radius:8px;font-size:22px}
+ .fju-topbar-languages{position:absolute;right:0;top:calc(100% + 8px);display:flex;gap:5px;padding:7px;background:#0b2342;border:1px solid #ffffff50;border-radius:11px;box-shadow:0 12px 28px #0006}
+ .fju-topbar-languages[hidden]{display:none!important}
+ .fju-topbar-languages button{border:0;border-radius:6px;background:#ffffff14;color:white;padding:4px;font-size:23px;width:38px;height:38px}
+ .fju-topbar-languages button[hidden]{display:none!important}
+ .fju-topbar-menu{position:absolute;top:calc(100% + 5px);right:12px;width:min(270px,calc(100vw - 24px));background:#0b2342;border:1px solid #ffffff35;border-radius:12px;box-shadow:0 18px 40px #0007;padding:8px}
+ .fju-topbar-menu[hidden]{display:none!important}
+ .fju-topbar-menu a{display:block;color:#fff;text-decoration:none;padding:12px;border-bottom:1px solid #ffffff1a;font-weight:700;font-size:13px}
+ .fju-topbar-menu a:last-child{border-bottom:0}
+}
+@media(max-width:390px){
+ body>header .header-in{width:calc(100% - 16px)!important;gap:3px!important}
+ body>header .brand img{width:60px!important}
+ body>header .brand-text b{font-size:9px!important}
+ body>header .brand-text small{font-size:7px!important}
+ body>header .header-side{gap:3px!important}
+ .fju-topbar-button{width:30px;height:36px}
+ .fju-topbar-button svg{width:24px;height:24px}
+ .fju-topbar-profile svg{width:32px;height:32px}
+}
+</style>
 </head>
 <body>
-<header><div class="wrap header-in"><a class="brand" href="../">FJU JAPAN<small>CONNECT JAPAN</small></a><div class="header-side"><a href="../" class="back" data-t="back">← VOLTAR</a><select id="lang" aria-label="Idioma / 言語 / Language"><option value="pt">Português</option><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
+<header><div class="wrap header-in"><a class="brand" href="../">FJU JAPAN<small>CONNECT JAPAN</small></a><div class="header-side"><a href="../" class="back" data-t="back">← VOLTAR</a><select id="lang" aria-label="Idioma / 言語 / Language"><option value="pt">Português</option><option value="ja">日本語</option><option value="en">English</option></select><button type="button" class="fju-topbar-button" id="fju-sub-search" aria-label="Buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 5 5"/></svg></button><div class="fju-topbar-language"><button type="button" class="fju-topbar-button" id="fju-sub-language" aria-label="Selecionar idioma" aria-expanded="false">🇧🇷</button><div class="fju-topbar-languages" id="fju-sub-languages" hidden><button type="button" data-lang="pt" aria-label="Português">🇧🇷</button><button type="button" data-lang="ja" aria-label="日本語">🇯🇵</button><button type="button" data-lang="en" aria-label="English">🇺🇸</button></div></div><a class="fju-topbar-button fju-topbar-profile" href="../#my-page" aria-label="My Page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.8 20c.9-4.1 3.3-6 7.2-6s6.3 1.9 7.2 6"/></svg></a><button type="button" class="fju-topbar-button" id="fju-sub-menu-toggle" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div></div><nav class="fju-topbar-menu" id="fju-sub-menu" hidden aria-label="Menu"><a href="../">Início</a><a href="../eventos/">Eventos</a><a href="../#my-page">My Page</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a></nav></header>
 <main>
 <section class="hero"><div class="wrap"><div class="overline">FJU CONNECT · FIND YOUR PEOPLE</div><h1 id="heroTitle"></h1><p data-t="intro"></p></div></section>
 <div class="wrap">
@@ -101,6 +139,30 @@ $('year').textContent=new Date().getFullYear();setLanguage(lang);
     var now=Date.now();
     if(now-lastTap<300){e.preventDefault();lastTap=0;}else lastTap=now;
   },{passive:false});
+})();
+</script>
+<script id="fju-shared-mobile-topbar-script">
+(function(){
+ const select=document.getElementById('lang');
+ const toggle=document.getElementById('fju-sub-language');
+ const list=document.getElementById('fju-sub-languages');
+ const menu=document.getElementById('fju-sub-menu');
+ const menuToggle=document.getElementById('fju-sub-menu-toggle');
+ const search=document.getElementById('fju-sub-search');
+ const flags={pt:'🇧🇷',ja:'🇯🇵',en:'🇺🇸'};
+ function sync(){if(!select)return;toggle.textContent=flags[select.value]||'🌐';list.querySelectorAll('[data-lang]').forEach(b=>{b.hidden=b.dataset.lang===select.value;});}
+ function close(){list.hidden=true;toggle.setAttribute('aria-expanded','false');menu.hidden=true;menuToggle.setAttribute('aria-expanded','false');}
+ toggle.addEventListener('click',()=>{const open=list.hidden;close();list.hidden=!open;toggle.setAttribute('aria-expanded',String(open));});
+ list.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{
+   select.value=b.dataset.lang;select.dispatchEvent(new Event('change',{bubbles:true}));sync();close();
+ }));
+ select?.addEventListener('change',sync);
+ menuToggle.addEventListener('click',()=>{const open=menu.hidden;close();menu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));});
+ search.addEventListener('click',()=>{close();const field=document.getElementById('search');if(field){field.scrollIntoView({behavior:'smooth',block:'center'});field.focus({preventScroll:true});}else location.href='../#inicio';});
+ document.addEventListener('click',e=>{if(!e.target.closest('.fju-topbar-language,#fju-sub-menu-toggle,#fju-sub-menu'))close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+ window.addEventListener('pageshow',sync);
+ sync();
 })();
 </script>
 </body></html>
