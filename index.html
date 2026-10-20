@@ -1142,5 +1142,29 @@ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttrib
 </script>
 <script type="module" src="./my-page-auth.js"></script>
 <script defer src="./universal-highlights.js"></script>
+<script id="fju-app-gesture-lock">
+/* FJU JAPAN: prevent accidental page magnification on iOS Safari.
+   Keep one-finger scrolling, links, inputs and native accessibility settings intact. */
+(function(){
+  'use strict';
+  document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});
+  document.addEventListener('gesturechange',function(e){e.preventDefault();},{passive:false});
+  document.addEventListener('gestureend',function(e){e.preventDefault();},{passive:false});
+  document.addEventListener('touchmove',function(e){
+    if(e.touches.length>1)e.preventDefault();
+  },{passive:false});
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1)e.preventDefault();
+  },{passive:false});
+  var lastTap=0;
+  document.addEventListener('touchend',function(e){
+    if(e.changedTouches.length!==1 || e.touches.length!==0)return;
+    var target=e.target;
+    if(target && target.closest && target.closest('a,button,input,textarea,select,label,[role="button"],[contenteditable],video,iframe')){lastTap=0;return;}
+    var now=Date.now();
+    if(now-lastTap<300){e.preventDefault();lastTap=0;}else lastTap=now;
+  },{passive:false});
+})();
+</script>
 </body>
 </html>
