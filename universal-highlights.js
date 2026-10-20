@@ -15,7 +15,7 @@
  // Only the three newest public posts; shuffle display order without repetition per cycle.
  const locale=()=>translations[document.getElementById('language')?.value]||translations.pt;
  let posts=[],queue=[],current=-1,timer=null;
- const shuffle=()=>{queue=posts.map((_,i)=>i);for(let i=queue.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}if(queue.length>1&&queue[0]===current)[queue.push(queue.shift())];};
+ const shuffle=()=>{queue=posts.map((_,i)=>i);for(let i=queue.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}if(queue.length>1&&queue[0]===current)queue.push(queue.shift());};
  const plain=html=>{const el=document.createElement('div');el.innerHTML=html||'';return el.textContent?.trim()||'';};
  const draw=()=>{
   const t=locale();root.querySelector('[data-universal-heading]').textContent=t.label;
