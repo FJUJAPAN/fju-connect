@@ -374,11 +374,11 @@ signupForm.addEventListener('submit',async event=>{
   if(data.session&&data.user?.id){
    await sendYouthDetails(data.user.id,info,photoBlob);
    sessionStorage.removeItem('fju-youth-pending-signup');
-   signupForm.reset();
+   signupForm.reset();signupExtra.photo.dispatchEvent(new Event('change'));
    await loadAccount();
    setFeedback('Cadastro completo enviado ao coordenador do seu polo!');
   }else{
-   signupForm.reset();showView('login');
+   signupForm.reset();signupExtra.photo.dispatchEvent(new Event('change'));showView('login');
    setFeedback('Confirme seu e-mail e entre na My Page. Por segurança, será preciso selecionar sua foto novamente para concluir a inscrição.');
   }
  }catch(error){
