@@ -205,8 +205,8 @@ const signupNotice=document.createElement('p');
 signupNotice.setAttribute('role','alert');signupNotice.setAttribute('aria-live','assertive');
 signupNotice.style.cssText='display:none;margin:0;padding:12px;border-radius:9px;background:#fff0f0;color:#9b1c1c;font-weight:700;line-height:1.5';
 const signupPolo=document.createElement('select');signupPolo.required=true;signupPolo.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
-const signupProjects=document.createElement('fieldset');signupProjects.style.cssText='border:1px solid #9daecb;border-radius:10px;padding:12px;background:#f8faff;color:#172033';
-const signupLegend=document.createElement('legend');signupLegend.textContent='Projetos em que atua';signupProjects.append(signupLegend);
+const signupProjects=document.createElement('div');signupProjects.setAttribute('role','group');signupProjects.style.cssText='box-sizing:border-box;min-width:0;width:100%;border:1px solid #9daecb;border-radius:10px;padding:12px;background:#f8faff;color:#172033';
+const signupLegend=document.createElement('div');signupLegend.textContent='Projetos em que atua';signupLegend.style.cssText='font-size:15px;font-weight:700;line-height:1.5;white-space:normal;overflow-wrap:anywhere;margin-bottom:8px;width:100%';signupProjects.append(signupLegend);
 for(const project of ['Esporte','Cultura','Mídia','Banda']){
  const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;padding:7px;color:#172033';
  const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='appearance:auto;-webkit-appearance:checkbox;width:22px;height:22px;min-width:22px;min-height:22px;accent-color:#253b75;opacity:1;cursor:pointer';
