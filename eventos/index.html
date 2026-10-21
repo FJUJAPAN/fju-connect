@@ -58,8 +58,39 @@ html{scroll-padding-top:94px}
 body{padding-top:84px}
 body>header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important}
 </style>
-</head><body>
-<header><div class="wrap header-in"><a class="brand" href="../" aria-label="FJU CONNECT JAPAN"><img id="officialLogo" alt="FJU JAPAN logo"><div class="brand-text"><b>FJU CONNECT</b><small>JAPAN · GALLERY</small></div></a><div class="header-side"><a class="top-link" href="../" data-t="back">VOLTAR AO PORTAL</a><select id="lang" aria-label="Language"><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select></div></div></header>
+<style id="fju-shared-app-header-style">
+.fju-shared-app-header{display:none}
+@media(max-width:740px){
+body>header{height:82px!important;z-index:1100!important;background:#123158!important;border:0!important}
+body>header>.header-in{display:none!important}
+.fju-shared-app-header{height:82px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 13px;position:relative;color:white;font-family:system-ui,-apple-system,sans-serif}
+.fju-shared-logo{display:flex;align-items:center;gap:6px;text-decoration:none;color:white;min-width:0;flex:0 1 auto}
+.fju-logo-big{font-weight:1000;font-style:italic;letter-spacing:-4px;font-size:clamp(27px,8vw,43px);line-height:1}
+.fju-logo-small{font-size:9px;font-weight:900;letter-spacing:1.8px;line-height:1.35}
+.fju-shared-controls{display:flex;align-items:center;gap:5px;flex:none}
+.fju-shared-icon{width:36px;height:39px;display:grid;place-items:center;flex:none;border:0;background:transparent;color:white;text-decoration:none;padding:3px;cursor:pointer}
+.fju-shared-icon svg{width:27px;height:27px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fju-shared-lang-wrap{position:relative}
+.fju-shared-flag{width:35px;height:37px;border:1px solid #ffffff60;border-radius:9px;background:#ffffff12;font-size:22px;padding:0;cursor:pointer}
+#fju-shared-language-menu:not([hidden]){display:flex;position:absolute;right:0;top:43px;gap:5px;background:#0b2342;padding:8px;border:1px solid #ffffff40;border-radius:10px;z-index:1300;box-shadow:0 10px 25px #0006}
+#fju-shared-language-menu button{background:transparent;border:0;font-size:23px;padding:5px;cursor:pointer}
+#fju-shared-language-menu button[hidden]{display:none}
+#fju-shared-menu:not([hidden]){display:flex;flex-direction:column;position:absolute;right:9px;top:76px;z-index:1300;width:190px;background:#0b2342;border:1px solid #ffffff35;border-radius:12px;padding:8px;box-shadow:0 12px 30px #0007}
+#fju-shared-menu a{padding:12px;color:white;text-decoration:none;font-size:13px;font-weight:700;border-bottom:1px solid #ffffff20}
+#fju-shared-menu a:last-child{border:0}
+}
+@media(max-width:365px){.fju-shared-app-header{padding:0 7px;gap:3px}.fju-shared-controls{gap:1px}.fju-shared-icon{width:32px}.fju-shared-flag{width:31px}.fju-logo-small{font-size:8px;letter-spacing:1px}}
+</style></head><body>
+<header><div class="wrap header-in"><a class="brand" href="../" aria-label="FJU CONNECT JAPAN"><img id="officialLogo" alt="FJU JAPAN logo"><div class="brand-text"><b>FJU CONNECT</b><small>JAPAN · GALLERY</small></div></a><div class="header-side"><a class="top-link" href="../" data-t="back">VOLTAR AO PORTAL</a><select id="lang" aria-label="Language"><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select></div></div><div class="fju-shared-app-header" aria-label="Menu superior FJU Connect">
+<a class="fju-shared-logo" href="../" aria-label="FJU Connect Japan"><span class="fju-logo-big">FJU</span><span class="fju-logo-small">CONNECT<br>JAPAN</span></a>
+<div class="fju-shared-controls">
+<button type="button" class="fju-shared-icon" id="fju-shared-search" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></button>
+<div class="fju-shared-lang-wrap"><button type="button" id="fju-shared-language" class="fju-shared-flag" aria-label="Trocar idioma" aria-expanded="false">🇧🇷</button><div id="fju-shared-language-menu" hidden><button type="button" data-language="pt" aria-label="Português">🇧🇷</button><button type="button" data-language="ja" aria-label="日本語">🇯🇵</button><button type="button" data-language="en" aria-label="English">🇺🇸</button></div></div>
+<a class="fju-shared-icon" href="../#my-page" aria-label="My Page"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.3 3.5-6.5 8-6.5s7.2 2.2 8 6.5"/></svg></a>
+<button type="button" class="fju-shared-icon" id="fju-shared-menu-button" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+</div>
+<nav id="fju-shared-menu" hidden aria-label="Navegação"><a href="../">Início</a><a href="../eventos/">Eventos</a><a href="../#my-page">My Page</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a></nav>
+</div></header>
 <main><section class="hero"><div class="hero-photo" id="heroBackground"></div><div class="wrap"><span class="eyebrow" data-t="eyebrow">FJU JAPAN / GALERIA NACIONAL</span><h1 data-th="heroTitle">NOSSOS ENCONTROS. <span>NOSSAS HISTÓRIAS.</span></h1><p data-t="heroDesc">Uma única galeria para reunir os momentos da FJU em todo o Japão.</p><div class="hero-cta"><a class="btn btn-red" href="#galeria" data-t="explore">EXPLORAR EVENTOS</a><a class="btn btn-plain" href="#enviar" data-t="send">ENVIAR FOTOS</a></div></div></section>
 <section id="galeria" class="wrap"><div class="intro"><span class="tag"><i></i><span data-t="section">ÁLBUNS PUBLICADOS</span></span><div class="intro-head"><div><h2 data-th="heading">MOMENTOS <em>REAIS.</em></h2><p data-t="sectionDesc">Fotos aprovadas em um lugar para os encontros de todo o Japão.</p></div><span class="count" id="counter"></span></div></div><div class="filters"><input class="filter-input" id="search" type="search" data-placeholder="search" placeholder="Buscar evento ou cidade..." aria-label="Buscar eventos"><select class="filter-select" id="type" aria-label="Filtrar categoria"><option value="" data-t="all">Todas as atividades</option><option value="encontros" data-t="encontros">Encontros</option><option value="esporte" data-t="esporte">Esporte</option><option value="cultura" data-t="cultura">Cultura</option></select></div><div class="albums" id="albums"></div><div class="no-results" id="noResults" data-t="noResults">Nenhum álbum corresponde à busca.</div></section>
 <section class="workflow" id="enviar"><div class="wrap"><div class="workflow-head"><span class="tag"><i></i><span data-t="workflow">ENVIO DE MATERIAL</span></span><h2 data-th="workflowTitle">VOCÊ ENVIA. <em>NÓS APROVAMOS.</em></h2><p data-t="workflowDesc">Os organizadores compartilham os registros. Só serão publicados após aprovação da coordenação nacional.</p></div><div class="steps"><div class="step"><strong>01</strong><h3 data-t="step1">O organizador envia</h3><p data-t="step1p">Evento, cidade e fotos.</p></div><div class="step"><strong>02</strong><h3 data-t="step2">A coordenação avalia</h3><p data-t="step2p">Material pendente não é publicado.</p></div><div class="step"><strong>03</strong><h3 data-t="step3">O álbum entra no ar</h3><p data-t="step3p">Álbum público e link compartilhável.</p></div></div><form id="sendForm" class="send-form"><h3 data-t="formTitle">Enviar um evento para avaliação</h3><p data-t="formDesc">As fotos são enviadas pelo WhatsApp oficial, não diretamente pelo site.</p><div class="form-grid"><div class="field"><label for="f-event" data-t="labelEvent">Nome do evento</label><input id="f-event" name="event" maxlength="120" required></div><div class="field"><label for="f-city" data-t="labelCity">Cidade / polo</label><input id="f-city" name="city" maxlength="100" required></div><div class="field"><label for="f-date" data-t="labelDate">Data do evento</label><input id="f-date" name="date" type="date" required></div><div class="field"><label for="f-name" data-t="labelName">Nome do organizador</label><input id="f-name" name="name" maxlength="100" required></div><div class="field full"><label for="f-link" data-t="labelLink">Link das fotos (opcional)</label><input id="f-link" name="link" type="url" placeholder="https://drive.google.com/..." maxlength="1500"></div><div class="field full"><label for="f-note" data-t="labelNote">Observações (opcional)</label><textarea id="f-note" name="note" maxlength="700"></textarea></div></div><button class="btn btn-red" type="submit" data-t="submit">ABRIR WHATSAPP PARA ENVIAR</button><div class="form-warning" data-th="disclaimer">As fotos não são enviadas automaticamente por este formulário. <strong>A publicação depende da aprovação do administrador nacional.</strong></div></form></div></section></main>
@@ -151,4 +182,19 @@ const requestedType=new URLSearchParams(window.location.search).get('tipo');if([
   },{passive:false});
 })();
 </script>
-</body></html>
+<script id="fju-shared-app-header-script">
+(function(){
+const language=document.getElementById('lang'),toggle=document.getElementById('fju-shared-language'),langMenu=document.getElementById('fju-shared-language-menu'),menuBtn=document.getElementById('fju-shared-menu-button'),menu=document.getElementById('fju-shared-menu');
+const flags={pt:'🇧🇷',ja:'🇯🇵',en:'🇺🇸'};
+function sync(){const value=language?.value||'pt';toggle.textContent=flags[value]||'🇧🇷';langMenu.querySelectorAll('[data-language]').forEach(b=>b.hidden=b.dataset.language===value);}
+function close(){langMenu.hidden=true;toggle.setAttribute('aria-expanded','false');menu.hidden=true;menuBtn.setAttribute('aria-expanded','false');}
+toggle.addEventListener('click',()=>{const opening=langMenu.hidden;close();langMenu.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));});
+langMenu.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>{if(language){language.value=b.dataset.language;language.dispatchEvent(new Event('change',{bubbles:true}));}sync();close();}));
+language?.addEventListener('change',sync);
+menuBtn.addEventListener('click',()=>{const opening=menu.hidden;close();menu.hidden=!opening;menuBtn.setAttribute('aria-expanded',String(opening));});
+document.getElementById('fju-shared-search').addEventListener('click',()=>{close();const input=document.getElementById('search');if(input){input.scrollIntoView({behavior:'smooth',block:'center'});input.focus({preventScroll:true});}});
+document.addEventListener('click',e=>{if(!e.target.closest('.fju-shared-controls,#fju-shared-menu'))close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+sync();
+})();
+</script></body></html>
