@@ -183,9 +183,9 @@ function localize(){
   localizeSignup();
 }
 const signupLabels={
- pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',error:'Não foi possível criar a conta: '},
- ja:{create:'新規登録',title:'青年アカウント作成',name:'氏名',email:'メールアドレス',password:'パスワード（8文字以上）',confirm:'パスワード確認',submit:'アカウント作成',back:'ログインに戻る',pending:'登録しました。確認メールのリンクを開いてからログインし、所属教会とプロジェクトを選択してください。',active:'登録完了！MY PAGEを開きます。',error:'登録できませんでした: '},
- en:{create:'Create my account',title:'Create youth account',name:'Full name',email:'Email',password:'Password (8+ characters)',confirm:'Confirm password',submit:'Create account',back:'Back to login',pending:'Account created. Confirm your email, then sign in and choose your church and projects.',active:'Account created! Opening My Page.',error:'Could not create account: '}
+ pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
+ ja:{create:'新規登録',title:'青年アカウント作成',name:'氏名',email:'メールアドレス',password:'パスワード（8文字以上）',confirm:'パスワード確認',submit:'アカウント作成',back:'ログインに戻る',pending:'登録しました。確認メールのリンクを開いてからログインし、所属教会とプロジェクトを選択してください。',active:'登録完了！MY PAGEを開きます。',duplicate:'このメールアドレスは登録済みです。ログインするか別のメールアドレスを使用してください。',error:'登録できませんでした: '},
+ en:{create:'Create my account',title:'Create youth account',name:'Full name',email:'Email',password:'Password (8+ characters)',confirm:'Confirm password',submit:'Create account',back:'Back to login',pending:'Account created. Confirm your email, then sign in and choose your church and projects.',active:'Account created! Opening My Page.',duplicate:'This email is already registered. Sign in or use another email address.',error:'Could not create account: '}
 };
 const signupText=()=>signupLabels[lang()]||signupLabels.pt;
 const signupOpen=document.createElement('button');
@@ -201,19 +201,27 @@ const signupPassword=document.createElement('input');signupPassword.required=tru
 const signupConfirm=document.createElement('input');signupConfirm.required=true;signupConfirm.type='password';signupConfirm.minLength=8;signupConfirm.autocomplete='new-password';
 const signupSubmit=document.createElement('button');signupSubmit.type='submit';signupSubmit.style.cssText='padding:13px;border-radius:10px;background:#253b75;color:white;font-weight:700';
 const signupBack=document.createElement('button');signupBack.type='button';signupBack.style.cssText='padding:10px;border:0;background:transparent;color:#253b75;text-decoration:underline';
-signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupSubmit,signupBack);
+const signupNotice=document.createElement('p');
+signupNotice.setAttribute('role','alert');signupNotice.setAttribute('aria-live','assertive');
+signupNotice.style.cssText='display:none;margin:0;padding:12px;border-radius:9px;background:#fff0f0;color:#9b1c1c;font-weight:700;line-height:1.5';
+signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupNotice,signupSubmit,signupBack);
+function signupFeedback(message='',error=false){
+ signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
+ signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
+ setFeedback(message,error);
+}
 loginForm.insertAdjacentElement('afterend',signupForm);
 function localizeSignup(){
  const t=signupText();signupOpen.textContent=t.create;signupTitle.textContent=t.title;
  for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
 }
-signupOpen.addEventListener('click',()=>{setFeedback();showView('signup');});
+signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
- if(signupPassword.value!==signupConfirm.value){setFeedback(t('passwordMismatch'),true);return;}
- signupSubmit.disabled=true;setFeedback('');
+ if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
+ signupSubmit.disabled=true;signupFeedback('');
  try{
   const {data,error}=await client.auth.signUp({
    email:signupEmail.value.trim(),password:signupPassword.value,
@@ -222,13 +230,13 @@ signupForm.addEventListener('submit',async event=>{
   if(error)throw error;
   // Supabase can return an obfuscated user with no identities for an existing account.
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
-   setFeedback(signupText().duplicate,true);return;
+   signupFeedback(signupText().duplicate,true);return;
   }
   if(data.session){signupForm.reset();setFeedback(signupText().active);await loadAccount();}
   else{signupForm.reset();showView('login');setFeedback(signupText().pending);}
  }catch(error){
   const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
-  setFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
+  signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
  }
  finally{signupSubmit.disabled=false;}
 });
