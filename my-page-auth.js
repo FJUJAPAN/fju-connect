@@ -155,6 +155,36 @@ async function loadStoredHeaderAvatar(user,current){
     if(headerGuest)headerGuest.hidden=true;
   }catch(_){}
 }
+async function loadApprovedYouthCard(current){
+ try{
+  const {data,error}=await client.rpc('fju_consultar_meu_cartao_jovem');
+  if(error||current!==updateSequence||passwordRecovery)return;
+  const row=Array.isArray(data)?data[0]:data;
+  if(!row)return;
+  const name=byId('fju-member-card-name');
+  const polo=byId('fju-member-card-polo');
+  const project=byId('fju-member-card-project');
+  const rank=byId('fju-member-card-rank');
+  if(name&&row.nome_completo)name.textContent=row.nome_completo;
+  if(polo&&row.polo_nome)polo.textContent='FJU '+row.polo_nome;
+  if(project)project.textContent=(row.projetos||[]).join(' · ')||'Nenhum projeto informado';
+  const display=String(row.patente||row.categoria||'').trim().toLowerCase();
+  const labels={inconstante:'Inconstante',firme:'Firme',cpo:'CPO',colaborador:'Colaborador',obreiro:'Obreiro',coordenador:'Coordenador'};
+  if(rank&&labels[display])rank.textContent=labels[display];
+ }catch(_){}
+}
+async function loadYouthPreviewPhoto(user,current){
+ try{
+  const {data:blob,error}=await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
+  if(error||!blob||current!==updateSequence||passwordRecovery)return;
+  clearHeaderAvatarObjectUrl();
+  headerAvatarObjectUrl=URL.createObjectURL(blob);
+  if(headerAvatar){headerAvatar.src=headerAvatarObjectUrl;headerAvatar.hidden=false;}
+  if(headerGuest)headerGuest.hidden=true;
+  const img=byId('fju-member-card-photo');
+  if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
+ }catch(_){}
+}
 function renderHeaderAccount(user=null){
   const signedIn=Boolean(user);
   document.documentElement.dataset.fjuAuthenticated=String(signedIn);
@@ -221,7 +251,88 @@ async function loadSignupPolos(){
  signupSubmit.disabled=false;
  for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
 }
-signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
+// Campos completos do cadastro inicial, compartilhados com a conclusão de cadastro na My Page.
+function createYouthDetails(prefix){
+ const root=document.createElement('div');root.style.cssText='display:grid;gap:12px;min-width:0';
+ const makeLabel=(value,control)=>{
+  const label=document.createElement('label');label.style.cssText='display:grid;gap:6px;min-width:0;color:#172033;font-weight:600;font-size:14px';
+  const text=document.createElement('span');text.textContent=value;label.append(text,control);return label;
+ };
+ const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.required=true;photo.setAttribute('aria-label','Foto de perfil do jovem');
+ photo.style.cssText='width:100%;max-width:100%;box-sizing:border-box;font-size:14px';
+ const preview=document.createElement('img');preview.alt='Prévia da foto selecionada';preview.hidden=true;preview.style.cssText='width:95px;height:115px;object-fit:cover;border-radius:12px;border:1px solid #b7c5dd';
+ let photoUrl=null;
+ photo.addEventListener('change',()=>{
+  if(photoUrl){URL.revokeObjectURL(photoUrl);photoUrl=null;}
+  const file=photo.files?.[0];preview.hidden=!file;
+  if(file){photoUrl=URL.createObjectURL(file);preview.src=photoUrl;}
+ });
+ const photoHolder=document.createElement('div');photoHolder.style.cssText='display:grid;gap:6px';
+ photoHolder.append(makeLabel('Foto de perfil',photo),preview);
+ const dateHolder=document.createElement('div');dateHolder.style.cssText='display:grid;gap:6px';
+ const dateLabel=document.createElement('label');dateLabel.textContent='Data de nascimento';dateLabel.style.cssText='color:#172033;font-weight:600;font-size:14px';
+ const parts=document.createElement('div');parts.style.cssText='display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:7px;min-width:0';
+ function makeSelect(placeholder){
+  const element=document.createElement('select');element.required=true;element.setAttribute('aria-label',placeholder);
+  element.style.cssText='min-width:0;width:100%;box-sizing:border-box;padding:9px 5px;border-radius:8px;background:white;color:#172033;font-size:16px';
+  const blank=document.createElement('option');blank.value='';blank.textContent=placeholder;element.append(blank);
+  return element;
+ }
+ const day=makeSelect('Dia'),month=makeSelect('Mês'),year=makeSelect('Ano');
+ for(let d=1;d<=31;d++){const o=document.createElement('option');o.value=String(d);o.textContent=String(d).padStart(2,'0');day.append(o);}
+ for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=String(m);o.textContent=String(m).padStart(2,'0');month.append(o);}
+ for(let y=new Date().getFullYear();y>=1900;y--){const o=document.createElement('option');o.value=String(y);o.textContent=String(y);year.append(o);}
+ parts.append(day,month,year);dateHolder.append(dateLabel,parts);
+ const phone=document.createElement('input');phone.type='tel';phone.required=true;phone.maxLength=30;phone.autocomplete='tel';phone.placeholder='Ex.: 090-1234-5678';phone.style.cssText='min-width:0;width:100%;box-sizing:border-box';
+ const nationality=makeSelect('Selecione a nacionalidade');
+ const countries=[['BR','🇧🇷 Brasil'],['JP','🇯🇵 Japão'],['PH','🇵🇭 Filipinas'],['PE','🇵🇪 Peru'],['BO','🇧🇴 Bolívia'],['PY','🇵🇾 Paraguai'],['AR','🇦🇷 Argentina'],['CO','🇨🇴 Colômbia'],['VE','🇻🇪 Venezuela'],['US','🇺🇸 Estados Unidos'],['CN','🇨🇳 China'],['KR','🇰🇷 Coreia do Sul'],['VN','🇻🇳 Vietnã'],['ID','🇮🇩 Indonésia'],['NP','🇳🇵 Nepal'],['IN','🇮🇳 Índia'],['LK','🇱🇰 Sri Lanka'],['MM','🇲🇲 Mianmar'],['TH','🇹🇭 Tailândia'],['PK','🇵🇰 Paquistão'],['BD','🇧🇩 Bangladesh'],['GB','🇬🇧 Reino Unido'],['DE','🇩🇪 Alemanha'],['PT','🇵🇹 Portugal'],['MX','🇲🇽 México'],['CL','🇨🇱 Chile'],['UY','🇺🇾 Uruguai'],['EC','🇪🇨 Equador'],['IT','🇮🇹 Itália'],['FR','🇫🇷 França'],['CA','🇨🇦 Canadá'],['AU','🇦🇺 Austrália']];
+ for(const [code,name] of countries){const o=document.createElement('option');o.value=code;o.textContent=name;nationality.append(o);}
+ const rank=document.createElement('p');rank.style.cssText='margin:0;padding:10px;border-radius:8px;background:#e9effb;color:#172033;font-size:14px;line-height:1.4';
+ rank.textContent='Patente do jovem: será definida pelo coordenador ao aprovar a inscrição.';
+ root.append(photoHolder,dateHolder,makeLabel('Telefone',phone),makeLabel('Nacionalidade',nationality),rank);
+ return {root,photo,day,month,year,phone,nationality};
+}
+function birthDateFrom(fields){
+ const y=Number(fields.year.value),m=Number(fields.month.value),d=Number(fields.day.value);
+ if(!y||!m||!d)throw Error('Preencha a data de nascimento.');
+ const date=new Date(Date.UTC(y,m-1,d));
+ if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)throw Error('Data de nascimento inválida.');
+ return String(y).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+function fillYouthDetails(fields,details){
+ if(details?.birth){const parts=details.birth.split('-');if(parts.length===3){fields.year.value=String(Number(parts[0]));fields.month.value=String(Number(parts[1]));fields.day.value=String(Number(parts[2]));}}
+ if(details?.phone)fields.phone.value=details.phone;
+ if(details?.nationality)fields.nationality.value=details.nationality;
+}
+async function compressYouthPhoto(file){
+ if(!file||!file.type.startsWith('image/')||file.size>8*1024*1024)throw Error('Selecione uma foto de até 8 MB.');
+ const bitmap=await createImageBitmap(file);
+ try{
+  for(const size of [900,750,600,480,360,280,200,140]){
+   const scale=Math.min(1,size/Math.max(bitmap.width,bitmap.height));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Não foi possível processar a foto.');
+   ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+   for(const quality of [0.82,0.7,0.58,0.45,0.3,0.18,0.08]){
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+    if(blob&&blob.size<=100*1024)return blob;
+   }
+  }
+  throw Error('Não foi possível reduzir a foto para 100 KB.');
+ }finally{bitmap.close();}
+}
+async function sendYouthDetails(userId,info,blob){
+ const upload=await client.storage.from('fju-inscricoes-fotos').upload(userId+'/perfil.jpg',blob,{contentType:'image/jpeg',upsert:true});
+ if(upload.error)throw Error('Não foi possível enviar a foto: '+upload.error.message);
+ const {error}=await client.rpc('fju_enviar_inscricao_jovem_detalhada',{
+  p_polo_id:info.polo,p_nome:info.name,p_projetos:info.projects,
+  p_nascimento:info.birth,p_telefone:info.phone,p_nacionalidade_iso2:info.nationality
+ });
+ if(error)throw Error('Não foi possível enviar a inscrição: '+error.message);
+}
+const signupExtra=createYouthDetails('signup');
+signupForm.append(signupTitle,signupName,signupExtra.root,signupPolo,signupProjects,signupEmail,signupPassword,signupConfirm,signupNotice,signupSubmit,signupBack);
 function signupFeedback(message='',error=false){
  signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
  signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
@@ -238,32 +349,43 @@ signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const requestedName=signupName.value.trim(),requestedPolo=signupPolo.value;
- const requestedProjects=[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value);
+ const info={
+  email:signupEmail.value.trim(),name:signupName.value.trim(),polo:signupPolo.value,
+  projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),
+  phone:signupExtra.phone.value.trim(),nationality:signupExtra.nationality.value
+ };
  signupSubmit.disabled=true;signupFeedback('');
+ let accountCreated=false;
  try{
+  info.birth=birthDateFrom(signupExtra);
+  // Validação da foto ANTES de abrir a conta no Supabase.
+  const photoBlob=await compressYouthPhoto(signupExtra.photo.files?.[0]);
   const {data,error}=await client.auth.signUp({
-   email:signupEmail.value.trim(),password:signupPassword.value,
-   options:{data:{full_name:requestedName},emailRedirectTo:window.location.origin+window.location.pathname}
+   email:info.email,password:signupPassword.value,
+   options:{data:{full_name:info.name},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
-  // Supabase can return an obfuscated user with no identities for an existing account.
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
    signupFeedback(signupText().duplicate,true);return;
   }
-  if(data.session){
-   const {error:inscriptionError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:requestedPolo,p_nome:requestedName,p_projetos:requestedProjects});
-   if(inscriptionError){signupFeedback('Conta criada, mas inscrição não enviada: '+inscriptionError.message,true);return;}
-   signupForm.reset();await loadAccount();setFeedback('Conta e inscrição enviadas ao coordenador!');
+  accountCreated=true;
+  // Não guardar senha nem foto no armazenamento do navegador.
+  sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify(info));
+  if(data.session&&data.user?.id){
+   await sendYouthDetails(data.user.id,info,photoBlob);
+   sessionStorage.removeItem('fju-youth-pending-signup');
+   signupForm.reset();signupExtra.photo.dispatchEvent(new Event('change'));
+   await loadAccount();
+   setFeedback('Cadastro completo enviado ao coordenador do seu polo!');
   }else{
-   sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify({email:signupEmail.value.trim(),name:requestedName,polo:requestedPolo,projects:requestedProjects}));
-   signupForm.reset();showView('login');setFeedback('Confirme seu e-mail e entre na My Page para concluir o envio da inscrição.');
+   signupForm.reset();signupExtra.photo.dispatchEvent(new Event('change'));showView('login');
+   setFeedback('Confirme seu e-mail e entre na My Page. Por segurança, será preciso selecionar sua foto novamente para concluir a inscrição.');
   }
  }catch(error){
   const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
-  signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
- }
- finally{signupSubmit.disabled=false;}
+  const msg=duplicate?signupText().duplicate:signupText().error+error.message;
+  signupFeedback(accountCreated?msg+' A conta já foi criada: entre na My Page para concluir a inscrição.':msg,true);
+ }finally{signupSubmit.disabled=false;}
 });
 
 function showView(view){
@@ -305,24 +427,34 @@ async function renderYouthSignup(user,isAdmin,current){
   if(current!==updateSequence||passwordRecovery)return;
   // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
   const currentSignup=Array.isArray(existing)?existing[0]:existing;
-  if(!existingError&&!currentSignup){
-   let pending=null;try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
-   if(pending&&pending.email===user.email&&pending.polo&&pending.name){
-    const {error:pendingError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:pending.polo,p_nome:pending.name,p_projetos:pending.projects||[]});
-    if(current!==updateSequence||passwordRecovery)return;
-    if(!pendingError){sessionStorage.removeItem('fju-youth-pending-signup');status.textContent='Inscrição enviada ao coordenador do polo!';return;}
-    status.textContent='Conclua a inscrição abaixo: '+pendingError.message;
-   }
-  }
+  // Se houve confirmação por e-mail, recuperar as escolhas deste navegador.
+  // A foto nunca é guardada em sessionStorage: deve ser selecionada novamente.
+  let pending=null;
+  try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+  if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){
-    status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
+    const statusTexts={
+      pendente:'Inscrição recebida. Aguarde a análise do coordenador do seu polo.',
+      aprovado:'Inscrição aprovada! Sua ficha oficial foi criada.',
+      rejeitado:'Inscrição rejeitada. Procure o coordenador do seu polo para esclarecer.'
+    };
+    status.textContent=statusTexts[currentSignup.status]||'Situação: '+currentSignup.status;
+    const project=byId('fju-member-card-project');
+    if(project)project.textContent=(currentSignup.projetos_solicitados||[]).join(' · ')||'Nenhum projeto informado';
+    const poloLabel=byId('fju-member-card-polo');
+    if(poloLabel&&currentSignup.polo_id){
+      const result=await client.rpc('fju_listar_polos_cadastro');
+      if(current!==updateSequence||passwordRecovery)return;
+      const found=(result.data||[]).find(p=>p.id===currentSignup.polo_id);
+      if(found)poloLabel.textContent='FJU '+found.nome;
+    }
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
   const {data:polos,error:poloError}=await client.rpc('fju_listar_polos_cadastro');
   if(current!==updateSequence||passwordRecovery)return;
   if(poloError){status.textContent='Não foi possível carregar os polos: '+poloError.message;return;}
-  status.textContent='Escolha seu polo e até 5 projetos. O coordenador verificará seus dados.';
+  status.textContent='Preencha todos os dados e envie a foto. O coordenador verificará sua inscrição e definirá a patente.';
   const form=document.createElement('form');form.style.display='grid';form.style.gap='10px';
   const name=document.createElement('input');name.required=true;name.maxLength=120;name.minLength=2;name.placeholder='Nome completo';name.setAttribute('aria-label','Nome completo');
   const polo=document.createElement('select');polo.required=true;polo.setAttribute('aria-label','Selecione seu polo');
@@ -337,13 +469,29 @@ async function renderYouthSignup(user,isAdmin,current){
     label.append(check,document.createTextNode(project));projects.append(label);
   }
   const button=document.createElement('button');button.type='submit';button.textContent='Enviar solicitação';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
-  form.append(name,polo,projects,button);container.append(form);
+  const details=createYouthDetails('logged-in');
+  name.value=pending?.name||user.user_metadata?.full_name||'';
+  if(pending?.polo)polo.value=pending.polo;
+  fillYouthDetails(details,pending);
+  for(const input of projects.querySelectorAll('input[type=checkbox]')){
+    input.checked=Array.isArray(pending?.projects)&&pending.projects.includes(input.value);
+  }
+  form.append(name,details.root,polo,projects,button);container.append(form);
   form.addEventListener('submit',async event=>{
-    event.preventDefault();button.disabled=true;status.textContent='Enviando inscrição…';
-    const selected=[...projects.querySelectorAll('input:checked')].map(x=>x.value);
-    const {error}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:polo.value,p_nome:name.value.trim(),p_projetos:selected});
-    if(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;return;}
-    form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+    event.preventDefault();button.disabled=true;status.textContent='Enviando foto e inscrição…';
+    try{
+      const info={
+       name:name.value.trim(),polo:polo.value,birth:birthDateFrom(details),
+       phone:details.phone.value.trim(),nationality:details.nationality.value,
+       projects:[...projects.querySelectorAll('input:checked')].map(x=>x.value)
+      };
+      const blob=await compressYouthPhoto(details.photo.files?.[0]);
+      await sendYouthDetails(user.id,info,blob);
+      sessionStorage.removeItem('fju-youth-pending-signup');
+      form.remove();status.textContent='Inscrição completa enviada! Aguarde a análise do coordenador do seu polo.';
+      await loadYouthPreviewPhoto(user,current);
+    }catch(error){status.textContent=error.message||'Não foi possível enviar a inscrição.';}
+    finally{button.disabled=false;}
   });
 }
 
@@ -385,6 +533,8 @@ async function loadAccount(){
     if(current!==updateSequence||passwordRecovery)return;
     await loadStoredHeaderAvatar(user,current);
     if(current!==updateSequence||passwordRecovery)return;
+    if(!profile?.ativo||!['nacional','coordenador'].includes(profile.papel))await loadYouthPreviewPhoto(user,current);
+    if(current!==updateSequence||passwordRecovery)return;
     const cardPhoto=byId('fju-member-card-photo');
     if(cardPhoto&&headerAvatar?.src&&!headerAvatar.hidden){cardPhoto.src=headerAvatar.src;cardPhoto.hidden=false;}
     if(profileError){
@@ -401,6 +551,8 @@ async function loadAccount(){
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
     await renderYouthSignup(user,verifiedAdmin,current);
+    if(current!==updateSequence||passwordRecovery)return;
+    if(!verifiedAdmin)await loadApprovedYouthCard(current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
