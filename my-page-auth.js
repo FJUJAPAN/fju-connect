@@ -215,7 +215,7 @@ async function loadAccount(){
     const memberCard=byId('fju-member-collectible');
     if(memberCard){
       const meta=user.user_metadata||{};
-      byId('fju-member-card-name').textContent=meta.full_name||meta.name||userEmail.split('@')[0]||'FJU JAPAN';
+      byId('fju-member-card-name').textContent=meta.full_name||meta.name||meta.nome||userEmail.split('@')[0]||'FJU JAPAN';
       const img=byId('fju-member-card-photo');
       const photo=meta.avatar_url||meta.picture||meta.photo_url||'';
       if(photo){img.src=photo;img.hidden=false;}else{img.hidden=true;img.removeAttribute('src');}
@@ -235,6 +235,8 @@ async function loadAccount(){
     if(current!==updateSequence||passwordRecovery)return;
     await loadStoredHeaderAvatar(user,current);
     if(current!==updateSequence||passwordRecovery)return;
+    const cardPhoto=byId('fju-member-card-photo');
+    if(cardPhoto&&headerAvatar?.src&&!headerAvatar.hidden){cardPhoto.src=headerAvatar.src;cardPhoto.hidden=false;}
     if(profileError){
       setFeedback(t('profileError'),true);
     }else if(profile?.ativo&&['nacional','coordenador'].includes(profile.papel)&&(profile.papel!=='coordenador'||Boolean(profile.polo_id))){
@@ -247,6 +249,7 @@ async function loadAccount(){
         churchName=polo?.nome||'';
       }
     }
+    if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
     const church=byId('fju-account-church');
