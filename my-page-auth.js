@@ -204,7 +204,23 @@ const signupBack=document.createElement('button');signupBack.type='button';signu
 const signupNotice=document.createElement('p');
 signupNotice.setAttribute('role','alert');signupNotice.setAttribute('aria-live','assertive');
 signupNotice.style.cssText='display:none;margin:0;padding:12px;border-radius:9px;background:#fff0f0;color:#9b1c1c;font-weight:700;line-height:1.5';
-signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupNotice,signupSubmit,signupBack);
+const signupPolo=document.createElement('select');signupPolo.required=true;signupPolo.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
+const signupProjects=document.createElement('fieldset');signupProjects.style.cssText='border:1px solid #9daecb;border-radius:10px;padding:12px;background:#f8faff;color:#172033';
+const signupLegend=document.createElement('legend');signupLegend.textContent='Projetos em que atua (até 5)';signupProjects.append(signupLegend);
+for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
+ const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;padding:7px;color:#172033';
+ const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='width:20px;height:20px;accent-color:#253b75';
+ check.addEventListener('change',()=>{if(signupProjects.querySelectorAll('input:checked').length>5){check.checked=false;signupFeedback('Máximo de 5 projetos.',true);}});
+ label.append(check,document.createTextNode(project));signupProjects.append(label);
+}
+async function loadSignupPolos(){
+ signupPolo.replaceChildren();
+ const empty=document.createElement('option');empty.value='';empty.textContent='Selecione seu polo';signupPolo.append(empty);
+ const {data,error}=await client.from('fju_polos').select('id,nome').order('nome');
+ if(error){signupFeedback('Erro ao carregar polos: '+error.message,true);return;}
+ for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
+}
+signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
 function signupFeedback(message='',error=false){
  signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
  signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
@@ -216,24 +232,32 @@ function localizeSignup(){
  for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
 }
-signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');});
+signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
+ const requestedName=signupName.value.trim(),requestedPolo=signupPolo.value;
+ const requestedProjects=[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value);
  signupSubmit.disabled=true;signupFeedback('');
  try{
   const {data,error}=await client.auth.signUp({
    email:signupEmail.value.trim(),password:signupPassword.value,
-   options:{data:{full_name:signupName.value.trim()},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:requestedName},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   // Supabase can return an obfuscated user with no identities for an existing account.
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
    signupFeedback(signupText().duplicate,true);return;
   }
-  if(data.session){signupForm.reset();setFeedback(signupText().active);await loadAccount();}
-  else{signupForm.reset();showView('login');setFeedback(signupText().pending);}
+  if(data.session){
+   const {error:inscriptionError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:requestedPolo,p_nome:requestedName,p_projetos:requestedProjects});
+   if(inscriptionError){signupFeedback('Conta criada, mas inscrição não enviada: '+inscriptionError.message,true);return;}
+   signupForm.reset();await loadAccount();setFeedback('Conta e inscrição enviadas ao coordenador!');
+  }else{
+   sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify({email:signupEmail.value.trim(),name:requestedName,polo:requestedPolo,projects:requestedProjects}));
+   signupForm.reset();showView('login');setFeedback('Confirme seu e-mail e entre na My Page para concluir o envio da inscrição.');
+  }
  }catch(error){
   const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
   signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
@@ -280,6 +304,15 @@ async function renderYouthSignup(user,isAdmin,current){
   if(current!==updateSequence||passwordRecovery)return;
   // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
   const currentSignup=Array.isArray(existing)?existing[0]:existing;
+  if(!existingError&&!currentSignup){
+   let pending=null;try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+   if(pending&&pending.email===user.email&&pending.polo&&pending.name){
+    const {error:pendingError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:pending.polo,p_nome:pending.name,p_projetos:pending.projects||[]});
+    if(current!==updateSequence||passwordRecovery)return;
+    if(!pendingError){sessionStorage.removeItem('fju-youth-pending-signup');status.textContent='Inscrição enviada ao coordenador do polo!';return;}
+    status.textContent='Conclua a inscrição abaixo: '+pendingError.message;
+   }
+  }
   if(!existingError&&currentSignup){
     status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
     return;
