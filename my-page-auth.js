@@ -188,6 +188,69 @@ const signupLabels={
  en:{create:'Create my account',title:'Create youth account',name:'Full name',email:'Email',password:'Password (8+ characters)',confirm:'Confirm password',submit:'Create account',back:'Back to login',pending:'Account created. Confirm your email, then sign in and choose your church and projects.',active:'Account created! Opening My Page.',duplicate:'This email is already registered. Sign in or use another email address.',error:'Could not create account: '}
 };
 const signupText=()=>signupLabels[lang()]||signupLabels.pt;
+// FJU JAPAN — dados pessoais enviados somente à inscrição privada.
+let signupInProgress=false;
+const detailLabels={
+ pt:{birth:'Data de nascimento',phone:'Telefone',nationality:'Nacionalidade',photo:'Foto de perfil',choose:'Selecione',rank:'A patente inicial será definida pela liderança na aprovação.',photoHelp:'Escolha uma foto. Ela será reduzida e guardada de forma privada.'},
+ ja:{birth:'生年月日',phone:'電話番号',nationality:'国籍',photo:'プロフィール写真',choose:'選択してください',rank:'初期ランクは承認時にリーダーが設定します。',photoHelp:'写真を選択してください。縮小して非公開で保存します。'},
+ en:{birth:'Date of birth',phone:'Phone',nationality:'Nationality',photo:'Profile photo',choose:'Select',rank:'Leadership assigns the initial rank on approval.',photoHelp:'Choose a photo. It will be resized and stored privately.'}
+};
+function createSignupDetails(){
+ const root=document.createElement('div');root.style.cssText='display:grid;gap:12px;min-width:0';
+ const fields={},labels={};
+ for(const key of ['photo','birth','phone','nationality']){
+  const label=document.createElement('label');label.style.cssText='display:grid;gap:7px;margin:0;color:inherit';
+  const caption=document.createElement('span');
+  const input=document.createElement(key==='nationality'?'select':'input');input.required=true;
+  input.style.cssText='width:100%;min-width:0;max-width:100%;padding:10px;border:1px solid #8394b5;border-radius:10px;font-size:16px';
+  if(key==='birth'){input.type='date';input.min='1900-01-01';const now=new Date();input.max=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');input.autocomplete='bday';}
+  if(key==='phone'){input.type='tel';input.minLength=5;input.maxLength=30;input.autocomplete='tel';}
+  if(key==='photo'){input.type='file';input.accept='image/*';input.style.height='auto';}
+  label.append(caption,input);root.append(label);fields[key]=input;labels[key]=caption;
+ }
+ const help=document.createElement('small'),rank=document.createElement('p');
+ help.style.cssText='line-height:1.5';rank.style.cssText='margin:0;font-size:13px;line-height:1.5';root.append(help,rank);
+ // ISO 3166-1 alpha-2 codes, including the nationalities represented in Japan.
+ const codes='AF AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW'.split(' ');
+ function localize(){
+  const tr=detailLabels[lang()];for(const key in labels)labels[key].textContent=tr[key];
+  help.textContent=tr.photoHelp;rank.textContent=tr.rank;
+  const value=fields.nationality.value;
+  const names=new Intl.DisplayNames([lang()],{type:'region'});
+  fields.nationality.replaceChildren(new Option(tr.choose,''));
+  for(const code of ['JP','BR',...codes.filter(c=>!['JP','BR'].includes(c)).sort((a,b)=>names.of(a).localeCompare(names.of(b),lang()))])fields.nationality.add(new Option(names.of(code),code));
+  fields.nationality.value=value;
+ }
+ localize();
+ return {root,fields,localize,values:()=>({birth:fields.birth.value,phone:fields.phone.value.trim(),nationality:fields.nationality.value})};
+}
+async function prepareSignupPhoto(file){
+ if(!file)throw new Error('Selecione sua foto de perfil.');
+ if(file.size>20*1024*1024)throw new Error('Escolha uma foto de até 20 MB.');
+ const url=URL.createObjectURL(file);
+ try{
+  const image=new Image();image.src=url;await image.decode();
+  const canvas=document.createElement('canvas');
+  const scale=Math.min(1,640/Math.max(image.naturalWidth,image.naturalHeight));
+  canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+  const context=canvas.getContext('2d');context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+  for(const quality of [.85,.7,.5,.35]){
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+   if(blob&&blob.size<=307200)return blob;
+  }
+  throw new Error('Não foi possível reduzir a foto. Escolha outra imagem.');
+ }finally{URL.revokeObjectURL(url);}
+}
+async function sendDetailedSignup(user,details,photo){
+ const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
+ if(photoError)throw photoError;
+ const {error}=await client.rpc('fju_enviar_inscricao_jovem_detalhada',{
+  p_polo_id:details.polo,p_nome:details.name,p_projetos:details.projects,
+  p_nascimento:details.birth,p_telefone:details.phone,p_nacionalidade_iso2:details.nationality
+ });
+ if(error)throw error;
+ sessionStorage.removeItem('fju-youth-pending-signup');
+}
 const signupOpen=document.createElement('button');
 signupOpen.type='button';signupOpen.id='fju-account-signup-open';
 signupOpen.style.cssText='display:block;margin:14px auto 0;padding:12px 20px;border:1px solid #8394b5;border-radius:10px;background:#eef2fb;color:#19264b;font-weight:700;cursor:pointer';
@@ -210,7 +273,7 @@ const signupLegend=document.createElement('div');signupLegend.textContent='Proje
 for(const project of ['Esporte','Cultura','Mídia','Banda']){
  const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;padding:7px;color:#172033';
  const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='appearance:auto;-webkit-appearance:checkbox;width:22px;height:22px;min-width:22px;min-height:22px;accent-color:#253b75;opacity:1;cursor:pointer';
- check.addEventListener('change',()=>{if(signupProjects.querySelectorAll('input:checked').length>5){check.checked=false;signupFeedback('Máximo de 5 projetos.',true);}});
+ check.addEventListener('change',()=>{if(signupProjects.querySelectorAll('input:checked').length>4){check.checked=false;signupFeedback('Máximo de 4 projetos.',true);}});
  label.append(check,document.createTextNode(project));signupProjects.append(label);
 }
 async function loadSignupPolos(){
@@ -221,7 +284,8 @@ async function loadSignupPolos(){
  signupSubmit.disabled=false;
  for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
 }
-signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
+const signupDetails=createSignupDetails();
+signupForm.append(signupTitle,signupName,signupDetails.root,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
 function signupFeedback(message='',error=false){
  signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
  signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
@@ -232,38 +296,40 @@ function localizeSignup(){
  const t=signupText();signupOpen.textContent=t.create;signupTitle.textContent=t.title;
  for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
+ signupDetails.localize();
 }
 signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const requestedName=signupName.value.trim(),requestedPolo=signupPolo.value;
- const requestedProjects=[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value);
- signupSubmit.disabled=true;signupFeedback('');
+ const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
+ signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
+ let created=false;
  try{
+  const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
-   email:signupEmail.value.trim(),password:signupPassword.value,
-   options:{data:{full_name:requestedName},emailRedirectTo:window.location.origin+window.location.pathname}
+   email:details.email,password:signupPassword.value,
+   options:{data:{full_name:details.name},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
-  // Supabase can return an obfuscated user with no identities for an existing account.
-  if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
-   signupFeedback(signupText().duplicate,true);return;
-  }
+  if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
+  created=true;
+  sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify(details));
   if(data.session){
-   const {error:inscriptionError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:requestedPolo,p_nome:requestedName,p_projetos:requestedProjects});
-   if(inscriptionError){signupFeedback('Conta criada, mas inscrição não enviada: '+inscriptionError.message,true);return;}
+   await sendDetailedSignup(data.user,details,photo);
    signupForm.reset();await loadAccount();setFeedback('Conta e inscrição enviadas ao coordenador!');
   }else{
-   sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify({email:signupEmail.value.trim(),name:requestedName,polo:requestedPolo,projects:requestedProjects}));
-   signupForm.reset();showView('login');setFeedback('Confirme seu e-mail e entre na My Page para concluir o envio da inscrição.');
+   signupForm.reset();showView('login');setFeedback('Conta criada! Confirme seu e-mail e entre na My Page para concluir a inscrição e selecionar novamente a foto.');
   }
  }catch(error){
-  const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
-  signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
- }
- finally{signupSubmit.disabled=false;}
+  if(created){
+   await loadAccount();setFeedback('Conta criada. Conclua sua inscrição na My Page: '+error.message,true);
+  }else{
+   const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
+   signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
+  }
+ }finally{signupSubmit.disabled=false;signupInProgress=false;}
 });
 
 function showView(view){
@@ -305,24 +371,18 @@ async function renderYouthSignup(user,isAdmin,current){
   if(current!==updateSequence||passwordRecovery)return;
   // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
   const currentSignup=Array.isArray(existing)?existing[0]:existing;
-  if(!existingError&&!currentSignup){
-   let pending=null;try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
-   if(pending&&pending.email===user.email&&pending.polo&&pending.name){
-    const {error:pendingError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:pending.polo,p_nome:pending.name,p_projetos:pending.projects||[]});
-    if(current!==updateSequence||passwordRecovery)return;
-    if(!pendingError){sessionStorage.removeItem('fju-youth-pending-signup');status.textContent='Inscrição enviada ao coordenador do polo!';return;}
-    status.textContent='Conclua a inscrição abaixo: '+pendingError.message;
-   }
-  }
+  let pending=null;
+  try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+  if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){
-    status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
+    status.textContent=currentSignup.status==='aprovado'?'Cadastro aprovado pelo coordenador.':currentSignup.status==='rejeitado'?'Sua inscrição não foi aprovada. Fale com o coordenador do seu polo.':'Sua inscrição foi recebida. Aguarde a análise do coordenador do seu polo.';
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
   const {data:polos,error:poloError}=await client.rpc('fju_listar_polos_cadastro');
   if(current!==updateSequence||passwordRecovery)return;
   if(poloError){status.textContent='Não foi possível carregar os polos: '+poloError.message;return;}
-  status.textContent='Escolha seu polo e até 5 projetos. O coordenador verificará seus dados.';
+  status.textContent='Complete seus dados, selecione a foto e escolha seu polo e projetos. O coordenador verificará sua inscrição.';
   const form=document.createElement('form');form.style.display='grid';form.style.gap='10px';
   const name=document.createElement('input');name.required=true;name.maxLength=120;name.minLength=2;name.placeholder='Nome completo';name.setAttribute('aria-label','Nome completo');
   const polo=document.createElement('select');polo.required=true;polo.setAttribute('aria-label','Selecione seu polo');
@@ -333,17 +393,27 @@ async function renderYouthSignup(user,isAdmin,current){
   for(const project of ['Esporte','Cultura','Mídia','Banda']){
     const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0';
     const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='appearance:auto;-webkit-appearance:checkbox;width:22px;height:22px;min-width:22px;min-height:22px;accent-color:#253b75;opacity:1';
-    check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>5){check.checked=false;status.textContent='Você pode solicitar no máximo cinco projetos.';}});
+    check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>4){check.checked=false;status.textContent='Você pode solicitar no máximo quatro projetos.';}});
     label.append(check,document.createTextNode(project));projects.append(label);
   }
   const button=document.createElement('button');button.type='submit';button.textContent='Enviar solicitação';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
-  form.append(name,polo,projects,button);container.append(form);
+  const details=createSignupDetails();
+  name.value=pending?.name||user.user_metadata?.full_name||'';
+  polo.value=pending?.polo||'';
+  details.fields.birth.value=pending?.birth||'';
+  details.fields.phone.value=pending?.phone||'';
+  details.fields.nationality.value=pending?.nationality||'';
+  for(const check of projects.querySelectorAll('input'))check.checked=(pending?.projects||[]).includes(check.value);
+  form.append(name,details.root,polo,projects,button);container.append(form);
   form.addEventListener('submit',async event=>{
     event.preventDefault();button.disabled=true;status.textContent='Enviando inscrição…';
     const selected=[...projects.querySelectorAll('input:checked')].map(x=>x.value);
-    const {error}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:polo.value,p_nome:name.value.trim(),p_projetos:selected});
-    if(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;return;}
-    form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+    try{
+     const photo=await prepareSignupPhoto(details.fields.photo.files[0]);
+     await sendDetailedSignup(user,{name:name.value.trim(),polo:polo.value,projects:selected,...details.values()},photo);
+     form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+    }catch(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;}
+
   });
 }
 
@@ -400,6 +470,25 @@ async function loadAccount(){
       }
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
+    if(!verifiedAdmin){
+      const {data:cards}=await client.rpc('fju_consultar_meu_cartao_jovem');
+      if(current!==updateSequence||passwordRecovery)return;
+      const card=Array.isArray(cards)?cards[0]:cards;
+      if(card){
+        byId('fju-member-card-name').textContent=card.nome_completo;
+        byId('fju-member-card-polo').textContent='FJU '+card.polo_nome;
+        byId('fju-member-card-project').textContent=(card.projetos||[]).join(' · ')||'FJU JAPAN';
+        byId('fju-member-card-rank').textContent=card.patente|| (card.categoria==='firme'?'Firme':'Inconstante');
+      }
+      const {data:photo}=await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
+      if(current!==updateSequence||passwordRecovery)return;
+      if(photo){
+        clearHeaderAvatarObjectUrl();headerAvatarObjectUrl=URL.createObjectURL(photo);
+        if(headerAvatar){headerAvatar.src=headerAvatarObjectUrl;headerAvatar.hidden=false;}
+        if(headerGuest)headerGuest.hidden=true;
+        if(cardPhoto){cardPhoto.src=headerAvatarObjectUrl;cardPhoto.hidden=false;}
+      }
+    }
     await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
@@ -521,7 +610,7 @@ client.auth.onAuthStateChange(event=>{
     renderHeaderAccount(null);
     showView('login');
     localize();
-  }else if(event==='SIGNED_IN'&&!passwordRecovery){
+  }else if(event==='SIGNED_IN'&&!passwordRecovery&&!signupInProgress){
     // Agendar para depois que o SDK liberar o lock interno do auth.
     setTimeout(()=>{void loadAccount();},0);
   }
