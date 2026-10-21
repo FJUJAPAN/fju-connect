@@ -35,9 +35,43 @@ html{scroll-padding-top:94px}
 body{padding-top:84px}
 body>header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;z-index:20}
 </style>
+<style id="fju-unified-subpage-header-style">
+body>header.fju-unified-header{height:82px!important;position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;z-index:900!important;background:#123158!important;border:0!important;color:#fff!important}
+body>header.fju-unified-header .fju-unified-inner{height:82px;min-height:0!important;width:calc(100% - 24px);max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:7px}
+.fju-unified-header .fju-unified-brand{display:flex;flex:1 1 auto;min-width:0;align-items:center}
+.fju-unified-header .fju-unified-brand img{display:block;width:112px;max-width:100%;height:55px;object-fit:contain}
+.fju-unified-header .fju-unified-actions{display:flex;align-items:center;gap:7px;flex:none}
+.fju-unified-header button{display:grid;place-items:center;width:38px;height:38px;min-width:38px;padding:0;background:transparent;color:#fff;border:0;border-radius:50%;cursor:pointer}
+.fju-unified-header button svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.fju-unified-header .fju-current-flag{border:1px solid #ffffff55;border-radius:9px;font-size:22px;background:#ffffff13}
+.fju-unified-header .fju-flag-wrap{position:relative}
+.fju-unified-header .fju-flag-options{position:absolute;top:calc(100% + 8px);right:0;display:flex;gap:4px;background:#0b2342;padding:7px;border-radius:10px;box-shadow:0 12px 25px #0007}
+.fju-unified-header [hidden]{display:none!important}
+.fju-unified-header .fju-avatar{width:36px;height:36px;object-fit:cover;border:1.5px solid #fff;border-radius:50%}
+.fju-unified-header .fju-avatar-guest{width:36px;height:36px;display:grid;place-items:center;border:1.5px solid #fff;border-radius:50%}
+.fju-unified-header .fju-avatar-guest svg{width:24px;height:24px}
+.fju-unified-header .fju-menu-pop,.fju-unified-header .fju-search-pop,.fju-unified-header .fju-notify-pop{position:absolute;right:12px;top:calc(100% + 5px);width:min(320px,calc(100vw - 24px));padding:12px;background:#0b2342;border:1px solid #ffffff35;border-radius:12px;box-shadow:0 16px 32px #0007;color:#fff}
+.fju-unified-header .fju-menu-pop a{display:block;padding:12px;color:#fff;text-decoration:none;font-size:14px;border-bottom:1px solid #ffffff22}
+.fju-unified-header .fju-search-pop{left:12px;right:12px;width:auto}
+.fju-unified-header .fju-search-pop input{width:100%;padding:12px;border-radius:8px;background:#fff;color:#111;border:0;font-size:16px}
+.fju-unified-header .fju-notify-pop{font-size:13px;line-height:1.6}
+.fju-unified-header .fju-profile-button{display:grid;place-items:center}
+.fju-unified-header button:focus-visible,.fju-unified-header a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(max-width:390px){.fju-unified-header .fju-unified-brand img{width:83px}.fju-unified-header .fju-unified-actions{gap:3px}.fju-unified-header button{width:33px;min-width:33px;height:36px}.fju-unified-header button svg{width:24px;height:24px}}
+@media(min-width:741px){body>header.fju-unified-header .fju-unified-inner{width:calc(100% - 48px)}.fju-unified-header .fju-unified-brand img{width:140px}}
+</style><style id="fju-unified-header-css">
+body>header.fju-unified-header{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;height:82px!important;z-index:1100!important;background:#103159!important;color:white!important;border:0!important;box-shadow:0 3px 15px #001a3533}
+body>header.fju-unified-header .header-in{height:82px!important;min-height:82px!important;max-width:1180px;width:calc(100% - 28px)!important;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fju-unified-header .brand{display:flex;align-items:center;gap:8px;flex:0 1 auto;min-width:0;color:white;text-decoration:none}.fju-unified-header .fju-logo-text{font-size:34px;font-weight:1000;font-style:italic;letter-spacing:-3px;line-height:1}.fju-unified-header .brand-text{display:flex;flex-direction:column;gap:1px}.fju-unified-header .brand-text b{font-size:11px;letter-spacing:1.6px}.fju-unified-header .brand-text small{font-size:9px;letter-spacing:1.6px;color:#c1d5ed}
+.fju-unified-header .header-side{display:flex;align-items:center;gap:5px;flex:none}.fju-unified-header .fju-top-icon{display:grid;place-items:center;width:35px;height:39px;min-width:35px;border:0;background:transparent;color:white;font-size:30px;line-height:1;padding:0;text-decoration:none;cursor:pointer}.fju-unified-header .fju-profile{font-size:29px;border:2px solid white;border-radius:50%;height:36px;width:36px;min-width:36px}
+.fju-unified-header .fju-top-language{position:relative}.fju-unified-header #lang{position:absolute!important;width:1px!important;height:1px!important;clip-path:inset(50%)!important;opacity:0!important;pointer-events:none!important}.fju-unified-header #fju-top-flag{display:grid;place-items:center;width:35px;height:38px;padding:0;border:1px solid #ffffff55;border-radius:8px;background:#ffffff12;font-size:22px;cursor:pointer}.fju-unified-header #fju-top-flags{position:absolute;top:calc(100% + 9px);right:0;display:flex;gap:5px;padding:7px;border:1px solid #ffffff55;border-radius:10px;background:#0b2342;box-shadow:0 12px 25px #0007}.fju-unified-header #fju-top-flags[hidden],.fju-unified-header #fju-top-flags button[hidden]{display:none!important}.fju-unified-header #fju-top-flags button{font-size:22px;background:#ffffff15;border:0;border-radius:7px;width:34px;height:36px}
+.fju-unified-header .fju-top-popup{position:absolute;top:82px;right:10px;width:min(300px,calc(100vw - 20px));background:#0b2342;color:white;padding:13px;border:1px solid #ffffff44;border-radius:12px;box-shadow:0 16px 30px #0006}.fju-unified-header .fju-top-popup[hidden]{display:none!important}.fju-unified-header .fju-top-popup a{display:block;color:white;text-decoration:none;font-size:14px;padding:11px;border-bottom:1px solid #ffffff22}.fju-unified-header .fju-top-popup label{display:block;font-size:12px;margin-bottom:8px}.fju-unified-header .fju-top-popup input{width:100%;height:43px;padding:8px;border:1px solid #fff6;border-radius:8px;background:white;color:#123;font-size:16px}
+body{padding-top:82px!important}html{scroll-padding-top:94px}
+@media(max-width:390px){.fju-unified-header .fju-logo-text{font-size:28px}.fju-unified-header .brand-text b{font-size:9px}.fju-unified-header .brand-text small{font-size:8px}.fju-unified-header .header-side{gap:3px}.fju-unified-header .fju-top-icon{width:31px;min-width:31px}.fju-unified-header #fju-top-flag{width:31px}}
+</style>
 </head>
 <body>
-<header><div class="wrap header-in"><a class="brand" href="../">FJU JAPAN<small>CONNECT JAPAN</small></a><div class="header-side"><a href="../" class="back" data-t="back">← VOLTAR</a><select id="lang" aria-label="Idioma / 言語 / Language"><option value="pt">Português</option><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
+<header class="fju-unified-header"><div class="wrap header-in"><a class="brand" href="../" aria-label="FJU CONNECT JAPAN"><span class="fju-logo-text">FJU</span><span class="brand-text"><b>CONNECT</b><small>JAPAN</small></span></a><div class="header-side"><button type="button" class="fju-top-icon" id="fju-top-search" aria-label="Buscar" aria-expanded="false">⌕</button><div class="fju-top-language"><select id="lang" aria-label="Idioma"><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select><button type="button" id="fju-top-flag" aria-label="Trocar idioma" aria-expanded="false">🇧🇷</button><div id="fju-top-flags" hidden><button type="button" data-lang="pt" aria-label="Português">🇧🇷</button><button type="button" data-lang="ja" aria-label="日本語">🇯🇵</button><button type="button" data-lang="en" aria-label="English">🇺🇸</button></div></div><a href="../#my-page" class="fju-top-icon fju-profile" aria-label="My Page">♙</a><button type="button" class="fju-top-icon" id="fju-top-menu" aria-label="Abrir menu" aria-expanded="false">☰</button></div></div><div class="fju-top-popup" id="fju-top-search-box" hidden><label for="fju-top-query">Buscar nesta página</label><input id="fju-top-query" type="search" placeholder="Buscar..."></div><nav class="fju-top-popup" id="fju-top-links" hidden><a href="../">Início</a><a href="../eventos/">Eventos</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a><a href="../#my-page">My Page</a></nav></header><select id="lang" aria-label="Language" hidden><option value="ja">日本語</option><option value="pt">Português</option><option value="en">English</option></select>
 <main>
 <section class="hero"><div class="wrap"><div class="overline">FJU CONNECT · FIND YOUR PEOPLE</div><h1 id="heroTitle"></h1><p data-t="intro"></p></div></section>
 <div class="wrap">
@@ -101,6 +135,24 @@ $('year').textContent=new Date().getFullYear();setLanguage(lang);
     var now=Date.now();
     if(now-lastTap<300){e.preventDefault();lastTap=0;}else lastTap=now;
   },{passive:false});
+})();
+</script>
+<script type="module" src="../shared-top-header.js"></script><script id="fju-unified-header-js">
+(function(){
+ const header=document.querySelector('.fju-unified-header');if(!header)return;
+ const select=header.querySelector('#lang'),flag=header.querySelector('#fju-top-flag'),flags=header.querySelector('#fju-top-flags');
+ const search=header.querySelector('#fju-top-search'),searchBox=header.querySelector('#fju-top-search-box'),query=header.querySelector('#fju-top-query');
+ const menu=header.querySelector('#fju-top-menu'),links=header.querySelector('#fju-top-links');
+ function close(){flags.hidden=true;flag.setAttribute('aria-expanded','false');searchBox.hidden=true;search.setAttribute('aria-expanded','false');links.hidden=true;menu.setAttribute('aria-expanded','false');}
+ function sync(){flag.textContent=({pt:'🇧🇷',ja:'🇯🇵',en:'🇺🇸'})[select.value]||'🌐';flags.querySelectorAll('[data-lang]').forEach(b=>b.hidden=b.dataset.lang===select.value);}
+ select.addEventListener('change',sync);
+ flag.addEventListener('click',e=>{e.stopPropagation();const open=flags.hidden;close();flags.hidden=!open;flag.setAttribute('aria-expanded',String(open));});
+ flags.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{select.value=b.dataset.lang;select.dispatchEvent(new Event('change',{bubbles:true}));close();}));
+ search.addEventListener('click',e=>{e.stopPropagation();const open=searchBox.hidden;close();searchBox.hidden=!open;search.setAttribute('aria-expanded',String(open));if(open)query.focus();});
+ menu.addEventListener('click',e=>{e.stopPropagation();const open=links.hidden;close();links.hidden=!open;menu.setAttribute('aria-expanded',String(open));});
+ query.addEventListener('input',()=>{const input=document.getElementById('search');if(input){input.value=query.value;input.dispatchEvent(new Event('input',{bubbles:true}));}});
+ document.addEventListener('click',e=>{if(!header.contains(e.target))close();});document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+ sync();close();
 })();
 </script>
 </body></html>
