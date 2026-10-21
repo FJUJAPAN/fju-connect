@@ -256,6 +256,10 @@ async function openAccount(){
   if(passwordRecovery){showView('reset');return;}
   await loadAccount();
 }
+// Open My Page when arriving from a subpage's shared header.
+if(window.location.hash==='#my-page'){
+  window.addEventListener('load',()=>{void openAccount();},{once:true});
+}
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
   trigger.addEventListener('click',event=>{event.preventDefault();void openAccount();});
 }
