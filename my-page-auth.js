@@ -138,10 +138,12 @@ async function loadStoredHeaderAvatar(user,current){
   try{
     const {data:card,error:cardError}=await client
       .from('fju_coordenador_cards')
-      .select('foto_path')
+      .select('foto_path,nome_exibicao')
       .eq('usuario_id',user.id)
       .maybeSingle();
-    if(cardError||current!==updateSequence||passwordRecovery||!card?.foto_path)return;
+    if(cardError||current!==updateSequence||passwordRecovery)return;
+    if(card?.nome_exibicao?.trim())byId('fju-member-card-name').textContent=card.nome_exibicao.trim();
+    if(!card?.foto_path)return;
     const {data:blob,error:photoError}=await client.storage
       .from('fju-coordenadores')
       .download(card.foto_path);
@@ -250,15 +252,6 @@ async function loadAccount(){
       }
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
-    // Coordinator/national profile name: only use data linked to this authenticated user.
-    if(verifiedAdmin){
-      try{
-        const {data:cardIdentity}=await client.from('fju_coordenador_cards')
-          .select('nome_exibicao').eq('usuario_id',user.id).maybeSingle();
-        if(current!==updateSequence||passwordRecovery)return;
-        if(cardIdentity?.nome_exibicao?.trim())byId('fju-member-card-name').textContent=cardIdentity.nome_exibicao.trim();
-      }catch(_){}
-    }
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
     const church=byId('fju-account-church');
