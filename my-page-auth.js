@@ -220,9 +220,16 @@ signupForm.addEventListener('submit',async event=>{
    options:{data:{full_name:signupName.value.trim()},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
+  // Supabase can return an obfuscated user with no identities for an existing account.
+  if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
+   setFeedback(signupText().duplicate,true);return;
+  }
   if(data.session){signupForm.reset();setFeedback(signupText().active);await loadAccount();}
   else{signupForm.reset();showView('login');setFeedback(signupText().pending);}
- }catch(error){setFeedback(signupText().error+error.message,true);}
+ }catch(error){
+  const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
+  setFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
+ }
  finally{signupSubmit.disabled=false;}
 });
 
