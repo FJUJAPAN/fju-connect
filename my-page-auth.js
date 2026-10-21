@@ -209,15 +209,16 @@ const signupProjects=document.createElement('fieldset');signupProjects.style.css
 const signupLegend=document.createElement('legend');signupLegend.textContent='Projetos em que atua (até 5)';signupProjects.append(signupLegend);
 for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
  const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;padding:7px;color:#172033';
- const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='width:20px;height:20px;accent-color:#253b75';
+ const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='appearance:auto;-webkit-appearance:checkbox;width:22px;height:22px;min-width:22px;min-height:22px;accent-color:#253b75;opacity:1;cursor:pointer';
  check.addEventListener('change',()=>{if(signupProjects.querySelectorAll('input:checked').length>5){check.checked=false;signupFeedback('Máximo de 5 projetos.',true);}});
  label.append(check,document.createTextNode(project));signupProjects.append(label);
 }
 async function loadSignupPolos(){
  signupPolo.replaceChildren();
  const empty=document.createElement('option');empty.value='';empty.textContent='Selecione seu polo';signupPolo.append(empty);
- const {data,error}=await client.from('fju_polos').select('id,nome').order('nome');
- if(error){signupFeedback('Erro ao carregar polos: '+error.message,true);return;}
+ const {data,error}=await client.rpc('fju_listar_polos_cadastro');
+ if(error){signupFeedback('Erro ao carregar polos: '+error.message,true);signupSubmit.disabled=true;return;}
+ signupSubmit.disabled=false;
  for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
 }
 signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
@@ -318,7 +319,7 @@ async function renderYouthSignup(user,isAdmin,current){
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
-  const {data:polos,error:poloError}=await client.from('fju_polos').select('id,nome').order('nome');
+  const {data:polos,error:poloError}=await client.rpc('fju_listar_polos_cadastro');
   if(current!==updateSequence||passwordRecovery)return;
   if(poloError){status.textContent='Não foi possível carregar os polos: '+poloError.message;return;}
   status.textContent='Escolha seu polo e até 5 projetos. O coordenador verificará seus dados.';
@@ -331,7 +332,7 @@ async function renderYouthSignup(user,isAdmin,current){
   const legend=document.createElement('legend');legend.textContent='Projetos (até 5)';projects.append(legend);
   for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
     const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0';
-    const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.width='auto';
+    const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='appearance:auto;-webkit-appearance:checkbox;width:22px;height:22px;min-width:22px;min-height:22px;accent-color:#253b75;opacity:1';
     check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>5){check.checked=false;status.textContent='Você pode solicitar no máximo cinco projetos.';}});
     label.append(check,document.createTextNode(project));projects.append(label);
   }
