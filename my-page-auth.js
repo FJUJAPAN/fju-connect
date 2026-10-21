@@ -250,6 +250,15 @@ async function loadAccount(){
       }
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
+    // Coordinator/national profile name: only use data linked to this authenticated user.
+    if(verifiedAdmin){
+      try{
+        const {data:cardIdentity}=await client.from('fju_coordenador_cards')
+          .select('nome').eq('usuario_id',user.id).maybeSingle();
+        if(current!==updateSequence||passwordRecovery)return;
+        if(cardIdentity?.nome?.trim())byId('fju-member-card-name').textContent=cardIdentity.nome.trim();
+      }catch(_){}
+    }
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
     const church=byId('fju-account-church');
