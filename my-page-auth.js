@@ -180,16 +180,63 @@ function localize(){
   byId('fju-account-close').setAttribute('aria-label',t('close'));
   byId('fju-account-role-label').textContent=t('roleLabel');
   byId('fju-account-role-value').textContent=t(lastRole||'member');
+  localizeSignup();
 }
+const signupLabels={
+ pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',error:'Não foi possível criar a conta: '},
+ ja:{create:'新規登録',title:'青年アカウント作成',name:'氏名',email:'メールアドレス',password:'パスワード（8文字以上）',confirm:'パスワード確認',submit:'アカウント作成',back:'ログインに戻る',pending:'登録しました。確認メールのリンクを開いてからログインし、所属教会とプロジェクトを選択してください。',active:'登録完了！MY PAGEを開きます。',error:'登録できませんでした: '},
+ en:{create:'Create my account',title:'Create youth account',name:'Full name',email:'Email',password:'Password (8+ characters)',confirm:'Confirm password',submit:'Create account',back:'Back to login',pending:'Account created. Confirm your email, then sign in and choose your church and projects.',active:'Account created! Opening My Page.',error:'Could not create account: '}
+};
+const signupText=()=>signupLabels[lang()]||signupLabels.pt;
+const signupOpen=document.createElement('button');
+signupOpen.type='button';signupOpen.id='fju-account-signup-open';
+signupOpen.style.cssText='display:block;margin:14px auto 0;padding:12px 20px;border:1px solid #8394b5;border-radius:10px;background:#eef2fb;color:#19264b;font-weight:700;cursor:pointer';
+loginForm.insertAdjacentElement('afterend',signupOpen);
+const signupForm=document.createElement('form');signupForm.id='fju-account-signup-form';signupForm.hidden=true;
+signupForm.style.cssText='display:grid;gap:12px;margin:16px 0';
+const signupTitle=document.createElement('h3');
+const signupName=document.createElement('input');signupName.required=true;signupName.minLength=2;signupName.maxLength=120;signupName.autocomplete='name';
+const signupEmail=document.createElement('input');signupEmail.required=true;signupEmail.type='email';signupEmail.autocomplete='email';
+const signupPassword=document.createElement('input');signupPassword.required=true;signupPassword.type='password';signupPassword.minLength=8;signupPassword.autocomplete='new-password';
+const signupConfirm=document.createElement('input');signupConfirm.required=true;signupConfirm.type='password';signupConfirm.minLength=8;signupConfirm.autocomplete='new-password';
+const signupSubmit=document.createElement('button');signupSubmit.type='submit';signupSubmit.style.cssText='padding:13px;border-radius:10px;background:#253b75;color:white;font-weight:700';
+const signupBack=document.createElement('button');signupBack.type='button';signupBack.style.cssText='padding:10px;border:0;background:transparent;color:#253b75;text-decoration:underline';
+signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupSubmit,signupBack);
+loginForm.insertAdjacentElement('afterend',signupForm);
+function localizeSignup(){
+ const t=signupText();signupOpen.textContent=t.create;signupTitle.textContent=t.title;
+ for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
+ signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
+}
+signupOpen.addEventListener('click',()=>{setFeedback();showView('signup');});
+signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
+signupForm.addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(signupPassword.value!==signupConfirm.value){setFeedback(t('passwordMismatch'),true);return;}
+ signupSubmit.disabled=true;setFeedback('');
+ try{
+  const {data,error}=await client.auth.signUp({
+   email:signupEmail.value.trim(),password:signupPassword.value,
+   options:{data:{full_name:signupName.value.trim()},emailRedirectTo:window.location.origin+window.location.pathname}
+  });
+  if(error)throw error;
+  if(data.session){signupForm.reset();setFeedback(signupText().active);await loadAccount();}
+  else{signupForm.reset();showView('login');setFeedback(signupText().pending);}
+ }catch(error){setFeedback(signupText().error+error.message,true);}
+ finally{signupSubmit.disabled=false;}
+});
+
 function showView(view){
   const forms=[
     ['login',loginForm],
+    ['signup',signupForm],
     ['account',myPage],
     ['forgot',forgotForm],
     ['reset',resetForm],
     ['loading',loading]
   ];
   for(const [id,node] of forms)node.hidden=view!==id;
+  signupOpen.hidden=view!=='login';
   byId('fju-account-title').textContent=
     view==='forgot'?t('forgotTitle'):view==='reset'?t('resetTitle'):t('title');
   byId('fju-account-subtitle').textContent=
