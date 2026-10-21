@@ -254,9 +254,9 @@ async function loadAccount(){
     if(verifiedAdmin){
       try{
         const {data:cardIdentity}=await client.from('fju_coordenador_cards')
-          .select('nome').eq('usuario_id',user.id).maybeSingle();
+          .select('nome_exibicao').eq('usuario_id',user.id).maybeSingle();
         if(current!==updateSequence||passwordRecovery)return;
-        if(cardIdentity?.nome?.trim())byId('fju-member-card-name').textContent=cardIdentity.nome.trim();
+        if(cardIdentity?.nome_exibicao?.trim())byId('fju-member-card-name').textContent=cardIdentity.nome_exibicao.trim();
       }catch(_){}
     }
     accountAccess.hidden=!verifiedAdmin;
