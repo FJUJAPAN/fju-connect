@@ -199,6 +199,56 @@ function showView(view){
 function showDialog(){
   if(!dialog.open)dialog.showModal();
 }
+
+async function renderYouthSignup(user,isAdmin,current){
+  let container=byId('fju-youth-signup');
+  if(!container){
+    container=document.createElement('section');
+    container.id='fju-youth-signup';
+    container.style.cssText='margin:16px 0;padding:16px;border:1px solid #dce2ed;border-radius:14px;background:#f8faff;color:#172033';
+    byId('fju-account-member-note')?.insertAdjacentElement('afterend',container);
+  }
+  container.replaceChildren();
+  container.hidden=isAdmin;
+  if(isAdmin)return;
+  const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
+  const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
+  container.append(title,status);
+  const {data:existing,error:existingError}=await client.rpc('fju_consultar_minha_inscricao');
+  if(current!==updateSequence||passwordRecovery)return;
+  if(!existingError&&existing){
+    status.textContent='Sua inscrição foi recebida. Situação: '+existing.status+'. Aguarde a análise do coordenador.';
+    return;
+  }
+  if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
+  const {data:polos,error:poloError}=await client.from('fju_polos').select('id,nome').order('nome');
+  if(current!==updateSequence||passwordRecovery)return;
+  if(poloError){status.textContent='Não foi possível carregar os polos: '+poloError.message;return;}
+  status.textContent='Escolha seu polo e até 5 projetos. O coordenador verificará seus dados.';
+  const form=document.createElement('form');form.style.display='grid';form.style.gap='10px';
+  const name=document.createElement('input');name.required=true;name.maxLength=120;name.minLength=2;name.placeholder='Nome completo';name.setAttribute('aria-label','Nome completo');
+  const polo=document.createElement('select');polo.required=true;polo.setAttribute('aria-label','Selecione seu polo');
+  const empty=document.createElement('option');empty.value='';empty.textContent='Selecione seu polo';polo.append(empty);
+  for(const item of polos||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;polo.append(option);}
+  const projects=document.createElement('fieldset');projects.style.cssText='border:1px solid #dce2ed;border-radius:10px';
+  const legend=document.createElement('legend');legend.textContent='Projetos (até 5)';projects.append(legend);
+  for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
+    const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0';
+    const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.width='auto';
+    check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>5){check.checked=false;status.textContent='Você pode solicitar no máximo cinco projetos.';}});
+    label.append(check,document.createTextNode(project));projects.append(label);
+  }
+  const button=document.createElement('button');button.type='submit';button.textContent='Enviar solicitação';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
+  form.append(name,polo,projects,button);container.append(form);
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();button.disabled=true;status.textContent='Enviando inscrição…';
+    const selected=[...projects.querySelectorAll('input:checked')].map(x=>x.value);
+    const {error}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:polo.value,p_nome:name.value.trim(),p_projetos:selected});
+    if(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;return;}
+    form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+  });
+}
+
 async function loadAccount(){
   const current=++updateSequence;
   if(!passwordRecovery)showView('loading');
@@ -252,6 +302,8 @@ async function loadAccount(){
       }
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
+    await renderYouthSignup(user,verifiedAdmin,current);
+    if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
     const church=byId('fju-account-church');
