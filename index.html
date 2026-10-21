@@ -991,6 +991,20 @@ body{padding-top:78px}
   body{padding-top:82px}
 }
 </style>
+<style id="fju-member-collectible-style">
+.fju-member-collectible{position:relative;overflow:hidden;width:min(100%,350px);margin:12px auto 22px;padding:16px;border:2px solid #d7bb78;border-radius:20px;background:radial-gradient(ellipse at 50% 30%,#365da0 0%,#182f64 40%,#101632 85%);color:#fff;text-align:center;box-shadow:0 14px 32px #0005}
+.fju-member-collectible[hidden]{display:none!important}
+.fju-member-card-top{display:flex;justify-content:space-between;gap:8px;color:#f8dc8d;font:800 10px system-ui;letter-spacing:1px}
+.fju-member-card-photo-frame{height:175px;margin:15px auto 12px;border:2px solid #bd9c65;border-radius:12px;background:linear-gradient(145deg,#426cb3,#1b2556);display:grid;place-items:center;overflow:hidden}
+.fju-member-card-photo-frame img{width:100%;height:100%;object-fit:cover;grid-area:1/1}
+.fju-member-card-monogram{font:900 52px system-ui;opacity:.25;grid-area:1/1}
+.fju-member-card-photo-frame img:not([hidden])+.fju-member-card-monogram{display:none}
+#fju-member-card-name{display:block;font:900 24px system-ui;overflow-wrap:anywhere}
+.fju-member-card-details{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:10px}
+.fju-member-card-details span{padding:6px 9px;border:1px solid #ffffff60;border-radius:30px;font:700 11px system-ui}
+#fju-member-card-rank{font:700 12px system-ui;color:#e5d49f;margin:13px 0}
+.fju-member-card-bottom{border-top:1px solid #ffffff50;padding-top:10px;font:800 9px system-ui;letter-spacing:1px}
+</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -1228,6 +1242,14 @@ body{padding-top:78px}
 </form>
 
 <section id="fju-account-my-page" hidden>
+<div id="fju-member-collectible" class="fju-member-collectible" hidden>
+ <div class="fju-member-card-top"><span>FJU CONNECT JAPAN</span><span>MY PAGE</span></div>
+ <div class="fju-member-card-photo-frame"><img id="fju-member-card-photo" alt="Foto do perfil" hidden><span class="fju-member-card-monogram">FJU</span></div>
+ <strong id="fju-member-card-name">FJU JAPAN</strong>
+ <div class="fju-member-card-details"><span id="fju-member-card-polo">Polo a confirmar</span><span id="fju-member-card-project">Projeto a confirmar</span></div>
+ <p id="fju-member-card-rank">Patente definida pela liderança</p>
+ <div class="fju-member-card-bottom">UMA NOVA GERAÇÃO · UM NOVO COMEÇO</div>
+</div>
 <div class="fju-account-identity">
   <div class="fju-account-avatar" aria-hidden="true">👤</div>
   <p class="fju-account-identity-title" data-fju-auth-i18n="loggedIn">Você está conectado</p>
