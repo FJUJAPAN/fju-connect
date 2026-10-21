@@ -212,6 +212,18 @@ async function loadAccount(){
     authenticated=true;userEmail=user.email||'';
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
+    const memberCard=byId('fju-member-collectible');
+    if(memberCard){
+      const meta=user.user_metadata||{};
+      byId('fju-member-card-name').textContent=meta.full_name||meta.name||userEmail.split('@')[0]||'FJU JAPAN';
+      const img=byId('fju-member-card-photo');
+      const photo=meta.avatar_url||meta.picture||meta.photo_url||'';
+      if(photo){img.src=photo;img.hidden=false;}else{img.hidden=true;img.removeAttribute('src');}
+      byId('fju-member-card-polo').textContent=meta.polo_nome||'Polo a confirmar';
+      byId('fju-member-card-project').textContent=meta.projeto_nome||'Projeto a confirmar';
+      byId('fju-member-card-rank').textContent='Patente definida pela liderança';
+      memberCard.hidden=false;
+    }
     lastRole='member';
     let verifiedAdmin=false;
     let churchName='';
