@@ -978,6 +978,8 @@ document.addEventListener('DOMContentLoaded',init);
 @media(min-width:741px){
   .fju-menu-button,.fju-notification-button{display:none!important}
   .fju-profile-guest,.fju-header-avatar{display:none!important}
+  .fju-header-avatar:not([hidden]){display:block!important;width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #fff}
+  .fju-profile-button:has(.fju-header-avatar:not([hidden])) .fju-profile-desktop-lock{display:none!important}
 }
 </style>
 <style id="fju-fixed-top-header">
