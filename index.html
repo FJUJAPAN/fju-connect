@@ -1335,5 +1335,15 @@ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttrib
   menu?.addEventListener('click',function(e){if(e.target.closest('a,button'))closeMenu();});
 })();
 </script>
+<script id="fju-open-my-page-from-subpage">
+window.addEventListener('DOMContentLoaded',function(){
+  const params=new URLSearchParams(location.search);
+  if(params.get('open')!=='my-page')return;
+  history.replaceState(null,'',location.pathname+location.hash);
+  window.addEventListener('load',function(){
+    document.querySelector('[data-fju-account-open]')?.click();
+  },{once:true});
+});
+</script>
 </body>
 </html>
