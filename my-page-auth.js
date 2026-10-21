@@ -319,32 +319,43 @@ signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const requestedName=signupName.value.trim(),requestedPolo=signupPolo.value;
- const requestedProjects=[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value);
+ const info={
+  email:signupEmail.value.trim(),name:signupName.value.trim(),polo:signupPolo.value,
+  projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),
+  phone:signupExtra.phone.value.trim(),nationality:signupExtra.nationality.value
+ };
  signupSubmit.disabled=true;signupFeedback('');
+ let accountCreated=false;
  try{
+  info.birth=birthDateFrom(signupExtra);
+  // Validação da foto ANTES de abrir a conta no Supabase.
+  const photoBlob=await compressYouthPhoto(signupExtra.photo.files?.[0]);
   const {data,error}=await client.auth.signUp({
-   email:signupEmail.value.trim(),password:signupPassword.value,
-   options:{data:{full_name:requestedName},emailRedirectTo:window.location.origin+window.location.pathname}
+   email:info.email,password:signupPassword.value,
+   options:{data:{full_name:info.name},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
-  // Supabase can return an obfuscated user with no identities for an existing account.
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
    signupFeedback(signupText().duplicate,true);return;
   }
-  if(data.session){
-   const {error:inscriptionError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:requestedPolo,p_nome:requestedName,p_projetos:requestedProjects});
-   if(inscriptionError){signupFeedback('Conta criada, mas inscrição não enviada: '+inscriptionError.message,true);return;}
-   signupForm.reset();await loadAccount();setFeedback('Conta e inscrição enviadas ao coordenador!');
+  accountCreated=true;
+  // Não guardar senha nem foto no armazenamento do navegador.
+  sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify(info));
+  if(data.session&&data.user?.id){
+   await sendYouthDetails(data.user.id,info,photoBlob);
+   sessionStorage.removeItem('fju-youth-pending-signup');
+   signupForm.reset();
+   await loadAccount();
+   setFeedback('Cadastro completo enviado ao coordenador do seu polo!');
   }else{
-   sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify({email:signupEmail.value.trim(),name:requestedName,polo:requestedPolo,projects:requestedProjects}));
-   signupForm.reset();showView('login');setFeedback('Confirme seu e-mail e entre na My Page para concluir o envio da inscrição.');
+   signupForm.reset();showView('login');
+   setFeedback('Confirme seu e-mail e entre na My Page. Por segurança, será preciso selecionar sua foto novamente para concluir a inscrição.');
   }
  }catch(error){
   const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
-  signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
- }
- finally{signupSubmit.disabled=false;}
+  const msg=duplicate?signupText().duplicate:signupText().error+error.message;
+  signupFeedback(accountCreated?msg+' A conta já foi criada: entre na My Page para concluir a inscrição.':msg,true);
+ }finally{signupSubmit.disabled=false;}
 });
 
 function showView(view){
