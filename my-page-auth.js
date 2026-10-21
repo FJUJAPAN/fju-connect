@@ -256,6 +256,13 @@ async function openAccount(){
   if(passwordRecovery){showView('reset');return;}
   await loadAccount();
 }
+// Open the same login/My Page dialog when arriving from Eventos or Polos.
+if(window.location.hash==='#my-page'){
+  void openAccount();
+}
+window.addEventListener('hashchange',()=>{
+  if(window.location.hash==='#my-page')void openAccount();
+});
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
   trigger.addEventListener('click',event=>{event.preventDefault();void openAccount();});
 }
