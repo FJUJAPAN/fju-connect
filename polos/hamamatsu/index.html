@@ -68,4 +68,5 @@ document.getElementById('matImg').src=gallerySources.gallery4;
 const l=document.getElementById('lightbox');document.querySelectorAll('#photos button').forEach(button=>button.addEventListener('click',()=>{const img=button.querySelector('img');document.getElementById('lightboxPhoto').src=img.src;document.getElementById('lightboxPhoto').alt=img.alt;l.showModal()}));document.getElementById('closeLightbox').addEventListener('click',()=>l.close());l.addEventListener('click',e=>{if(e.target===l)l.close()});
 document.getElementById('language').addEventListener('change',ev=>changeLang(ev.target.value));changeLang(getLang());
 </script>
+<script type="module" src="../../subpage-avatar.js"></script>
 </body></html>
