@@ -259,6 +259,9 @@ async function openAccount(){
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
   trigger.addEventListener('click',event=>{event.preventDefault();void openAccount();});
 }
+if(window.location.hash==='#my-page'){
+  void openAccount();
+}
 document.addEventListener('click',event=>{
   const target=event.target.closest('a[href="#my-page"]');
   if(!target)return;
