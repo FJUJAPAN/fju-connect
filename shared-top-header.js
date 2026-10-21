@@ -56,7 +56,7 @@ quickSearch?.addEventListener('input',()=>{
   localSearch.dispatchEvent(new Event('input',{bubbles:true}));
   localSearch.dispatchEvent(new Event('change',{bubbles:true}));
 });
-$('fju-sub-profile')?.addEventListener('click',()=>{window.location.href='../#my-page';});
+$('fju-sub-profile')?.addEventListener('click',()=>{window.location.href='../?open=my-page';});
 // Auth state and profile photo use the same private data as the Home header.
 try{
   const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
