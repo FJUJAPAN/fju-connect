@@ -278,8 +278,10 @@ async function renderYouthSignup(user,isAdmin,current){
   container.append(title,status);
   const {data:existing,error:existingError}=await client.rpc('fju_consultar_minha_inscricao');
   if(current!==updateSequence||passwordRecovery)return;
-  if(!existingError&&existing){
-    status.textContent='Sua inscrição foi recebida. Situação: '+existing.status+'. Aguarde a análise do coordenador.';
+  // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
+  const currentSignup=Array.isArray(existing)?existing[0]:existing;
+  if(!existingError&&currentSignup){
+    status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
