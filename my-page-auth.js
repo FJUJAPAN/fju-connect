@@ -155,6 +155,24 @@ async function loadStoredHeaderAvatar(user,current){
     if(headerGuest)headerGuest.hidden=true;
   }catch(_){}
 }
+async function loadApprovedYouthCard(current){
+ try{
+  const {data,error}=await client.rpc('fju_consultar_meu_cartao_jovem');
+  if(error||current!==updateSequence||passwordRecovery)return;
+  const row=Array.isArray(data)?data[0]:data;
+  if(!row)return;
+  const name=byId('fju-member-card-name');
+  const polo=byId('fju-member-card-polo');
+  const project=byId('fju-member-card-project');
+  const rank=byId('fju-member-card-rank');
+  if(name&&row.nome_completo)name.textContent=row.nome_completo;
+  if(polo&&row.polo_nome)polo.textContent='FJU '+row.polo_nome;
+  if(project)project.textContent=(row.projetos||[]).join(' · ')||'Nenhum projeto informado';
+  const display=String(row.patente||row.categoria||'').trim().toLowerCase();
+  const labels={inconstante:'Inconstante',firme:'Firme',cpo:'CPO',colaborador:'Colaborador',obreiro:'Obreiro',coordenador:'Coordenador'};
+  if(rank&&labels[display])rank.textContent=labels[display];
+ }catch(_){}
+}
 async function loadYouthPreviewPhoto(user,current){
  try{
   const {data:blob,error}=await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
@@ -415,7 +433,21 @@ async function renderYouthSignup(user,isAdmin,current){
   try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
   if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){
-    status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
+    const statusTexts={
+      pendente:'Inscrição recebida. Aguarde a análise do coordenador do seu polo.',
+      aprovado:'Inscrição aprovada! Sua ficha oficial foi criada.',
+      rejeitado:'Inscrição rejeitada. Procure o coordenador do seu polo para esclarecer.'
+    };
+    status.textContent=statusTexts[currentSignup.status]||'Situação: '+currentSignup.status;
+    const project=byId('fju-member-card-project');
+    if(project)project.textContent=(currentSignup.projetos_solicitados||[]).join(' · ')||'Nenhum projeto informado';
+    const poloLabel=byId('fju-member-card-polo');
+    if(poloLabel&&currentSignup.polo_id){
+      const result=await client.rpc('fju_listar_polos_cadastro');
+      if(current!==updateSequence||passwordRecovery)return;
+      const found=(result.data||[]).find(p=>p.id===currentSignup.polo_id);
+      if(found)poloLabel.textContent='FJU '+found.nome;
+    }
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
@@ -519,6 +551,8 @@ async function loadAccount(){
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
     await renderYouthSignup(user,verifiedAdmin,current);
+    if(current!==updateSequence||passwordRecovery)return;
+    if(!verifiedAdmin)await loadApprovedYouthCard(current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
