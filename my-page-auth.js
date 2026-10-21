@@ -206,8 +206,8 @@ signupNotice.setAttribute('role','alert');signupNotice.setAttribute('aria-live',
 signupNotice.style.cssText='display:none;margin:0;padding:12px;border-radius:9px;background:#fff0f0;color:#9b1c1c;font-weight:700;line-height:1.5';
 const signupPolo=document.createElement('select');signupPolo.required=true;signupPolo.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
 const signupProjects=document.createElement('fieldset');signupProjects.style.cssText='border:1px solid #9daecb;border-radius:10px;padding:12px;background:#f8faff;color:#172033';
-const signupLegend=document.createElement('legend');signupLegend.textContent='Projetos em que atua (até 5)';signupProjects.append(signupLegend);
-for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
+const signupLegend=document.createElement('legend');signupLegend.textContent='Projetos em que atua';signupProjects.append(signupLegend);
+for(const project of ['Esporte','Cultura','Mídia','Banda']){
  const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:10px;padding:7px;color:#172033';
  const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.cssText='width:20px;height:20px;accent-color:#253b75';
  check.addEventListener('change',()=>{if(signupProjects.querySelectorAll('input:checked').length>5){check.checked=false;signupFeedback('Máximo de 5 projetos.',true);}});
@@ -328,8 +328,8 @@ async function renderYouthSignup(user,isAdmin,current){
   const empty=document.createElement('option');empty.value='';empty.textContent='Selecione seu polo';polo.append(empty);
   for(const item of polos||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;polo.append(option);}
   const projects=document.createElement('fieldset');projects.style.cssText='border:1px solid #dce2ed;border-radius:10px';
-  const legend=document.createElement('legend');legend.textContent='Projetos (até 5)';projects.append(legend);
-  for(const project of ['Mídia','Esporte','Cultura','Banda','Help','Universitário','Arcanjos','Atalaia','Uniforça']){
+  const legend=document.createElement('legend');legend.textContent='Projetos';projects.append(legend);
+  for(const project of ['Esporte','Cultura','Mídia','Banda']){
     const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0';
     const check=document.createElement('input');check.type='checkbox';check.value=project;check.style.width='auto';
     check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>5){check.checked=false;status.textContent='Você pode solicitar no máximo cinco projetos.';}});
