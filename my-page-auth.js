@@ -155,6 +155,18 @@ async function loadStoredHeaderAvatar(user,current){
     if(headerGuest)headerGuest.hidden=true;
   }catch(_){}
 }
+async function loadYouthPreviewPhoto(user,current){
+ try{
+  const {data:blob,error}=await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
+  if(error||!blob||current!==updateSequence||passwordRecovery)return;
+  clearHeaderAvatarObjectUrl();
+  headerAvatarObjectUrl=URL.createObjectURL(blob);
+  if(headerAvatar){headerAvatar.src=headerAvatarObjectUrl;headerAvatar.hidden=false;}
+  if(headerGuest)headerGuest.hidden=true;
+  const img=byId('fju-member-card-photo');
+  if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
+ }catch(_){}
+}
 function renderHeaderAccount(user=null){
   const signedIn=Boolean(user);
   document.documentElement.dataset.fjuAuthenticated=String(signedIn);
@@ -397,15 +409,11 @@ async function renderYouthSignup(user,isAdmin,current){
   if(current!==updateSequence||passwordRecovery)return;
   // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
   const currentSignup=Array.isArray(existing)?existing[0]:existing;
-  if(!existingError&&!currentSignup){
-   let pending=null;try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
-   if(pending&&pending.email===user.email&&pending.polo&&pending.name){
-    const {error:pendingError}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:pending.polo,p_nome:pending.name,p_projetos:pending.projects||[]});
-    if(current!==updateSequence||passwordRecovery)return;
-    if(!pendingError){sessionStorage.removeItem('fju-youth-pending-signup');status.textContent='Inscrição enviada ao coordenador do polo!';return;}
-    status.textContent='Conclua a inscrição abaixo: '+pendingError.message;
-   }
-  }
+  // Se houve confirmação por e-mail, recuperar as escolhas deste navegador.
+  // A foto nunca é guardada em sessionStorage: deve ser selecionada novamente.
+  let pending=null;
+  try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+  if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){
     status.textContent='Sua inscrição foi recebida. Situação: '+currentSignup.status+'. Aguarde a análise do coordenador.';
     return;
@@ -414,7 +422,7 @@ async function renderYouthSignup(user,isAdmin,current){
   const {data:polos,error:poloError}=await client.rpc('fju_listar_polos_cadastro');
   if(current!==updateSequence||passwordRecovery)return;
   if(poloError){status.textContent='Não foi possível carregar os polos: '+poloError.message;return;}
-  status.textContent='Escolha seu polo e até 5 projetos. O coordenador verificará seus dados.';
+  status.textContent='Preencha todos os dados e envie a foto. O coordenador verificará sua inscrição e definirá a patente.';
   const form=document.createElement('form');form.style.display='grid';form.style.gap='10px';
   const name=document.createElement('input');name.required=true;name.maxLength=120;name.minLength=2;name.placeholder='Nome completo';name.setAttribute('aria-label','Nome completo');
   const polo=document.createElement('select');polo.required=true;polo.setAttribute('aria-label','Selecione seu polo');
@@ -429,13 +437,29 @@ async function renderYouthSignup(user,isAdmin,current){
     label.append(check,document.createTextNode(project));projects.append(label);
   }
   const button=document.createElement('button');button.type='submit';button.textContent='Enviar solicitação';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
-  form.append(name,polo,projects,button);container.append(form);
+  const details=createYouthDetails('logged-in');
+  name.value=pending?.name||user.user_metadata?.full_name||'';
+  if(pending?.polo)polo.value=pending.polo;
+  fillYouthDetails(details,pending);
+  for(const input of projects.querySelectorAll('input[type=checkbox]')){
+    input.checked=Array.isArray(pending?.projects)&&pending.projects.includes(input.value);
+  }
+  form.append(name,details.root,polo,projects,button);container.append(form);
   form.addEventListener('submit',async event=>{
-    event.preventDefault();button.disabled=true;status.textContent='Enviando inscrição…';
-    const selected=[...projects.querySelectorAll('input:checked')].map(x=>x.value);
-    const {error}=await client.rpc('fju_enviar_inscricao_jovem',{p_polo_id:polo.value,p_nome:name.value.trim(),p_projetos:selected});
-    if(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;return;}
-    form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+    event.preventDefault();button.disabled=true;status.textContent='Enviando foto e inscrição…';
+    try{
+      const info={
+       name:name.value.trim(),polo:polo.value,birth:birthDateFrom(details),
+       phone:details.phone.value.trim(),nationality:details.nationality.value,
+       projects:[...projects.querySelectorAll('input:checked')].map(x=>x.value)
+      };
+      const blob=await compressYouthPhoto(details.photo.files?.[0]);
+      await sendYouthDetails(user.id,info,blob);
+      sessionStorage.removeItem('fju-youth-pending-signup');
+      form.remove();status.textContent='Inscrição completa enviada! Aguarde a análise do coordenador do seu polo.';
+      await loadYouthPreviewPhoto(user,current);
+    }catch(error){status.textContent=error.message||'Não foi possível enviar a inscrição.';}
+    finally{button.disabled=false;}
   });
 }
 
@@ -476,6 +500,8 @@ async function loadAccount(){
       .maybeSingle();
     if(current!==updateSequence||passwordRecovery)return;
     await loadStoredHeaderAvatar(user,current);
+    if(current!==updateSequence||passwordRecovery)return;
+    if(!profile?.ativo||!['nacional','coordenador'].includes(profile.papel))await loadYouthPreviewPhoto(user,current);
     if(current!==updateSequence||passwordRecovery)return;
     const cardPhoto=byId('fju-member-card-photo');
     if(cardPhoto&&headerAvatar?.src&&!headerAvatar.hidden){cardPhoto.src=headerAvatar.src;cardPhoto.hidden=false;}
