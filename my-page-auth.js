@@ -221,7 +221,88 @@ async function loadSignupPolos(){
  signupSubmit.disabled=false;
  for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
 }
-signupForm.append(signupTitle,signupName,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
+// Campos completos do cadastro inicial, compartilhados com a conclusão de cadastro na My Page.
+function createYouthDetails(prefix){
+ const root=document.createElement('div');root.style.cssText='display:grid;gap:12px;min-width:0';
+ const makeLabel=(value,control)=>{
+  const label=document.createElement('label');label.style.cssText='display:grid;gap:6px;min-width:0;color:#172033;font-weight:600;font-size:14px';
+  const text=document.createElement('span');text.textContent=value;label.append(text,control);return label;
+ };
+ const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.required=true;photo.setAttribute('aria-label','Foto de perfil do jovem');
+ photo.style.cssText='width:100%;max-width:100%;box-sizing:border-box;font-size:14px';
+ const preview=document.createElement('img');preview.alt='Prévia da foto selecionada';preview.hidden=true;preview.style.cssText='width:95px;height:115px;object-fit:cover;border-radius:12px;border:1px solid #b7c5dd';
+ let photoUrl=null;
+ photo.addEventListener('change',()=>{
+  if(photoUrl){URL.revokeObjectURL(photoUrl);photoUrl=null;}
+  const file=photo.files?.[0];preview.hidden=!file;
+  if(file){photoUrl=URL.createObjectURL(file);preview.src=photoUrl;}
+ });
+ const photoHolder=document.createElement('div');photoHolder.style.cssText='display:grid;gap:6px';
+ photoHolder.append(makeLabel('Foto de perfil',photo),preview);
+ const dateHolder=document.createElement('div');dateHolder.style.cssText='display:grid;gap:6px';
+ const dateLabel=document.createElement('label');dateLabel.textContent='Data de nascimento';dateLabel.style.cssText='color:#172033;font-weight:600;font-size:14px';
+ const parts=document.createElement('div');parts.style.cssText='display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:7px;min-width:0';
+ function makeSelect(placeholder){
+  const element=document.createElement('select');element.required=true;element.setAttribute('aria-label',placeholder);
+  element.style.cssText='min-width:0;width:100%;box-sizing:border-box;padding:9px 5px;border-radius:8px;background:white;color:#172033;font-size:16px';
+  const blank=document.createElement('option');blank.value='';blank.textContent=placeholder;element.append(blank);
+  return element;
+ }
+ const day=makeSelect('Dia'),month=makeSelect('Mês'),year=makeSelect('Ano');
+ for(let d=1;d<=31;d++){const o=document.createElement('option');o.value=String(d);o.textContent=String(d).padStart(2,'0');day.append(o);}
+ for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=String(m);o.textContent=String(m).padStart(2,'0');month.append(o);}
+ for(let y=new Date().getFullYear();y>=1900;y--){const o=document.createElement('option');o.value=String(y);o.textContent=String(y);year.append(o);}
+ parts.append(day,month,year);dateHolder.append(dateLabel,parts);
+ const phone=document.createElement('input');phone.type='tel';phone.required=true;phone.maxLength=30;phone.autocomplete='tel';phone.placeholder='Ex.: 090-1234-5678';phone.style.cssText='min-width:0;width:100%;box-sizing:border-box';
+ const nationality=makeSelect('Selecione a nacionalidade');
+ const countries=[['BR','🇧🇷 Brasil'],['JP','🇯🇵 Japão'],['PH','🇵🇭 Filipinas'],['PE','🇵🇪 Peru'],['BO','🇧🇴 Bolívia'],['PY','🇵🇾 Paraguai'],['AR','🇦🇷 Argentina'],['CO','🇨🇴 Colômbia'],['VE','🇻🇪 Venezuela'],['US','🇺🇸 Estados Unidos'],['CN','🇨🇳 China'],['KR','🇰🇷 Coreia do Sul'],['VN','🇻🇳 Vietnã'],['ID','🇮🇩 Indonésia'],['NP','🇳🇵 Nepal'],['IN','🇮🇳 Índia'],['LK','🇱🇰 Sri Lanka'],['MM','🇲🇲 Mianmar'],['TH','🇹🇭 Tailândia'],['PK','🇵🇰 Paquistão'],['BD','🇧🇩 Bangladesh'],['GB','🇬🇧 Reino Unido'],['DE','🇩🇪 Alemanha'],['PT','🇵🇹 Portugal'],['MX','🇲🇽 México'],['CL','🇨🇱 Chile'],['UY','🇺🇾 Uruguai'],['EC','🇪🇨 Equador'],['IT','🇮🇹 Itália'],['FR','🇫🇷 França'],['CA','🇨🇦 Canadá'],['AU','🇦🇺 Austrália']];
+ for(const [code,name] of countries){const o=document.createElement('option');o.value=code;o.textContent=name;nationality.append(o);}
+ const rank=document.createElement('p');rank.style.cssText='margin:0;padding:10px;border-radius:8px;background:#e9effb;color:#172033;font-size:14px;line-height:1.4';
+ rank.textContent='Patente do jovem: será definida pelo coordenador ao aprovar a inscrição.';
+ root.append(photoHolder,dateHolder,makeLabel('Telefone',phone),makeLabel('Nacionalidade',nationality),rank);
+ return {root,photo,day,month,year,phone,nationality};
+}
+function birthDateFrom(fields){
+ const y=Number(fields.year.value),m=Number(fields.month.value),d=Number(fields.day.value);
+ if(!y||!m||!d)throw Error('Preencha a data de nascimento.');
+ const date=new Date(Date.UTC(y,m-1,d));
+ if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)throw Error('Data de nascimento inválida.');
+ return String(y).padStart(4,'0')+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+function fillYouthDetails(fields,details){
+ if(details?.birth){const parts=details.birth.split('-');if(parts.length===3){fields.year.value=String(Number(parts[0]));fields.month.value=String(Number(parts[1]));fields.day.value=String(Number(parts[2]));}}
+ if(details?.phone)fields.phone.value=details.phone;
+ if(details?.nationality)fields.nationality.value=details.nationality;
+}
+async function compressYouthPhoto(file){
+ if(!file||!file.type.startsWith('image/')||file.size>8*1024*1024)throw Error('Selecione uma foto de até 8 MB.');
+ const bitmap=await createImageBitmap(file);
+ try{
+  for(const size of [900,750,600,480,360,280,200,140]){
+   const scale=Math.min(1,size/Math.max(bitmap.width,bitmap.height));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Não foi possível processar a foto.');
+   ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+   for(const quality of [0.82,0.7,0.58,0.45,0.3,0.18,0.08]){
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+    if(blob&&blob.size<=100*1024)return blob;
+   }
+  }
+  throw Error('Não foi possível reduzir a foto para 100 KB.');
+ }finally{bitmap.close();}
+}
+async function sendYouthDetails(userId,info,blob){
+ const upload=await client.storage.from('fju-inscricoes-fotos').upload(userId+'/perfil.jpg',blob,{contentType:'image/jpeg',upsert:true});
+ if(upload.error)throw Error('Não foi possível enviar a foto: '+upload.error.message);
+ const {error}=await client.rpc('fju_enviar_inscricao_jovem_detalhada',{
+  p_polo_id:info.polo,p_nome:info.name,p_projetos:info.projects,
+  p_nascimento:info.birth,p_telefone:info.phone,p_nacionalidade_iso2:info.nationality
+ });
+ if(error)throw Error('Não foi possível enviar a inscrição: '+error.message);
+}
+const signupExtra=createYouthDetails('signup');
+signupForm.append(signupTitle,signupName,signupExtra.root,signupPolo,signupProjects,signupEmail,signupPassword,signupConfirm,signupNotice,signupSubmit,signupBack);
 function signupFeedback(message='',error=false){
  signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
  signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
