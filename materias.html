@@ -24,7 +24,7 @@ try{
 const {data,error}=await db.from('fju_materias').select('id,polo_id,categoria,data_materia,criado_em,titulo_pt,titulo_ja,titulo_en,texto1_pt,texto1_ja,texto1_en,texto2_pt,texto2_ja,texto2_en,final_pt,final_ja,final_en,foto1').eq('status','publicada').order('criado_em',{ascending:false}).limit(1000);
 if(error)throw error;articles=(data||[]).filter(valid).sort((a,b)=>(b.data_materia||b.criado_em||'').localeCompare(a.data_materia||a.criado_em||''));
 try{const r=await db.rpc('fju_polos_materias_publicadas');if(!r.error)for(const p of r.data||[])poloNames[p.id]=p.nome;}catch(e){}
-[...new Set(articles.map(a=>(a.data_materia||a.criado_em||'').slice(0,7)).filter(x=>/^\\d{4}-\\d{2}$/.test(x)))].sort().reverse().forEach(m=>option(el('month'),m,monthLabel(m)));[...new Set(articles.map(a=>a.categoria).filter(Boolean))].sort().forEach(c=>option(el('category'),c,label(c)));
+[...new Set(articles.map(a=>(a.data_materia||a.criado_em||'').slice(0,7)).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort().reverse().forEach(m=>option(el('month'),m,monthLabel(m)));[...new Set(articles.map(a=>a.categoria).filter(Boolean))].sort().forEach(c=>option(el('category'),c,label(c)));
 [...new Set(articles.map(a=>a.polo_id).filter(Boolean))].sort((a,b)=>(poloNames[a]||a).localeCompare(poloNames[b]||b)).forEach(id=>option(el('polo'),id,poloNames[id]||'Polo não identificado'));
 render();
 }catch(e){el('status').textContent=t().error+e.message;}
