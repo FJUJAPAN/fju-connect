@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Todas as matérias | FJU Connect JAPAN</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#143154;font:16px/1.5 system-ui,'Noto Sans JP',sans-serif}header{background:#0d2c52;color:#fff;padding:19px}header div,main{max-width:1120px;margin:auto}header a{color:#fff;text-decoration:none;font-weight:800}main{padding:28px 16px 70px}h1{font-size:clamp(28px,5vw,43px);margin:8px 0}.sub{color:#65768b;margin:0 0 24px}.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:24px}input,select{width:100%;padding:13px;border:1px solid #ccd5e1;border-radius:10px;background:#fff;color:#173354;font:inherit}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}.card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 7px 23px #0d2b5212;text-decoration:none;color:inherit;display:block}.cover{width:100%;height:190px;object-fit:cover;background:#dae1eb;display:block}.body{padding:18px}.meta{color:#d12a55;font-size:12px;font-weight:800;text-transform:uppercase}.card h2{font-size:20px;line-height:1.25;margin:12px 0}.more{font-weight:800;color:#0d2c52}.message{padding:24px;background:white;border-radius:12px}.load{display:block;margin:25px auto;padding:12px 28px;border:0;border-radius:9px;background:#0d2c52;color:#fff;font:700 16px system-ui;cursor:pointer}[hidden]{display:none!important}@media(max-width:650px){.filters{grid-template-columns:1fr}main{padding-top:20px}}
+</style></head><body>
+<header><div><a href="./#fju-news">← FJU CONNECT JAPAN</a></div></header>
+<main><div class="meta">FJU CONNECT JAPAN / NOTÍCIAS</div><h1>Todas as matérias</h1><p class="sub">Encontre notícias e histórias da FJU JAPAN.</p>
+<div class="filters"><input id="search" type="search" placeholder="Buscar por título ou texto" aria-label="Buscar matérias"><select id="category" aria-label="Filtrar categoria"><option value="">Todas as categorias</option></select><select id="polo" aria-label="Filtrar polo"><option value="">Todos os polos</option></select></div>
+<p id="status" role="status">Carregando matérias…</p><div id="grid" class="grid"></div><button id="more" class="load" hidden>Carregar mais</button></main>
+<script type="module">
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
+const el=id=>document.getElementById(id),langs=['pt','ja','en'],pageSize=12;let articles=[],shown=pageSize,poloNames={};
+const valid=a=>langs.some(l=>a['titulo_'+l]&&a['texto1_'+l]&&a['texto2_'+l]&&a['final_'+l]);
+const language=a=>langs.find(l=>l===(navigator.language||'pt').slice(0,2)&&a['titulo_'+l])||langs.find(l=>a['titulo_'+l])||'pt';
+const text=a=>langs.map(l=>[a['titulo_'+l],a['texto1_'+l],a['texto2_'+l],a['final_'+l]].filter(Boolean).join(' ')).join(' ').toLocaleLowerCase();
+const label=s=>(s||'FJU').replaceAll('_',' ');
+function option(select,value,name){const o=document.createElement('option');o.value=value;o.textContent=name;select.appendChild(o);}
+async function signed(path){if(!path)return null;const {data,error}=await db.storage.from('fju-materias').createSignedUrl(path,1800);return error?null:data.signedUrl;}
+async function render(){const query=el('search').value.trim().toLocaleLowerCase(),cat=el('category').value,polo=el('polo').value;const filtered=articles.filter(a=>(!query||text(a).includes(query))&&(!cat||a.categoria===cat)&&(!polo||a.polo_id===polo));el('grid').replaceChildren();el('status').textContent=filtered.length+' matéria(s) encontrada(s)';el('more').hidden=filtered.length<=shown;
+for(const a of filtered.slice(0,shown)){const l=language(a),card=document.createElement('a');card.className='card';card.href='materia.html?id='+encodeURIComponent(a.id)+'&lang='+l;const img=document.createElement('img');img.className='cover';img.alt='Foto da matéria';img.loading='lazy';card.appendChild(img);signed(a.foto1).then(url=>{if(url)img.src=url;else img.style.display='none';});const body=document.createElement('div');body.className='body';const meta=document.createElement('div');meta.className='meta';meta.textContent=[label(a.categoria),a.data_materia||'',poloNames[a.polo_id]||''].filter(Boolean).join(' • ');body.appendChild(meta);const h=document.createElement('h2');h.textContent=a['titulo_'+l];body.appendChild(h);const more=document.createElement('span');more.className='more';more.textContent='Ler matéria completa →';body.appendChild(more);card.appendChild(body);el('grid').appendChild(card);}}
+for(const id of ['search','category','polo'])el(id).addEventListener(id==='search'?'input':'change',()=>{shown=pageSize;render();});el('more').onclick=()=>{shown+=pageSize;render();};
+try{
+const {data,error}=await db.from('fju_materias').select('id,polo_id,categoria,data_materia,criado_em,titulo_pt,titulo_ja,titulo_en,texto1_pt,texto1_ja,texto1_en,texto2_pt,texto2_ja,texto2_en,final_pt,final_ja,final_en,foto1').eq('status','publicada').order('criado_em',{ascending:false}).limit(1000);
+if(error)throw error;articles=(data||[]).filter(valid);
+try{const r=await db.from('fju_polos').select('id,nome');if(!r.error)for(const p of r.data||[])poloNames[p.id]=p.nome;}catch(e){}
+[...new Set(articles.map(a=>a.categoria).filter(Boolean))].sort().forEach(c=>option(el('category'),c,label(c)));
+[...new Set(articles.map(a=>a.polo_id).filter(Boolean))].sort((a,b)=>(poloNames[a]||a).localeCompare(poloNames[b]||b)).forEach(id=>option(el('polo'),id,poloNames[id]||'Polo '+id.slice(0,8)));
+render();
+}catch(e){el('status').textContent='Não foi possível carregar as matérias: '+e.message;}
+</script></body></html>
