@@ -49,7 +49,7 @@ for a in articles:
             '<meta property="og:site_name" content="FJU Connect JAPAN">'
             + image_tag +
             '<link rel="canonical" href="' + esc(destination) + '">'
-            '<meta http-equiv="refresh" content="0;url=' + esc(destination) + '">'
+            '<meta name="robots" content="index,follow">'
             '</head><body><p><a href="' + esc(destination) + '">Ler matéria completa</a></p>'
             '<script>location.replace(' + json.dumps(destination) + ')</script></body></html>')
     (out / (uid + ".html")).write_text(page, encoding="utf-8")
