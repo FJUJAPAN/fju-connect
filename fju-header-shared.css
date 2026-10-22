@@ -1,0 +1,33 @@
+/* FJU JAPAN — cabeçalho visual compartilhado.
+   Mantém os controles existentes e seus eventos de tradução/login.
+   Carregado por último nas páginas públicas para corrigir diferenças visuais. */
+:root{--fju-header-bg:rgba(8,20,42,.96);--fju-header-line:rgba(255,255,255,.12)}
+.site-header,body>header{height:auto;min-height:72px;position:sticky;top:0;z-index:100;background:var(--fju-header-bg);color:#fff;border:0;border-bottom:1px solid var(--fju-header-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 5px 22px rgba(0,0,0,.16)}
+.site-header .header-inner,body>header .header-in{min-height:72px;height:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+body>header .wrap, .site-header>.wrap{width:min(1160px,calc(100% - 32px));margin-inline:auto}
+body>header .brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+body>header .brand-text b,body>header .brand small{letter-spacing:.08em}
+body>header .header-side{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
+body>header .header-side a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 11px;border-radius:10px;font-size:12px;font-weight:750;line-height:1.2;text-decoration:none;color:#f4f7ff;white-space:nowrap}
+body>header .header-side a:hover,body>header .header-side a:focus-visible{background:rgba(255,255,255,.11)}
+body>header #lang{width:auto;min-width:64px;min-height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.25);background:#203b65;color:#fff;padding:8px 10px;font-weight:700}
+body>header .fju-subpage-my-page{background:#284d84}
+body>header a:focus-visible,body>header select:focus-visible,.site-header a:focus-visible,.site-header button:focus-visible{outline:3px solid #8fbcff;outline-offset:2px}
+@media(max-width:700px){
+ .site-header,body>header{min-height:64px}
+ .site-header .header-inner,body>header .header-in{min-height:64px;gap:8px}
+ body>header .wrap,.site-header>.wrap{width:calc(100% - 24px)}
+ body>header .brand{font-size:17px;letter-spacing:-.03em}
+ body>header .brand img{max-width:74px;max-height:48px;object-fit:contain}
+ body>header .brand-text b{font-size:10px}
+ body>header .brand-text small,body>header .brand small{font-size:9px}
+ body>header .header-side{gap:4px}
+ body>header .header-side a{font-size:10px;min-height:40px;padding:6px}
+ body>header #lang{min-width:54px;padding:8px 5px}
+}
+@media(max-width:390px){
+ body>header .brand-text small{display:none}
+ body>header .header-side .top-link,body>header .header-side .back{font-size:0;padding:6px 8px}
+ body>header .header-side .top-link::after,body>header .header-side .back::after{content:"←";font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){.site-header,body>header{scroll-behavior:auto}}
