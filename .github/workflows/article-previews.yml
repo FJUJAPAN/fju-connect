@@ -17,7 +17,7 @@ jobs:
           python-version: '3.12'
       - name: Gerar paginas das materias
         env:
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_ANON_KEY: sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ
         run: python scripts/generate_article_previews.py
       - name: Commit das previas
         run: |
