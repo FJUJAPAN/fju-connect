@@ -33,7 +33,7 @@ for a in articles:
             img = request(BASE + "/storage/v1" + signed_path)
             # Published article cover is copied into the public share directory for crawler previews.
             if len(img) <= 400000:
-                ext = ".png" if img.startswith(b"\\x89PNG") else ".webp" if img.startswith(b"RIFF") else ".jpg"
+                ext = ".png" if img.startswith(bytes([137,80,78,71])) else ".webp" if img.startswith(b"RIFF") else ".jpg"
                 image_name = uid + ext
                 (out / image_name).write_bytes(img)
                 image_tag = '<meta property="og:image" content="' + SITE + 'share/' + image_name + '"><meta name="twitter:card" content="summary_large_image">'
@@ -54,6 +54,6 @@ for a in articles:
             '<script>location.replace(' + json.dumps(destination) + ')</script></body></html>')
     (out / (uid + ".html")).write_text(page, encoding="utf-8")
 for file in out.iterdir():
-    if file.name.split(".")[0] not in valid and re.fullmatch(r"[0-9a-f-]{36}\\.(html|jpg|png|webp)", file.name):
+    if file.name.split(".")[0] not in valid and re.fullmatch(r"[0-9a-f-]{36}[.](html|jpg|png|webp)", file.name):
         file.unlink()
 print("Generated", len(valid), "share previews")
