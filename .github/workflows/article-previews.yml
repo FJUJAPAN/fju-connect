@@ -5,6 +5,7 @@ on:
     - cron: '*/30 * * * *'
 permissions:
   contents: write
+  pull-requests: write
 jobs:
   previews:
     runs-on: ubuntu-latest
@@ -19,12 +20,15 @@ jobs:
         env:
           SUPABASE_ANON_KEY: sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ
         run: python scripts/generate_article_previews.py
-      - name: Commit das previas
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add share/
-          if ! git diff --cached --quiet; then
-            git commit -m "Atualizar previas Facebook"
-            git push
-          fi
+      - name: Abrir pull request com as previas
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: bot/atualizar-previas-facebook
+          base: main
+          delete-branch: true
+          commit-message: "Atualizar previas Facebook"
+          title: "Atualizar previas Facebook das materias"
+          body: "Atualizacao automatica das paginas e fotos de compartilhamento de materias publicadas. Revisar e aprovar para publicar no GitHub Pages."
+          add-paths: share/
+
