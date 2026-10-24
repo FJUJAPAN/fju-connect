@@ -5,19 +5,19 @@ if(original){
  const style=document.createElement('style');
  style.textContent=`
 @media(max-width:740px){
-body{padding-top:82px!important}
+body{padding-top:72px!important}
 body>header:not(#fju-unified-top){display:none!important}
 #fju-unified-top{display:flex!important}
 }
-#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:82px;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;background:#143562;color:#fff;box-sizing:border-box;box-shadow:0 2px 12px #06172d22}
+#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:72px;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;background:#111b30;color:#fff;box-sizing:border-box;box-shadow:0 2px 12px #06172d22}
 #fju-unified-top *{box-sizing:border-box}
-#fju-unified-top .fju-logo{width:110px;max-height:55px;object-fit:contain}
+#fju-unified-top .fju-logo{width:110px;height:55px;max-height:55px;object-fit:contain}
 #fju-unified-top .fju-tools{display:flex;align-items:center;gap:9px;margin-left:auto}
 #fju-unified-top button{background:transparent;color:white;border:0;padding:3px;display:grid;place-items:center;cursor:pointer}
 #fju-unified-top svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #fju-unified-top .fju-avatar{width:36px;height:36px;object-fit:cover;border-radius:50%;border:1.5px solid #fff}
 #fju-unified-top .fju-lang{font-size:22px;min-width:32px}
-#fju-unified-top .fju-panel{position:absolute;top:82px;right:10px;background:#0b2342;border:1px solid #ffffff40;border-radius:12px;padding:10px;box-shadow:0 12px 24px #0005;display:flex;flex-direction:column;gap:5px;min-width:190px}
+#fju-unified-top .fju-panel{position:absolute;top:72px;right:10px;background:#0b2342;border:1px solid #ffffff40;border-radius:12px;padding:10px;box-shadow:0 12px 24px #0005;display:flex;flex-direction:column;gap:5px;min-width:190px}
 #fju-unified-top .fju-panel[hidden]{display:none}
 #fju-unified-top .fju-panel a,#fju-unified-top .fju-panel button{color:white;text-align:left;text-decoration:none;font:700 14px system-ui;padding:10px;display:block}
 #fju-unified-top .fju-search-box{position:absolute;top:82px;left:10px;right:10px;background:#0b2342;padding:12px;border-radius:10px}
