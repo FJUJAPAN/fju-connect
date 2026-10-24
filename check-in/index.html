@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111a2d"><title>Check-in | FJU JAPAN</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#f7f8ff;background:#0d1426}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,#46327c 0%,#131b33 40%,#0d1426 90%)}a{color:#d8b9ff}header{display:flex;align-items:center;justify-content:space-between;padding:20px max(20px,calc((100vw - 760px)/2));border-bottom:1px solid #ffffff22}header strong{letter-spacing:.12em}main{max-width:760px;margin:auto;padding:38px 20px 125px}.eyebrow{color:#dbb8ff;font-weight:800;letter-spacing:.16em;font-size:12px}h1{font-size:clamp(34px,7vw,56px);margin:12px 0}p{line-height:1.6;color:#cbd3e6}.panel{background:#ffffff10;border:1px solid #ffffff28;border-radius:22px;padding:25px;margin-top:26px;box-shadow:0 20px 50px #0003}label{display:block;margin:20px 0 8px;font-weight:700}select,button{width:100%;min-height:52px;border-radius:12px;font-size:16px}select{background:#182641;color:white;border:1px solid #8490ac;padding:12px}button{border:0;background:linear-gradient(110deg,#a86ef3,#dc8aeb);font-weight:850;color:#14152a;margin-top:18px;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.status{min-height:50px;padding:12px 0;color:#f0d8ff}.small{font-size:13px}.card{margin-top:24px;border:1px solid #ffffff40;background:linear-gradient(145deg,#3c2472,#151b42 55%,#0a2037);padding:30px 22px;border-radius:24px;text-align:center;display:none}.card h2{font-size:32px}.card .mark{letter-spacing:.2em;color:#e8c5ff;font-weight:900}.card .check{font-size:44px;color:#e7a5f8}.card .name{font-size:24px;font-weight:850}.card .detail{color:#f0d8ff}.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#10192bf2;border-top:1px solid #ffffff35;padding:12px 8px calc(14px + env(safe-area-inset-bottom,0px));gap:8px}.bottom a{flex:1;text-align:center;font-size:12px;text-decoration:none;color:#d9d2ed}.bottom .active{color:#e8a8ff;font-weight:900}
+</style></head><body>
+<header><strong>FJU JAPAN</strong><a href="../">← Início</a></header>
+<main><span class="eyebrow">FJU CONNECT • JAPAN</span><h1>Check-in <span aria-hidden="true">📍</span></h1><p>Registre sua presença quando estiver a até <strong>100 metros</strong> de uma igreja FJU com localização verificada.</p>
+<section class="panel"><strong>Presença na igreja</strong><p class="small">Entre na sua conta FJU Connect e permita o acesso à localização. O GPS precisa ter precisão de até 50 metros.</p>
+<label for="polo">Igreja que está visitando</label><select id="polo"><option value="">Carregando igrejas verificadas…</option></select>
+<button id="check" disabled>Confirmar localização e fazer check-in</button><div id="status" class="status" role="status" aria-live="polite">Verificando sua conta…</div></section>
+<section id="card" class="card" aria-label="Card de check-in"><div class="mark">FJU JAPAN</div><div class="check">✓</div><h2>CHECK-IN</h2><div id="card-name" class="name"></div><p id="card-church"></p><div id="card-date" class="detail"></div><p class="small">Igreja Universal • FJU JAPAN</p></section>
+<button id="share" style="display:none">Compartilhar card</button><p class="small">A localização é solicitada somente quando você toca no botão. O GPS de celulares pode ser impreciso ou manipulado; o check-in não é uma prova absoluta de presença.</p>
+</main><nav class="bottom" aria-label="Navegação inferior"><a href="../">Início</a><a class="active" aria-current="page" href="./">Check-in</a><a href="../#my-page">My Page</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a></nav>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
+const el=id=>document.getElementById(id),status=msg=>el('status').textContent=msg;
+let user=null,locations=[],last=null;
+async function init(){
+ try{
+ const {data:{user:u},error:e}=await db.auth.getUser();if(e)throw e;user=u;
+ if(!user){status('Faça login na página inicial (My Page) antes de registrar presença.');el('polo').innerHTML='<option>Login necessário</option>';return;}
+ const {data,error}=await db.from('fju_checkin_locais').select('slug,nome').order('nome');
+ if(error)throw error;locations=data||[];el('polo').replaceChildren();
+ const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione uma igreja';el('polo').append(placeholder);
+ locations.forEach(p=>{const opt=document.createElement('option');opt.value=p.slug;opt.textContent=p.nome;el('polo').append(opt)});
+ if(!locations.length){status('Nenhuma igreja liberada ainda. As coordenadas precisam ser verificadas pela administração.');return;}
+ el('check').disabled=false;status('Conta conectada. Escolha a igreja e confirme sua localização.');
+ }catch(e){status('Não foi possível carregar o Check-in: '+e.message);}
+}
+el('check').addEventListener('click',()=>{
+ if(!user){status('Entre na sua conta primeiro.');return;}
+ const slug=el('polo').value;if(!slug){status('Selecione a igreja que está visitando.');return;}
+ if(!navigator.geolocation){status('Este navegador não oferece GPS.');return;}
+ el('check').disabled=true;status('Obtendo localização com precisão…');
+ navigator.geolocation.getCurrentPosition(async pos=>{
+ try{
+ const accuracy=pos.coords.accuracy;
+ if(!Number.isFinite(accuracy)||accuracy>50){status('Precisão insuficiente ('+Math.round(accuracy)+' m). Tente novamente ao ar livre.');return;}
+ const {data,error}=await db.rpc('fju_registrar_checkin',{p_polo_slug:slug,p_latitude:pos.coords.latitude,p_longitude:pos.coords.longitude,p_precisao_m:accuracy});
+ if(error)throw error;const record=data?.[0];if(!record)throw Error('Registro não confirmado');
+ const church=locations.find(x=>x.slug===slug)?.nome||slug;
+ const name=(user.user_metadata?.full_name||user.user_metadata?.name||user.email?.split('@')[0]||'Jovem FJU').slice(0,80);
+ el('card-name').textContent=name;el('card-church').textContent=church;el('card-date').textContent=new Date(record.registrado_em).toLocaleString('pt-BR',{timeZone:'Asia/Tokyo',dateStyle:'long',timeStyle:'short'});
+ el('card').style.display='block';el('share').style.display='block';last={name,church,date:el('card-date').textContent};status('Check-in confirmado! Distância aproximada: '+record.distancia_m+' m.');
+ }catch(e){status('Não foi possível registrar: '+String(e.message||e).replace('checkin_bloqueado: ','').replace('checkin_ja_registrado_hoje','Você já fez check-in nesta igreja hoje.'));}
+ finally{el('check').disabled=false;}
+ },err=>{status('Não foi possível acessar o GPS: '+err.message);el('check').disabled=false;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+});
+el('share').addEventListener('click',async()=>{
+ if(!last)return;
+ const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');
+ const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#51288c');bg.addColorStop(.55,'#18244b');bg.addColorStop(1,'#071d35');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
+ x.fillStyle='#e8b3ff';x.font='bold 52px system-ui';x.textAlign='center';x.fillText('FJU JAPAN',540,150);
+ x.fillStyle='#fff';x.font='bold 92px system-ui';x.fillText('CHECK-IN ✓',540,440);
+ function lines(value,y,size){x.font='bold '+size+'px system-ui';const words=value.split(' ');let line='',rows=[];for(const w of words){if(x.measureText(line+' '+w).width>900&&line){rows.push(line);line=w}else line+=(line?' ':'')+w}rows.push(line);rows.slice(0,4).forEach((t,i)=>x.fillText(t,540,y+i*(size+20)))}
+ lines(last.name,650,65);x.fillStyle='#e8b3ff';lines(last.church,835,52);x.fillStyle='#fff';x.font='32px system-ui';x.fillText(last.date,540,1120);x.fillText('IGREJA UNIVERSAL • FJU JAPAN',540,1250);
+ const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!blob){status('Não foi possível gerar o card.');return;}
+ const file=new File([blob],'fju-checkin.png',{type:'image/png'});
+ try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:'Meu Check-in FJU'});return;}}catch(e){if(e.name==='AbortError')return;}
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='fju-checkin.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+ status('Card salvo como imagem. Publique-o no Facebook pelo aplicativo.');
+});
+init();
+</script></body></html>
