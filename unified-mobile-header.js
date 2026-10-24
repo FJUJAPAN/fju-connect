@@ -1,6 +1,7 @@
 /* FJU JAPAN — unified mobile top navigation. Bottom navigation untouched. */
 const base=new URL('./',import.meta.url);
 const original=document.querySelector('body > header');
+const isHome=!!original?.classList.contains('site-header');
 if(original){
  const style=document.createElement('style');
  style.textContent=`
@@ -47,17 +48,18 @@ body>header:not(#fju-unified-top){display:none!important}
  bar.addEventListener('click',e=>{
   const action=e.target.closest('[data-action]')?.dataset.action;
   if(!action)return;
-  if(action==='search'){panel.hidden=true;search.hidden=!search.hidden;if(!search.hidden)search.querySelector('input').focus();}
+  if(action==='search'){if(isHome&&document.querySelector('#fju-search-toggle')){document.querySelector('#fju-search-toggle').click();panel.hidden=true;search.hidden=true;}else{panel.hidden=true;search.hidden=!search.hidden;if(!search.hidden)search.querySelector('input').focus();}}
   if(action==='language')show(Object.entries(langs).map(([code,flag])=>`<button type="button" data-lang="${code}">${flag} ${code.toUpperCase()}</button>`).join(''));
-  if(action==='notifications')show('<p style="margin:8px;font:13px system-ui">As atualizações da sua conta aparecerão aqui.</p>');
+  if(action==='notifications'){const native=original.querySelector('#fju-notification-toggle');if(isHome&&native&&!native.hidden)native.click();else show('<p style="margin:8px;font:13px system-ui">As atualizações da sua conta aparecerão aqui.</p>');}
   if(action==='menu')show(`<a href="${base.href}">Início</a><a href="${new URL('eventos/',base)}">Eventos</a><a href="${new URL('encontre-a-fju/',base)}">Polos</a><a href="${base.href}#projetos">Projetos</a><a href="${base.href}#my-page">My Page</a>`);
  });
  panel.addEventListener('click',e=>{const code=e.target.closest('[data-lang]')?.dataset.lang;if(code&&nativeSelect){nativeSelect.value=code;nativeSelect.dispatchEvent(new Event('change',{bubbles:true}));syncLang();panel.hidden=true;}});
  search.addEventListener('submit',e=>{e.preventDefault();const term=search.querySelector('input').value.trim();if(term)location.href=base.href+'?q='+encodeURIComponent(term);});
  document.addEventListener('click',e=>{if(!bar.contains(e.target))panel.hidden=true;});
  const account=bar.querySelector('[data-action="profile"]');
- const avatarLink=original.querySelector('.fju-subpage-my-page');
+ const avatarLink=original.querySelector('.fju-subpage-my-page')||original.querySelector('.fju-profile-button');
  function syncAvatar(){const img=avatarLink?.querySelector('img');if(img?.src){const copy=document.createElement('img');copy.className='fju-avatar';copy.src=img.src;copy.alt='Minha foto';account.replaceChildren(copy);}}
+ if(isHome){account.href='#my-page';account.addEventListener('click',e=>{const native=original.querySelector('[data-fju-account-open]');if(native){e.preventDefault();native.click();}});}
  syncAvatar();
  if(avatarLink)new MutationObserver(syncAvatar).observe(avatarLink,{childList:true,subtree:true});
 }
