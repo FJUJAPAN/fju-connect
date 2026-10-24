@@ -9,7 +9,7 @@ body{padding-top:60px!important}
 body>header:not(#fju-unified-top){display:none!important}
 #fju-unified-top{display:flex!important}
 }
-#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:60px;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;background:#111b30;color:#fff;box-sizing:border-box;box-shadow:0 2px 12px #06172d22}
+#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:60px;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;background:var(--fju-header-bg,#111B30);color:#fff;box-sizing:border-box;box-shadow:0 2px 12px #06172d22}
 #fju-unified-top *{box-sizing:border-box}
 #fju-unified-top .fju-logo{width:82px;height:43px;max-height:43px;object-fit:contain}
 #fju-unified-top .fju-tools{display:flex;align-items:center;gap:5px;margin-left:auto}
