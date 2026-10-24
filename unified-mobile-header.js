@@ -10,7 +10,8 @@ body{padding-top:60px!important}
 body>header:not(#fju-unified-top){display:none!important}
 #fju-unified-top{display:flex!important}
 }
-#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:60px;align-items:center;justify-content:space-between;gap:4px;padding:0 14px;background:var(--fju-header-bg,#111B30);color:#fff;box-sizing:border-box;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:none}
+#fju-unified-top{position:fixed;top:0;left:0;right:0;z-index:9999;height:60px;align-items:center;justify-content:space-between;gap:4px;padding:0 14px;background:#111B30!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;opacity:1!important;color:#fff;box-sizing:border-box;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:none}
+#fju-unified-top::before,#fju-unified-top::after{content:none!important;display:none!important}
 #fju-unified-top *{box-sizing:border-box}
 #fju-unified-top .fju-logo{width:82px;height:43px;max-height:43px;object-fit:contain;object-position:left center;display:block}
 #fju-unified-top .fju-tools{display:flex;align-items:center;gap:5px;margin-left:auto}
