@@ -82,7 +82,7 @@ el('share').addEventListener('click',async()=>{
  const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');
 
  const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#48208d');bg.addColorStop(.7,'#101b46');bg.addColorStop(1,'#09152b');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
- const churchPhoto=last.slug==='hamamatsu'?await imageLoad('../assets/checkin/hamamatsu.jpg'):null;
+ const churchPhoto=last.slug==='hamamatsu'?await imageLoad('./hamamatsu.jpg'):null;
  if(churchPhoto){const scale=Math.max(1080/churchPhoto.width,800/churchPhoto.height);const w=churchPhoto.width*scale,h=churchPhoto.height*scale;x.drawImage(churchPhoto,(1080-w)/2,(800-h)/2,w,h);}
  const shade=x.createLinearGradient(0,0,0,1020);shade.addColorStop(0,'#0b0f2a22');shade.addColorStop(.5,'#0b0f2a66');shade.addColorStop(1,'#09152b');x.fillStyle=shade;x.fillRect(0,0,1080,1020);
  x.textAlign='left';x.fillStyle='#fff';x.font='900 62px system-ui';x.fillText('FJU JAPAN',60,110);
