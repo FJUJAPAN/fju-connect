@@ -128,28 +128,33 @@ el('check').addEventListener('click',()=>{
  },err=>{status('Não foi possível acessar o GPS: '+err.message);el('check').disabled=false;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 });
 async function buildCard(){if(!last)return null;
- const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');
- const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#162449');bg.addColorStop(1,'#080f25');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
+ const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d'),red='#ed1740',navy='#071327';
+ const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#123a68');bg.addColorStop(.55,navy);bg.addColorStop(1,'#050a14');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
  const churchPhoto=last.slug==='hamamatsu'?await imageLoad('./hamamatsu.jpg'):null;
- if(churchPhoto){const scale=Math.max(1080/churchPhoto.width,860/churchPhoto.height);const w=churchPhoto.width*scale,h=churchPhoto.height*scale;x.drawImage(churchPhoto,(1080-w)/2,(860-h)/2,w,h);}
- const shade=x.createLinearGradient(0,0,0,1120);shade.addColorStop(0,'#07132955');shade.addColorStop(.35,'#08132b11');shade.addColorStop(.57,'#0a143399');shade.addColorStop(.85,'#09112af7');shade.addColorStop(1,'#09112a');x.fillStyle=shade;x.fillRect(0,0,1080,1350);
- x.textAlign='left';x.fillStyle='#fff';x.font='900 62px system-ui';x.fillText('FJU JAPAN',60,108);
- x.fillStyle='#fff';x.font='700 28px system-ui';x.fillText('IGREJA UNIVERSAL',60,151);
- x.fillStyle='#cba4ff';x.font='bold 35px system-ui';x.fillText('✓  '+translations[last.lng].done,60,219);
- const avatar=await imageLoad(last.avatar),cx=208,cy=670,radius=138;
+ if(churchPhoto){const scale=Math.max(1080/churchPhoto.width,880/churchPhoto.height),w=churchPhoto.width*scale,h=churchPhoto.height*scale;x.drawImage(churchPhoto,(1080-w)/2,(880-h)/2,w,h);}
+ const shade=x.createLinearGradient(0,0,0,1200);shade.addColorStop(0,'#071327b0');shade.addColorStop(.22,'#07132710');shade.addColorStop(.49,'#07132755');shade.addColorStop(.72,'#071327f8');shade.addColorStop(1,'#050a14');x.fillStyle=shade;x.fillRect(0,0,1080,1350);
+ x.textAlign='left';x.fillStyle='#fff';x.font='900 70px system-ui';x.fillText('FJU',60,110);x.fillStyle=red;x.fillText('JAPAN',224,110);
+ x.fillStyle='#fff';x.font='25px system-ui';x.fillText('IGREJA UNIVERSAL',63,150);
+ x.fillStyle=red;x.fillRect(63,172,75,7);x.fillStyle='#fff';x.fillRect(138,172,43,7);
+ // Compact check-in label, respecting Japanese and English text widths.
+ x.fillStyle='#071327e8';x.beginPath();x.roundRect(570,52,445,95,48);x.fill();x.strokeStyle=red;x.lineWidth=3;x.stroke();
+ x.fillStyle=red;x.beginPath();x.arc(620,100,26,0,Math.PI*2);x.fill();x.fillStyle='#fff';x.font='bold 29px system-ui';x.fillText('✓',606,111);
+ x.font=last.lng==='ja'?'bold 28px system-ui':'bold 25px system-ui';x.fillText(translations[last.lng].done,661,111,320);
+ const avatar=await imageLoad(last.avatar),cx=220,cy=690,radius=155;
  x.save();x.beginPath();x.arc(cx,cy,radius,0,Math.PI*2);x.clip();
  if(avatar){const scale=Math.max(radius*2/avatar.width,radius*2/avatar.height);x.drawImage(avatar,cx-avatar.width*scale/2,cy-avatar.height*scale/2,avatar.width*scale,avatar.height*scale);}
- else{x.fillStyle='#3b326e';x.fillRect(cx-radius,cy-radius,radius*2,radius*2);x.fillStyle='#fff';x.textAlign='center';x.font='bold 125px system-ui';x.fillText(last.name.slice(0,1).toUpperCase(),cx,cy+43);}
- x.restore();x.strokeStyle='#fff';x.lineWidth=10;x.beginPath();x.arc(cx,cy,radius+5,0,Math.PI*2);x.stroke();
- x.textAlign='left';x.fillStyle='#fff';x.font='bold 50px system-ui';drawWrapped(x,last.name,390,670,630,61,2);
- x.fillStyle='#d3adff';x.font='bold 34px system-ui';drawWrapped(x,last.church,390,729,630,46,2);
- x.fillStyle='#fff';x.font='bold 54px system-ui';drawWrapped(x,translations[last.lng].today,65,927,955,66,2);
- x.fillStyle='#b58af1';x.fillRect(65,1000,950,3);
- x.fillStyle='#fff';x.font='bold 39px system-ui';drawWrapped(x,last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3],65,1068,950,50,2);
- x.fillStyle='#cba4ff';x.font='30px system-ui';x.fillText(last.verse[0],65,1130);
- x.fillStyle='#ffffff66';x.fillRect(65,1204,950,2);
- x.fillStyle='#e4e7f5';x.font='29px system-ui';x.fillText(last.date,65,1260);
- x.textAlign='right';x.fillText('FJU JAPAN',1015,1260);
+ else{x.fillStyle='#162d50';x.fillRect(cx-radius,cy-radius,radius*2,radius*2);x.fillStyle='#fff';x.textAlign='center';x.font='bold 120px system-ui';x.fillText(last.name.slice(0,1).toUpperCase(),cx,cy+42);}
+ x.restore();x.strokeStyle='#fff';x.lineWidth=11;x.beginPath();x.arc(cx,cy,radius+5,0,Math.PI*2);x.stroke();x.strokeStyle=red;x.lineWidth=5;x.beginPath();x.arc(cx,cy,radius+12,-.15,Math.PI*.85);x.stroke();
+ x.textAlign='left';x.fillStyle='#fff';x.font='bold 48px system-ui';drawWrapped(x,last.name,430,679,600,57,2);
+ x.fillStyle=red;x.fillRect(430,710,200,5);x.fillStyle='#fff';x.font='30px system-ui';drawWrapped(x,last.church,430,761,580,39,2);
+ x.fillStyle='#fff';x.font=last.lng==='ja'?'bold 52px system-ui':'bold 55px system-ui';drawWrapped(x,translations[last.lng].today,65,960,950,66,2);
+ x.fillStyle=red;x.fillRect(65,1030,160,7);
+ x.fillStyle='#fff';x.font=last.lng==='ja'?'32px system-ui':'italic 37px system-ui';drawWrapped(x,'“'+last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3]+'”',100,1105,885,47,2);
+ x.fillStyle=red;x.fillRect(65,1065,7,105);
+ x.fillStyle='#bfc8d8';x.font='29px system-ui';x.fillText(last.verse[0],100,1190);
+ x.fillStyle='#ffffff77';x.fillRect(65,1230,950,2);
+ x.fillStyle='#fff';x.font='27px system-ui';x.fillText(last.date,65,1288,730);
+ x.textAlign='right';x.font='25px system-ui';x.fillText('FJU JAPAN',1015,1288);
  return c;
 }
 async function refreshPreview(){const version=++previewVersion;if(!last)return;try{const canvas=await buildCard();if(!canvas||version!==previewVersion)return;el('card-preview').src=canvas.toDataURL('image/png');el('card-preview-wrap').style.display='block';}catch(e){console.warn('Prévia indisponível',e);}}
