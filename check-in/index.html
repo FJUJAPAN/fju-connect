@@ -141,15 +141,15 @@ async function buildCard(){if(!last)return null;
  if(avatar){const scale=Math.max(radius*2/avatar.width,radius*2/avatar.height);x.drawImage(avatar,cx-avatar.width*scale/2,cy-avatar.height*scale/2,avatar.width*scale,avatar.height*scale);}
  else{x.fillStyle='#3b326e';x.fillRect(cx-radius,cy-radius,radius*2,radius*2);x.fillStyle='#fff';x.textAlign='center';x.font='bold 125px system-ui';x.fillText(last.name.slice(0,1).toUpperCase(),cx,cy+43);}
  x.restore();x.strokeStyle='#fff';x.lineWidth=10;x.beginPath();x.arc(cx,cy,radius+5,0,Math.PI*2);x.stroke();
- x.textAlign='left';x.fillStyle='#fff';x.font='bold 50px system-ui';drawWrapped(x,last.name,390,655,630,61,2);
- x.fillStyle='#d3adff';x.font='bold 34px system-ui';drawWrapped(x,'⌖ '+last.church,390,745,630,46,2);
+ x.textAlign='left';x.fillStyle='#fff';x.font='bold 50px system-ui';drawWrapped(x,last.name,390,670,630,61,2);
+ x.fillStyle='#d3adff';x.font='bold 34px system-ui';drawWrapped(x,last.church,390,729,630,46,2);
  x.fillStyle='#fff';x.font='bold 54px system-ui';drawWrapped(x,translations[last.lng].today,65,927,955,66,2);
- x.fillStyle='#b58af1';x.fillRect(65,1010,950,3);
- x.fillStyle='#fff';x.font='bold 39px system-ui';drawWrapped(x,last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3],65,1081,950,50,2);
- x.fillStyle='#cba4ff';x.font='30px system-ui';x.fillText(last.verse[0],65,1196);
- x.fillStyle='#ffffff66';x.fillRect(65,1230,950,2);
- x.fillStyle='#e4e7f5';x.font='29px system-ui';x.fillText(last.date,65,1290);
- x.textAlign='right';x.fillText('FJU JAPAN',1015,1290);
+ x.fillStyle='#b58af1';x.fillRect(65,1000,950,3);
+ x.fillStyle='#fff';x.font='bold 39px system-ui';drawWrapped(x,last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3],65,1068,950,50,2);
+ x.fillStyle='#cba4ff';x.font='30px system-ui';x.fillText(last.verse[0],65,1130);
+ x.fillStyle='#ffffff66';x.fillRect(65,1204,950,2);
+ x.fillStyle='#e4e7f5';x.font='29px system-ui';x.fillText(last.date,65,1260);
+ x.textAlign='right';x.fillText('FJU JAPAN',1015,1260);
  return c;
 }
 async function refreshPreview(){const version=++previewVersion;if(!last)return;try{const canvas=await buildCard();if(!canvas||version!==previewVersion)return;el('card-preview').src=canvas.toDataURL('image/png');el('card-preview-wrap').style.display='block';}catch(e){console.warn('Prévia indisponível',e);}}
