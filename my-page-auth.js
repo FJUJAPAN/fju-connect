@@ -18,6 +18,30 @@ const loading=byId('fju-account-loading');
 const accountAccess=byId('fju-account-admin-access');
 const adminButton=byId('fju-account-admin-link');
 const localeSelect=byId('language');
+const languageSettingsText={
+ pt:{title:'Idioma preferido',description:'Escolha o idioma padrão da sua conta FJU Connect.',saved:'Idioma salvo no seu perfil.',failed:'Não foi possível salvar o idioma no perfil.'},
+ ja:{title:'表示言語',description:'FJU Connectアカウントの表示言語を選択してください。',saved:'プロフィールに言語を保存しました。',failed:'言語を保存できませんでした。'},
+ en:{title:'Preferred language',description:'Choose the default language for your FJU Connect account.',saved:'Language saved to your profile.',failed:'Could not save language to your profile.'}
+};
+let preferredLanguageUser=null;
+function normalizedLanguage(value){const v=String(value||'').toLowerCase();return v.startsWith('ja')||v==='jp'?'ja':v.startsWith('en')?'en':'pt';}
+function preferredLanguageUI(){
+ let section=byId('fju-preferred-language-settings');
+ if(!section){section=document.createElement('section');section.id='fju-preferred-language-settings';section.style.cssText='margin:20px 0;padding:18px;border:1px solid #ffffff30;border-radius:16px;background:#ffffff08';
+ const heading=document.createElement('h3');heading.id='fju-preferred-language-title';heading.style.margin='0 0 8px';
+ const desc=document.createElement('p');desc.id='fju-preferred-language-description';desc.style.margin='0 0 12px';
+ const select=document.createElement('select');select.id='fju-preferred-language-select';select.style.cssText='width:100%;min-height:46px;border-radius:10px;padding:10px;background:#182641;color:white;border:1px solid #ffffff55';
+ [['pt','Português'],['ja','日本語'],['en','English']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);});
+ const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
+ section.append(heading,desc,select,feedback);
+ myPage.append(section);
+ select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
+ }
+ const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
+ byId('fju-preferred-language-select').value=normalizedLanguage(preferredLanguageUser?.user_metadata?.preferred_language||localeSelect?.value||'pt');
+ section.hidden=!preferredLanguageUser;
+}
+
 
 const translations={
   pt:{
@@ -424,12 +448,12 @@ async function loadAccount(){
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
     if(error||!user){
-      authenticated=false;userEmail='';lastRole='';
+      authenticated=false;userEmail='';lastRole='';preferredLanguageUser=null;
       renderHeaderAccount(null);
       showView('login');
       return;
     }
-    authenticated=true;userEmail=user.email||'';
+    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);if(localeSelect&&localeSelect.value!==savedLanguage){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change'));}}
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     const memberCard=byId('fju-member-collectible');
@@ -498,9 +522,10 @@ async function loadAccount(){
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
     showView('account');
     localize();
+    preferredLanguageUI();
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
-    authenticated=false;lastRole='';
+    authenticated=false;lastRole='';preferredLanguageUser=null;
     renderHeaderAccount(null);
     showView('login');
     setFeedback(t('sessionError'),true);
@@ -615,7 +640,7 @@ client.auth.onAuthStateChange(event=>{
     setTimeout(()=>{void loadAccount();},0);
   }
 });
-localeSelect?.addEventListener('change',localize);
+localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
 localize();
 void loadAccount();
