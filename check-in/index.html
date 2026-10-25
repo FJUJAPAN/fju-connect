@@ -158,27 +158,6 @@ el('share').addEventListener('click',async()=>{
  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='fju-checkin.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
  status('Card salvo como imagem. Publique-o no Facebook pelo aplicativo.');
 })
--h)/2,w,h);}
- const shade=x.createLinearGradient(0,0,0,1020);shade.addColorStop(0,'#0b0f2a22');shade.addColorStop(.5,'#0b0f2a66');shade.addColorStop(1,'#09152b');x.fillStyle=shade;x.fillRect(0,0,1080,1020);
- x.textAlign='left';x.fillStyle='#fff';x.font='900 62px system-ui';x.fillText('FJU JAPAN',60,110);
- x.fillStyle='#e5baff';x.font='bold 38px system-ui';x.fillText('✓  '+translations[last.lng].done,60,175);
- const avatar=await imageLoad(last.avatar);
- x.save();x.beginPath();x.arc(222,690,155,0,Math.PI*2);x.clip();
- if(avatar){const scale=Math.max(310/avatar.width,310/avatar.height);x.drawImage(avatar,222-avatar.width*scale/2,690-avatar.height*scale/2,avatar.width*scale,avatar.height*scale);}
- else{x.fillStyle='#312c73';x.fillRect(67,535,310,310);x.textAlign='center';x.fillStyle='#fff';x.font='bold 130px system-ui';x.fillText(last.name.slice(0,1).toUpperCase(),222,735);}
- x.restore();x.strokeStyle='#fff';x.lineWidth=14;x.beginPath();x.arc(222,690,162,0,Math.PI*2);x.stroke();
- x.textAlign='left';x.fillStyle='#fff';x.font='bold 52px system-ui';drawWrapped(x,last.name,420,660,605,65,2);
- x.fillStyle='#e5baff';x.font='bold 38px system-ui';drawWrapped(x,last.church,420,760,605,49,2);
- x.fillStyle='#fff';x.font='bold 54px system-ui';drawWrapped(x,translations[last.lng].today,60,940,950,68,2);
- x.fillStyle='#ffd474';x.font='bold 39px system-ui';drawWrapped(x,last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3],60,1070,950,52,3);
- x.fillStyle='#fff';x.font='bold 29px system-ui';x.fillText(last.verse[0],60,1260);
- x.textAlign='right';x.font='26px system-ui';x.fillText(last.date,1020,1310);
- const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!blob){status('Não foi possível gerar o card.');return;}
- const file=new File([blob],'fju-checkin.png',{type:'image/png'});
- try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:'Meu Check-in FJU'});return;}}catch(e){if(e.name==='AbortError')return;}
- const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='fju-checkin.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
- status('Card salvo como imagem. Publique-o no Facebook pelo aplicativo.');
-});
 const bootTimeout=setTimeout(()=>{status('Não foi possível carregar a conexão do Check-in. Verifique a internet e toque em Recarregar.');showRetry();},12000);
 function showRetry(){let b=el('retry-checkin');if(!b){b=document.createElement('button');b.id='retry-checkin';b.textContent='↻ Recarregar Check-in';b.onclick=()=>location.reload();el('status').after(b);}}
 import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(({createClient})=>{
