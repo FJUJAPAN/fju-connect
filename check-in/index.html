@@ -75,17 +75,18 @@ function renderCard(church,stamp,slug){const lng=language(),v=verseForDay(stamp,
 async function loadToday(slug){if(!user||!slug)return false;const now=new Date();const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);const get=t=>parts.find(p=>p.type===t)?.value;const day=get('year')+'-'+get('month')+'-'+get('day');const start=new Date(day+'T00:00:00+09:00').toISOString();const end=new Date(new Date(day+'T00:00:00+09:00').getTime()+86400000).toISOString();const {data,error}=await db.from('fju_checkin_presencas').select('registrado_em,polo_slug').eq('usuario_id',user.id).eq('polo_slug',slug).gte('registrado_em',start).lt('registrado_em',end).order('registrado_em',{ascending:false}).limit(1);if(error||!data?.length)return false;renderCard(locations.find(p=>p.slug===slug)?.nome||slug,data[0].registrado_em,slug);status('Check-in de hoje recuperado! Você pode compartilhar o card novamente.');return true;}
 function showLogin(){user=null;el('check').disabled=true;el('polo').replaceChildren();const o=document.createElement('option');o.value='';o.textContent='Entre na sua conta para continuar';el('polo').append(o);status('Você precisa entrar na sua conta FJU Connect para fazer check-in.');let link=el('login-link');if(!link){link=document.createElement('a');link.id='login-link';link.href='../#my-page';link.textContent='Ir para My Page / Login';link.style.cssText='display:block;text-align:center;margin-top:12px;font-weight:800';el('status').after(link);}}
 
+function withTimeout(p,ms=10000){return Promise.race([p,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tempo limite de conexão excedido')),ms))]);}
 async function init(){
  try{
- const {data:{session},error:sessionError}=await db.auth.getSession();if(sessionError||!session){showLogin();return;}
- const {data:{user:u},error:e}=await db.auth.getUser();if(e||!u){showLogin();return;}user=u;await loadProfile();
- const {data,error}=await db.from('fju_checkin_locais').select('slug,nome,latitude,longitude').order('nome');
+ const {data:{session},error:sessionError}=await withTimeout(db.auth.getSession());if(sessionError||!session){showLogin();return;}
+ const {data:{user:u},error:e}=await withTimeout(db.auth.getUser());if(e||!u){showLogin();return;}user=u;loadProfile().catch(()=>{});
+ const {data,error}=await withTimeout(db.from('fju_checkin_locais').select('slug,nome,latitude,longitude').order('nome'));
  if(error)throw error;locations=data||[];el('polo').replaceChildren();
  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione uma igreja';el('polo').append(placeholder);
  locations.forEach(p=>{const opt=document.createElement('option');opt.value=p.slug;opt.textContent=p.nome;el('polo').append(opt)});
  if(!locations.length){status('Nenhuma igreja liberada ainda. As coordenadas precisam ser verificadas pela administração.');return;}
  el('check').disabled=false;el('locate').disabled=false;status('Conta conectada. Toque em Localizar minha igreja para identificar a igreja mais próxima.');if(locations.length===1){el('polo').value=locations[0].slug;await loadToday(locations[0].slug);}
- }catch(e){if(/auth session missing|session missing|jwt|refresh token/i.test(String(e.message||e))){showLogin();return;}el('polo').replaceChildren();const o=document.createElement('option');o.textContent='Não foi possível carregar as igrejas';el('polo').append(o);status('Não foi possível carregar as igrejas. Atualize a página e tente novamente.');}
+ }catch(e){if(/auth session missing|session missing|jwt|refresh token/i.test(String(e.message||e))){showLogin();return;}el('polo').replaceChildren();const o=document.createElement('option');o.textContent='Não foi possível carregar as igrejas';el('polo').append(o);status('Falha ao carregar: '+(e?.message||'conexão indisponível')+'. Tente atualizar a página.');}
 }
 el('locate').addEventListener('click',()=>{
  if(!user){status('Entre na sua conta primeiro.');return;}
