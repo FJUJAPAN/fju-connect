@@ -6,7 +6,7 @@
 <header><strong>FJU JAPAN</strong><a href="../">← Início</a></header>
 <main><span class="eyebrow">FJU CONNECT • JAPAN</span><h1>Check-in <span aria-hidden="true">📍</span></h1><p>Registre sua presença quando estiver a até <strong>100 metros</strong> de uma igreja FJU com localização verificada.</p>
 <section class="panel"><strong>Presença na igreja</strong><p class="small">Entre na sua conta FJU Connect e permita o acesso à localização. O GPS precisa ter precisão de até 50 metros.</p>
-<label for="polo">Igreja que está visitando</label><select id="polo"><option value="">Carregando igrejas verificadas…</option></select>
+<button id="locate" type="button" disabled>📍 Localizar minha igreja pelo GPS</button><label for="polo">Igreja identificada (ou escolha manual)</label><select id="polo"><option value="">Carregando igrejas verificadas…</option></select>
 <button id="check" disabled>Confirmar localização e fazer check-in</button><div id="status" class="status" role="status" aria-live="polite">Verificando sua conta…</div></section>
 <section id="card" class="card" aria-label="Card de check-in"><div class="mark">FJU JAPAN</div><div class="check">✓</div><h2>CHECK-IN</h2><div id="card-name" class="name"></div><p id="card-church"></p><div id="card-date" class="detail"></div><p class="small">Igreja Universal • FJU JAPAN</p></section>
 <div id="card-preview-wrap" style="display:none;margin-top:22px"><p class="small">Prévia do card para compartilhar</p><img id="card-preview" alt="Prévia do card de check-in" style="display:block;width:100%;max-width:540px;margin:auto;border-radius:16px" /></div><button id="share" style="display:none">Compartilhar card</button><p class="small">A localização é solicitada somente quando você toca no botão. O GPS de celulares pode ser impreciso ou manipulado; o check-in não é uma prova absoluta de presença.</p>
@@ -15,7 +15,7 @@
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const el=id=>document.getElementById(id),status=msg=>el('status').textContent=msg;
-let user=null,locations=[],last=null,profile={name:'',avatar:''},previewVersion=0;
+let user=null,locations=[],last=null,profile={name:'',avatar:''},previewVersion=0,detectedPosition=null;
 
 const translations={pt:{done:'CHECK-IN CONFIRMADO',today:'Hoje eu estive na Casa do Senhor!',share:'Compartilhar card'},ja:{done:'チェックイン完了',today:'今日は神様の家に来ました！',share:'カードをシェア'},en:{done:'CHECK-IN CONFIRMED',today:'Today I was in the house of the Lord!',share:'Share card'}};
 const verses=[
@@ -41,6 +41,7 @@ const verses=[
 ['Salmos 46:1','Deus é nosso refúgio e nossa força.','神は私たちの避け所、また力。','God is our refuge and strength.']
 ];
 function language(){const s=(localStorage.getItem('fju_lang')||localStorage.getItem('fju_language')||navigator.language||'pt').toLowerCase();return s.startsWith('ja')||s==='jp'?'ja':s.startsWith('en')?'en':'pt';}
+function distanceMeters(a,b,c,d){const rad=Math.PI/180,R=6371000,p=(c-a)*rad,l=(d-b)*rad,q=Math.sin(p/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(l/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(q)));}
 function imageLoad(url){return new Promise(resolve=>{if(!url)return resolve(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=url;});}
 function drawWrapped(x,text,left,top,maxWidth,step,maxLines){let row='',lines=[];for(const word of text.split(/\s+/)){const test=row?row+' '+word:word;if(row&&x.measureText(test).width>maxWidth){lines.push(row);row=word}else row=test;}if(row)lines.push(row);lines.slice(0,maxLines).forEach((v,i)=>x.fillText(v,left,top+i*step));}
 
@@ -78,15 +79,34 @@ async function init(){
  try{
  const {data:{session},error:sessionError}=await db.auth.getSession();if(sessionError||!session){showLogin();return;}
  const {data:{user:u},error:e}=await db.auth.getUser();if(e||!u){showLogin();return;}user=u;await loadProfile();
- const {data,error}=await db.from('fju_checkin_locais').select('slug,nome').order('nome');
+ const {data,error}=await db.from('fju_checkin_locais').select('slug,nome,latitude,longitude').order('nome');
  if(error)throw error;locations=data||[];el('polo').replaceChildren();
  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione uma igreja';el('polo').append(placeholder);
  locations.forEach(p=>{const opt=document.createElement('option');opt.value=p.slug;opt.textContent=p.nome;el('polo').append(opt)});
  if(!locations.length){status('Nenhuma igreja liberada ainda. As coordenadas precisam ser verificadas pela administração.');return;}
- el('check').disabled=false;status('Conta conectada. Escolha a igreja e confirme sua localização.');if(locations.length===1){el('polo').value=locations[0].slug;await loadToday(locations[0].slug);}
+ el('check').disabled=false;el('locate').disabled=false;status('Conta conectada. Toque em Localizar minha igreja para identificar a igreja mais próxima.');if(locations.length===1){el('polo').value=locations[0].slug;await loadToday(locations[0].slug);}
  }catch(e){if(/auth session missing|session missing|jwt|refresh token/i.test(String(e.message||e))){showLogin();return;}el('polo').replaceChildren();const o=document.createElement('option');o.textContent='Não foi possível carregar as igrejas';el('polo').append(o);status('Não foi possível carregar as igrejas. Atualize a página e tente novamente.');}
 }
-el('polo').addEventListener('change',()=>{el('card').style.display='none';el('share').style.display='none';el('card-preview-wrap').style.display='none';last=null;loadToday(el('polo').value).catch(()=>{});});
+el('locate').addEventListener('click',()=>{
+ if(!user){status('Entre na sua conta primeiro.');return;}
+ if(!navigator.geolocation){status('Este navegador não oferece GPS.');return;}
+ el('locate').disabled=true;status('Localizando a igreja FJU mais próxima…');
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  try{
+   const accuracy=pos.coords.accuracy;
+   if(!Number.isFinite(accuracy)||accuracy>50){status('Precisão do GPS insuficiente ('+Math.round(accuracy)+' m). Tente novamente em local aberto.');return;}
+   const nearby=locations.filter(p=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)).map(p=>({...p,distance:distanceMeters(pos.coords.latitude,pos.coords.longitude,p.latitude,p.longitude)})).sort((a,b)=>a.distance-b.distance);
+   if(!nearby.length){status('Nenhuma igreja com coordenadas verificadas disponível.');return;}
+   const nearest=nearby[0];
+   if(nearest.distance+accuracy>100){status('Nenhuma igreja FJU liberada dentro de 100 metros da sua localização. A mais próxima é '+nearest.nome+' (aprox. '+Math.round(nearest.distance)+' m).');return;}
+   detectedPosition={coords:pos.coords,slug:nearest.slug,at:Date.now()};
+   el('polo').value=nearest.slug;el('card').style.display='none';el('share').style.display='none';el('card-preview-wrap').style.display='none';last=null;
+   status(nearest.nome+' identificada pelo GPS (aprox. '+Math.round(nearest.distance)+' m). Toque em Confirmar check-in.');
+   await loadToday(nearest.slug);
+  }finally{el('locate').disabled=false;}
+ },err=>{status('Não foi possível acessar o GPS: '+err.message);el('locate').disabled=false;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+});
+el('polo').addEventListener('change',()=>{detectedPosition=null;el('card').style.display='none';el('share').style.display='none';el('card-preview-wrap').style.display='none';last=null;loadToday(el('polo').value).catch(()=>{});});
 el('check').addEventListener('click',()=>{
  if(!user){status('Entre na sua conta primeiro.');return;}
  const slug=el('polo').value;if(!slug){status('Selecione a igreja que está visitando.');return;}
