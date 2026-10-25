@@ -35,7 +35,7 @@ function preferredLanguageUI(){
  const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
  section.append(heading,desc,select,feedback);
  myPage.append(section);
- select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
+ select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
  }
  const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
  byId('fju-preferred-language-select').value=normalizedLanguage(preferredLanguageUser?.user_metadata?.preferred_language||localeSelect?.value||'pt');
@@ -453,7 +453,7 @@ async function loadAccount(){
       showView('login');
       return;
     }
-    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);if(localeSelect&&localeSelect.value!==savedLanguage){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change'));}}
+    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect&&localeSelect.value!==savedLanguage){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change'));}}
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     const memberCard=byId('fju-member-collectible');
