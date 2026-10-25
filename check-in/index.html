@@ -60,6 +60,11 @@ async function loadProfile(){
    }
   }
  }catch(_){}
+ try{
+  const {data:cards,error}=await db.rpc('fju_consultar_meu_cartao_jovem');
+  const youth=Array.isArray(cards)?cards[0]:cards;
+  if(!error&&youth?.nome_completo?.trim())profile.name=youth.nome_completo.trim();
+ }catch(_){}
  if(!profile.avatar){
   try{const {data:photo,error}=await db.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');if(!error&&photo)profile.avatar=URL.createObjectURL(photo);}catch(_){}
  }
