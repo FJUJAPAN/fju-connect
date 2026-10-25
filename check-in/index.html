@@ -16,6 +16,34 @@ import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const el=id=>document.getElementById(id),status=msg=>el('status').textContent=msg;
 let user=null,locations=[],last=null;
+
+const translations={pt:{done:'CHECK-IN CONFIRMADO',today:'Hoje eu estive na Casa do Senhor!',share:'Compartilhar card'},ja:{done:'チェックイン完了',today:'今日は神様の家に来ました！',share:'カードをシェア'},en:{done:'CHECK-IN CONFIRMED',today:'Today I was in the house of the Lord!',share:'Share card'}};
+const verses=[
+['Salmos 122:1','Alegrei-me quando me disseram: vamos à Casa do Senhor!','主の家に行こうと言われたとき、私は喜びました。','I rejoiced when they said: Let us go to the house of the Lord!'],
+['Mateus 6:33','Busque primeiro o Reino de Deus.','まず神の国を求めよう。','Seek first the Kingdom of God.'],
+['Salmos 27:4','Uma coisa desejo: estar na presença do Senhor.','私の願いは、主の御前にいること。','One thing I seek: to dwell in the Lord’s presence.'],
+['Salmos 84:10','Um dia na presença de Deus vale mais que mil longe dEle.','神のもとでの一日は、ほかの千日にもまさる。','One day with God is better than a thousand elsewhere.'],
+['Tiago 4:8','Aproxime-se de Deus, e Ele Se aproximará de você.','神に近づけば、神も近づいてくださる。','Draw near to God, and He will draw near to you.'],
+['Jeremias 29:13','Busque a Deus de todo o coração.','心から神を求めよう。','Seek God with all your heart.'],
+['Salmos 16:11','Na presença de Deus existe alegria de verdade.','神の御前には満ちあふれる喜びがある。','In God’s presence there is fullness of joy.'],
+['Isaías 40:31','Quem espera no Senhor renova suas forças.','主を待ち望む人は新しい力を得る。','Those who hope in the Lord renew their strength.'],
+['Salmos 34:8','Experimente e veja como o Senhor é bom.','主の恵み深さを味わい、知ろう。','Taste and see that the Lord is good.'],
+['Hebreus 10:25','Não deixe de se reunir com os irmãos.','共に集まることをやめないでいよう。','Do not give up meeting together.'],
+['Salmos 100:2','Sirva ao Senhor com alegria!','喜びをもって主に仕えよう！','Serve the Lord with gladness!'],
+['Mateus 11:28','Venha a Mim, e Eu lhe darei descanso.','わたしのもとに来なさい。休ませてあげよう。','Come to Me, and I will give you rest.'],
+['Filipenses 4:4','Alegre-se sempre no Senhor!','いつも主にあって喜ぼう！','Rejoice in the Lord always!'],
+['Salmos 63:1','Minha alma tem sede de Deus.','私の魂は神を慕い求める。','My soul thirsts for God.'],
+['Provérbios 3:5','Confie no Senhor de todo o coração.','心を尽くして主に信頼しよう。','Trust in the Lord with all your heart.'],
+['João 8:12','Quem segue Jesus não anda nas trevas.','イエスに従う人は暗闇を歩まない。','Whoever follows Jesus will not walk in darkness.'],
+['Salmos 119:105','A Palavra de Deus ilumina o meu caminho.','神のことばは私の道の光。','God’s word is a light for my path.'],
+['Romanos 12:12','Alegre-se na esperança e persevere na oração.','希望を喜び、祈り続けよう。','Be joyful in hope and faithful in prayer.'],
+['1 Crônicas 16:11','Busque o Senhor e a Sua força continuamente.','絶えず主とその力を求めよう。','Seek the Lord and His strength continually.'],
+['Salmos 46:1','Deus é nosso refúgio e nossa força.','神は私たちの避け所、また力。','God is our refuge and strength.']
+];
+function language(){const s=(localStorage.getItem('fju_lang')||localStorage.getItem('fju_language')||navigator.language||'pt').toLowerCase();return s.startsWith('ja')||s==='jp'?'ja':s.startsWith('en')?'en':'pt';}
+function imageLoad(url){return new Promise(resolve=>{if(!url)return resolve(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=url;});}
+function drawWrapped(x,text,left,top,maxWidth,step,maxLines){let row='',lines=[];for(const word of text.split(/\s+/)){const test=row?row+' '+word:word;if(row&&x.measureText(test).width>maxWidth){lines.push(row);row=word}else row=test;}if(row)lines.push(row);lines.slice(0,maxLines).forEach((v,i)=>x.fillText(v,left,top+i*step));}
+
 function showLogin(){user=null;el('check').disabled=true;el('polo').replaceChildren();const o=document.createElement('option');o.value='';o.textContent='Entre na sua conta para continuar';el('polo').append(o);status('Você precisa entrar na sua conta FJU Connect para fazer check-in.');let link=el('login-link');if(!link){link=document.createElement('a');link.id='login-link';link.href='../#my-page';link.textContent='Ir para My Page / Login';link.style.cssText='display:block;text-align:center;margin-top:12px;font-weight:800';el('status').after(link);}}
 
 async function init(){
@@ -44,7 +72,7 @@ el('check').addEventListener('click',()=>{
  const church=locations.find(x=>x.slug===slug)?.nome||slug;
  const name=(user.user_metadata?.full_name||user.user_metadata?.name||user.email?.split('@')[0]||'Jovem FJU').slice(0,80);
  el('card-name').textContent=name;el('card-church').textContent=church;el('card-date').textContent=new Date(record.registrado_em).toLocaleString('pt-BR',{timeZone:'Asia/Tokyo',dateStyle:'long',timeStyle:'short'});
- el('card').style.display='block';el('share').style.display='block';last={name,church,date:el('card-date').textContent};status('Check-in confirmado! Distância aproximada: '+record.distancia_m+' m.');
+ const lng=language(),v=verses[Math.floor(Math.random()*verses.length)];el('card').style.display='block';el('share').style.display='block';last={name,church,date:el('card-date').textContent,slug,verse:v,lng,avatar:user.user_metadata?.avatar_url||user.user_metadata?.picture||user.user_metadata?.photo_url||''};el('card').querySelector('h2').textContent=translations[lng].done;el('share').textContent=translations[lng].share;let q=el('card-verse');if(!q){q=document.createElement('p');q.id='card-verse';el('card-date').after(q);}q.textContent=v[lng==='pt'?1:lng==='ja'?2:3]+' — '+v[0];status('Check-in confirmado! Distância aproximada: '+record.distancia_m+' m.');
  }catch(e){status('Não foi possível registrar: '+String(e.message||e).replace('checkin_bloqueado: ','').replace('checkin_ja_registrado_hoje','Você já fez check-in nesta igreja hoje.'));}
  finally{el('check').disabled=false;}
  },err=>{status('Não foi possível acessar o GPS: '+err.message);el('check').disabled=false;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
@@ -52,11 +80,24 @@ el('check').addEventListener('click',()=>{
 el('share').addEventListener('click',async()=>{
  if(!last)return;
  const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');
- const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#51288c');bg.addColorStop(.55,'#18244b');bg.addColorStop(1,'#071d35');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
- x.fillStyle='#e8b3ff';x.font='bold 52px system-ui';x.textAlign='center';x.fillText('FJU JAPAN',540,150);
- x.fillStyle='#fff';x.font='bold 92px system-ui';x.fillText('CHECK-IN ✓',540,440);
- function lines(value,y,size){x.font='bold '+size+'px system-ui';const words=value.split(' ');let line='',rows=[];for(const w of words){if(x.measureText(line+' '+w).width>900&&line){rows.push(line);line=w}else line+=(line?' ':'')+w}rows.push(line);rows.slice(0,4).forEach((t,i)=>x.fillText(t,540,y+i*(size+20)))}
- lines(last.name,650,65);x.fillStyle='#e8b3ff';lines(last.church,835,52);x.fillStyle='#fff';x.font='32px system-ui';x.fillText(last.date,540,1120);x.fillText('IGREJA UNIVERSAL • FJU JAPAN',540,1250);
+
+ const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#48208d');bg.addColorStop(.7,'#101b46');bg.addColorStop(1,'#09152b');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
+ const churchPhoto=last.slug==='hamamatsu'?await imageLoad('../assets/checkin/hamamatsu.jpg'):null;
+ if(churchPhoto){const scale=Math.max(1080/churchPhoto.width,800/churchPhoto.height);const w=churchPhoto.width*scale,h=churchPhoto.height*scale;x.drawImage(churchPhoto,(1080-w)/2,(800-h)/2,w,h);}
+ const shade=x.createLinearGradient(0,0,0,1020);shade.addColorStop(0,'#0b0f2a22');shade.addColorStop(.5,'#0b0f2a66');shade.addColorStop(1,'#09152b');x.fillStyle=shade;x.fillRect(0,0,1080,1020);
+ x.textAlign='left';x.fillStyle='#fff';x.font='900 62px system-ui';x.fillText('FJU JAPAN',60,110);
+ x.fillStyle='#e5baff';x.font='bold 38px system-ui';x.fillText('✓  '+translations[last.lng].done,60,175);
+ const avatar=await imageLoad(last.avatar);
+ x.save();x.beginPath();x.arc(222,690,155,0,Math.PI*2);x.clip();
+ if(avatar){const scale=Math.max(310/avatar.width,310/avatar.height);x.drawImage(avatar,222-avatar.width*scale/2,690-avatar.height*scale/2,avatar.width*scale,avatar.height*scale);}
+ else{x.fillStyle='#312c73';x.fillRect(67,535,310,310);x.textAlign='center';x.fillStyle='#fff';x.font='bold 130px system-ui';x.fillText(last.name.slice(0,1).toUpperCase(),222,735);}
+ x.restore();x.strokeStyle='#fff';x.lineWidth=14;x.beginPath();x.arc(222,690,162,0,Math.PI*2);x.stroke();
+ x.textAlign='left';x.fillStyle='#fff';x.font='bold 52px system-ui';drawWrapped(x,last.name,420,660,605,65,2);
+ x.fillStyle='#e5baff';x.font='bold 38px system-ui';drawWrapped(x,last.church,420,760,605,49,2);
+ x.fillStyle='#fff';x.font='bold 54px system-ui';drawWrapped(x,translations[last.lng].today,60,940,950,68,2);
+ x.fillStyle='#ffd474';x.font='bold 39px system-ui';drawWrapped(x,last.verse[last.lng==='pt'?1:last.lng==='ja'?2:3],60,1070,950,52,3);
+ x.fillStyle='#fff';x.font='bold 29px system-ui';x.fillText(last.verse[0],60,1260);
+ x.textAlign='right';x.font='26px system-ui';x.fillText(last.date,1020,1310);
  const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!blob){status('Não foi possível gerar o card.');return;}
  const file=new File([blob],'fju-checkin.png',{type:'image/png'});
  try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:'Meu Check-in FJU'});return;}}catch(e){if(e.name==='AbortError')return;}
