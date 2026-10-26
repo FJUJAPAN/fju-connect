@@ -603,7 +603,7 @@ async function loadAccount(){
     localize();
     preferredLanguageUI();
     activeYouthUserId=user.id;
-    const settings=byId('fju-youth-settings-pane');
+    const settings=byId('fju-youth-settings-content');
     if(settings){
       for(const node of [byId('fju-preferred-language-settings'),accountAccess,byId('fju-account-logout')])if(node)settings.append(node);
     }
