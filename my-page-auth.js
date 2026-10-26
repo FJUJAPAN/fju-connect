@@ -34,7 +34,7 @@ function preferredLanguageUI(){
  [['pt','Português'],['ja','日本語'],['en','English']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);});
  const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
  section.append(heading,desc,select,feedback);
- myPage.append(section);
+ byId('fju-youth-profile-pane').append(section);
  select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
  }
  const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
@@ -59,7 +59,8 @@ const translations={
     church:'Igreja',adminTitle:'Área administrativa',
     adminDescription:'Acesse as fichas, os relatórios e as autorizações de sua responsabilidade.',
     openAdmin:'Entrar no painel administrativo',
-    memberDescription:'Sua MY PAGE de jovem está em preparação. Você pode continuar usando o site da FJU normalmente.',
+    memberDescription:'Sua conta FJU JAPAN.',
+     youthOverline:'MINHA PÁGINA',youthMenuHeading:'Acesso rápido',youthProfile:'Meu Perfil',youthInteractions:'Interações',youthEvents:'Eventos',youthSaved:'Salvos',youthAdmin:'Painel',youthMenuCaption:'Tudo o que você precisa, em um só lugar.',youthBack:'‹ Voltar',youthInteractionsTitle:'Faça parte da conversa',youthInteractionsText:'Participe das matérias da FJU, curta e responda aos comentários com seu perfil.',youthOpenArticles:'Abrir matérias',youthSavedTitle:'Seus conteúdos favoritos',youthSavedText:'A função de salvar matérias ainda está em preparação. Enquanto isso, você pode explorar as publicações da FJU JAPAN.',
     loginError:'Não foi possível entrar. Confira seu e-mail e senha.',
     sessionError:'Não foi possível verificar sua sessão. Tente novamente.',
     profileError:'Não foi possível verificar suas permissões. Acesso administrativo indisponível neste momento.',
@@ -87,7 +88,8 @@ const translations={
     church:'教会',adminTitle:'管理者ページ',
     adminDescription:'担当する登録カード、報告、承認を確認できます。',
     openAdmin:'管理パネルを開く',
-    memberDescription:'青年用MY PAGEは現在準備中です。FJU公式サイトは引き続きご利用いただけます。',
+    memberDescription:'FJU JAPANアカウント',
+     youthOverline:'マイページ',youthMenuHeading:'クイックメニュー',youthProfile:'プロフィール',youthInteractions:'交流',youthEvents:'イベント',youthSaved:'保存済み',youthAdmin:'管理パネル',youthMenuCaption:'必要な機能を一か所に。',youthBack:'‹ 戻る',youthInteractionsTitle:'みんなと交流しよう',youthInteractionsText:'FJUの記事でコメントやいいね、返信を楽しめます。',youthOpenArticles:'記事を見る',youthSavedTitle:'お気に入りの記事',youthSavedText:'記事の保存機能は準備中です。それまでは、FJU JAPANの最新記事をご覧ください。',
     loginError:'ログインできませんでした。メールアドレスとパスワードをご確認ください。',
     sessionError:'セッションを確認できませんでした。もう一度お試しください。',
     profileError:'権限を確認できませんでした。現在、管理パネルにはアクセスできません。',
@@ -115,7 +117,8 @@ const translations={
     church:'Church',adminTitle:'Administrative area',
     adminDescription:'Open the youth records, weekly reports, and approvals you manage.',
     openAdmin:'Open administrative panel',
-    memberDescription:'The youth MY PAGE is being prepared. You can keep browsing the FJU website.',
+    memberDescription:'Your FJU JAPAN account.',
+     youthOverline:'MY PAGE',youthMenuHeading:'Quick access',youthProfile:'My Profile',youthInteractions:'Interactions',youthEvents:'Events',youthSaved:'Saved',youthAdmin:'Dashboard',youthMenuCaption:'Everything you need in one place.',youthBack:'‹ Back',youthInteractionsTitle:'Join the conversation',youthInteractionsText:'Read FJU articles, like comments, and reply using your registered profile.',youthOpenArticles:'Open articles',youthSavedTitle:'Your favorite content',youthSavedText:'Saving articles is coming soon. Meanwhile, explore the latest FJU JAPAN articles.',
     loginError:'Could not sign in. Check your email and password.',
     sessionError:'Could not verify the current session. Please try again.',
     profileError:'Could not verify permissions. Administrative access is unavailable right now.',
@@ -133,6 +136,7 @@ const translations={
 let authenticated=false;
 let userEmail='';
 let lastRole='';
+let activeYouthPanel='home';
 let passwordRecovery=false;
 const headerAvatar=byId('fju-header-avatar');
 const headerGuest=document.querySelector('.fju-profile-guest');
@@ -205,6 +209,8 @@ function localize(){
   byId('fju-account-role-label').textContent=t('roleLabel');
   byId('fju-account-role-value').textContent=t(lastRole||'member');
   localizeSignup();
+  const heading=byId('fju-youth-subpage-title');
+  if(heading&&activeYouthPanel!=='home')heading.textContent=t(activeYouthPanel==='profile'?'youthProfile':activeYouthPanel==='interactions'?'youthInteractions':'youthSaved');
 }
 const signupLabels={
  pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
@@ -356,7 +362,39 @@ signupForm.addEventListener('submit',async event=>{
  }finally{signupSubmit.disabled=false;signupInProgress=false;}
 });
 
+function showYouthPanel(panel='home'){
+ const panels=['profile','interactions','saved'];
+ if(!panels.includes(panel))panel='home';
+ activeYouthPanel=panel;
+ byId('fju-youth-dashboard').hidden=panel!=='home';
+ byId('fju-youth-subpage-head').hidden=panel==='home';
+ panels.forEach(name=>{byId('fju-youth-'+name+'-pane').hidden=panel!==name;});
+ if(panel!=='home')byId('fju-youth-subpage-title').textContent=t(panel==='profile'?'youthProfile':panel==='interactions'?'youthInteractions':'youthSaved');
+ dialog.scrollTop=0;
+}
+function syncYouthHero(){
+ const name=byId('fju-member-card-name')?.textContent?.trim()||'FJU JAPAN';
+ const polo=byId('fju-member-card-polo')?.textContent?.trim()||'FJU JAPAN';
+ const rank=byId('fju-member-card-rank')?.textContent?.trim()||'';
+ const source=byId('fju-member-card-photo'),img=byId('fju-youth-hero-photo');
+ byId('fju-youth-hero-name').textContent=name;
+ byId('fju-youth-hero-polo').textContent=polo;
+ byId('fju-youth-hero-fallback').textContent=(name[0]||'F').toUpperCase();
+ const realRank=rank&&!/definida pela liderança|defined by leadership|リーダー|pending|confirmar/i.test(rank);
+ byId('fju-youth-hero-rank').hidden=!realRank;
+ if(realRank)byId('fju-youth-hero-rank').textContent=rank;
+ if(source&&!source.hidden&&source.src){img.src=source.src;img.hidden=false;}
+ else{img.hidden=true;img.removeAttribute('src');}
+}
+for(const btn of document.querySelectorAll('[data-fju-youth-panel]')){
+ btn.addEventListener('click',()=>{showYouthPanel(btn.dataset.fjuYouthPanel);byId('fju-youth-back').focus({preventScroll:true});});
+}
+byId('fju-youth-back')?.addEventListener('click',()=>{showYouthPanel('home');byId('fju-youth-hero-edit').focus({preventScroll:true});});
+byId('fju-youth-hero-photo')?.addEventListener('error',event=>{event.currentTarget.hidden=true;});
+
 function showView(view){
+   dialog.dataset.fjuView=view;
+   if(view==='account')showYouthPanel('home');
   const forms=[
     ['login',loginForm],
     ['signup',signupForm],
@@ -516,13 +554,15 @@ async function loadAccount(){
     await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
-    byId('fju-account-member-note').hidden=verifiedAdmin;
+     byId('fju-youth-admin-tile').hidden=!verifiedAdmin;
+     byId('fju-account-member-note').hidden=true;
     const church=byId('fju-account-church');
     church.hidden=!churchName;
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
     showView('account');
-    localize();
-    preferredLanguageUI();
+     syncYouthHero();
+     localize();
+     preferredLanguageUI();
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
