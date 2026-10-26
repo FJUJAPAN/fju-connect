@@ -7,7 +7,9 @@ on:
       - 'comentarios-materias.css'
       - 'materia.html'
       - 'supabase/20261026_comentarios_materias.sql'
+      - 'supabase/20261026_curtidas_respostas_comentarios.sql'
       - 'tests/comentarios-materias.test.mjs'
+      - 'tests/interacoes-comentarios.test.mjs'
       - '.github/workflows/comentarios-materias.yml'
   push:
     branches: [main]
@@ -16,7 +18,9 @@ on:
       - 'comentarios-materias.css'
       - 'materia.html'
       - 'supabase/20261026_comentarios_materias.sql'
+      - 'supabase/20261026_curtidas_respostas_comentarios.sql'
       - 'tests/comentarios-materias.test.mjs'
+      - 'tests/interacoes-comentarios.test.mjs'
       - '.github/workflows/comentarios-materias.yml'
 permissions:
   contents: read
@@ -30,4 +34,4 @@ jobs:
         with:
           node-version: '22'
       - name: Verificar comentários, cadastro, foto e nome
-        run: node --test tests/comentarios-materias.test.mjs
+        run: node --test tests/comentarios-materias.test.mjs tests/interacoes-comentarios.test.mjs
