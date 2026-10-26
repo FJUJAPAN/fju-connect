@@ -75,3 +75,25 @@
  .fju-comment-reply-form{padding:11px}
  .fju-comment-like,.fju-comment-reply-toggle{min-height:37px}
 }
+
+/* Edição do próprio comentário e indicação pública de alteração. */
+.fju-comment-edit,.fju-comment-cancel{border:0;background:transparent;color:#1e5b8d;text-decoration:underline;font-size:12px;cursor:pointer;padding:5px 3px}
+.fju-comment-edit{margin-left:auto}
+.fju-comment-cancel{background:#ecf2f9;border-radius:9px;text-decoration:none;padding:10px 13px;font-weight:700}
+.fju-comment-edit:hover{color:#113d69}
+.fju-comment-delete{margin-left:0}
+.fju-comment-delete:first-of-type{margin-left:auto}
+.fju-comment-edited{font-size:10px;font-weight:650;color:#77879c;white-space:nowrap}
+.fju-comment-editor{margin:11px 0}
+.fju-comment-editor[hidden]{display:none!important}
+.fju-comment-edit-form{padding:13px;border:1px solid #dce6f2;border-radius:12px;background:#f7fafe}
+.fju-comment-edit-label{display:grid;gap:8px;font-size:12px;font-weight:700;color:#2c4c72}
+.fju-comment-edit-form .fju-comments-text{min-height:83px;font-weight:400}
+.fju-comment-edit-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin:10px 0 0}
+.fju-comment-edit-actions .fju-comments-counter{margin-right:auto}
+.fju-comment-edit:focus-visible,.fju-comment-cancel:focus-visible{outline:2px solid #3479c9;outline-offset:2px}
+@media(max-width:600px){
+ .fju-comment-edit-actions{gap:7px}
+ .fju-comment-edit-form{padding:10px}
+ .fju-comment-edit-actions .fju-comments-submit{padding:10px}
+}
