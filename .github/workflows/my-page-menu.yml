@@ -1,0 +1,35 @@
+name: FJU JAPAN - My Page iPhone
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'my-page-auth.js'
+      - 'my-page-menu.js'
+      - 'my-page-auth.css'
+      - 'my-page-menu.css'
+      - 'index.html'
+      - 'tests/my-page-menu.test.mjs'
+      - '.github/workflows/my-page-menu.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'my-page-auth.js'
+      - 'my-page-menu.js'
+      - 'my-page-auth.css'
+      - 'my-page-menu.css'
+      - 'index.html'
+      - 'tests/my-page-menu.test.mjs'
+      - '.github/workflows/my-page-menu.yml'
+permissions:
+  contents: read
+jobs:
+  verify-my-page:
+    runs-on: ubuntu-latest
+    name: Validar menu, cadastro e idiomas
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar o novo My Page
+        run: node --test tests/my-page-menu.test.mjs
