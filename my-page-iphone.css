@@ -1,0 +1,106 @@
+/* FJU JAPAN | My Page clean, padrão de dashboard, linguagem visual iPhone.
+   Aplicado SOMENTE à tela da conta autenticada; login e recuperação intactos. */
+#fju-account-dialog[data-fju-view="account"]{
+ width:min(480px,calc(100vw - 22px));max-width:480px;
+ max-height:min(94dvh,920px);border:1px solid #e2e8f0;
+ background:#f6f7fa;color:#1c293b;color-scheme:light;
+ border-radius:24px;box-shadow:0 24px 80px #0a1b3445
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-top{
+ background:#fff;border-bottom:1px solid #e9ecf0;padding:18px 21px 14px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-top small{
+ font-size:10px;letter-spacing:1.45px;color:#9c273e;margin-bottom:5px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-top h2{
+ color:#19263d;font-family:-apple-system,BlinkMacSystemFont,'DM Sans','Noto Sans JP',sans-serif;
+ font-size:23px;letter-spacing:-.65px;line-height:1.2;margin:0 0 4px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-top p{color:#748298;font-size:11px}
+#fju-account-dialog[data-fju-view="account"] #fju-account-close{
+ color:#49576a;background:#f2f4f7;border:0;border-radius:100px;width:35px;height:35px;font-size:24px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-body{padding:17px 19px 25px}
+#fju-account-dialog[data-fju-view="account"] #fju-account-feedback{color:#405777}
+#fju-account-dialog[data-fju-view="account"] #fju-account-feedback.error{color:#c3274b}
+#fju-account-dialog[data-fju-view="account"] [hidden]{display:none!important}
+.fju-youth-dashboard,.fju-youth-content-pane{min-width:0}
+.fju-youth-overline{display:block;font-size:10px;color:#a42b47;letter-spacing:1.45px;font-weight:850;margin:0 0 11px}
+.fju-youth-greeting{padding:20px;background:#fff;border:1px solid #e7ebf1;border-radius:21px;box-shadow:0 4px 14px #122b4a08}
+.fju-youth-profile-summary{display:flex;align-items:center;gap:13px;min-width:0}
+.fju-youth-avatar-wrap{
+ width:61px;height:61px;min-width:61px;border-radius:21px;overflow:hidden;
+ background:#ffe7ec;display:grid;place-items:center;color:#ac2b49;
+ font-size:26px;font-weight:800;border:2px solid #f1d5dc;position:relative
+}
+.fju-youth-avatar-wrap img{display:block;width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.fju-youth-profile-text{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:3px;flex:1}
+#fju-youth-hero-name{max-width:100%;font-size:18px;line-height:1.25;font-weight:850;letter-spacing:-.4px;color:#172538;overflow-wrap:anywhere}
+#fju-youth-hero-polo{font-size:12px;color:#68788b;max-width:100%;overflow-wrap:anywhere}
+.fju-youth-rank{font-size:10px;font-weight:750;color:#8e2c42;background:#ffedf0;border-radius:100px;padding:5px 10px;line-height:1.1}
+.fju-youth-edit{display:grid;place-items:center;align-self:flex-start;width:35px;height:35px;min-width:35px;border-radius:11px;background:#f3f5f8;border:0;color:#42546b;cursor:pointer}
+.fju-youth-edit svg{width:17px;height:17px}
+.fju-youth-menu-heading{font-size:14px;font-weight:800;color:#39485d;margin:25px 3px 13px;letter-spacing:-.1px}
+.fju-youth-app-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#fju-account-dialog .fju-youth-tile{
+ display:flex;align-items:center;flex-direction:column;justify-content:center;gap:12px;min-width:0;min-height:132px;
+ padding:18px 9px;background:#fff;border:1px solid #e7ebf1;border-radius:19px;
+ box-shadow:0 4px 14px #122b4a08;color:#23344c;font-size:13px;font-weight:760;line-height:1.2;text-align:center;
+ text-decoration:none;cursor:pointer;transition:transform .13s ease,background .13s ease;
+ -webkit-tap-highlight-color:transparent
+}
+#fju-account-dialog .fju-youth-tile:active{transform:scale(.98);background:#f9fafc}
+.fju-youth-tile-icon{display:grid;place-items:center;width:55px;height:55px;border-radius:17px;background:#eef4ff;color:#2867bd}
+.fju-youth-tile-icon svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.fju-youth-tile-icon.blue{background:#eaf1ff;color:#3266bf}
+.fju-youth-tile-icon.green{background:#e6f5ee;color:#21845c}
+.fju-youth-tile-icon.coral{background:#ffebef;color:#d63a5d}
+.fju-youth-tile-icon.amber{background:#fff1df;color:#b8701f}
+.fju-youth-tile-icon.violet{background:#f2edfd;color:#7760b2}
+.fju-youth-tile-icon.slate{background:#e9eff5;color:#485b73}
+.fju-youth-menu-caption{text-align:center;margin:20px 8px 4px;color:#919cab;font-size:11px}
+.fju-youth-subpage-head{display:flex;align-items:center;gap:12px;margin:0 0 16px}
+#fju-account-dialog .fju-youth-back{border:0;background:#e7ecf3;color:#354b68;border-radius:12px;padding:9px 12px;min-height:38px;white-space:nowrap;font-size:12px;font-weight:750;cursor:pointer}
+.fju-youth-subpage-head h3{margin:0;color:#19263b;font-size:17px;line-height:1.25;font-weight:800}
+.fju-youth-feature-card{padding:27px 18px 23px;background:#fff;border:1px solid #e5ebf1;border-radius:20px;text-align:center;color:#283951}
+.fju-youth-feature-icon{display:grid;place-items:center;width:65px;height:65px;margin:0 auto 18px;border-radius:20px;background:#ffeff2;color:#b52749;font-size:34px;font-weight:500}
+.fju-youth-feature-card h4{font-size:17px;margin:0 0 9px;color:#1b293f}
+.fju-youth-feature-card p{margin:0 auto 18px;font-size:13px;color:#66768c;line-height:1.7;max-width:310px}
+#fju-account-dialog .fju-youth-feature-action{display:inline-flex;align-items:center;justify-content:center;padding:13px 21px;border-radius:12px;color:#fff;background:#bb2644;text-decoration:none;font-weight:760;font-size:12px;min-height:44px}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-collectible{
+ margin:0 0 16px;width:100%;max-width:100%;border-radius:18px;
+ box-shadow:0 9px 22px #19273b15
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-identity{
+ background:#fff;border:1px solid #e4e8ee;color:#263954;border-radius:16px;padding:15px;margin:0 0 12px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-identity-title{color:#7c8798}
+#fju-account-dialog[data-fju-view="account"] .fju-account-email{color:#213047;overflow-wrap:anywhere}
+#fju-account-dialog[data-fju-view="account"] .fju-account-pill{background:#f1f4f7;color:#4b5b70}
+#fju-account-dialog[data-fju-view="account"] .fju-account-church{color:#62738a}
+#fju-account-dialog[data-fju-view="account"] .fju-account-avatar{background:#edf2fa;border-color:#d4dfea;color:#334a66}
+#fju-account-dialog[data-fju-view="account"] .fju-account-member-note{
+ background:#fff;border:1px solid #e1e7f0;color:#546780;border-radius:15px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-admin-box{
+ background:#fff;border:1px solid #e1e7ed;color:#44536b;border-radius:15px;margin-bottom:12px
+}
+#fju-account-dialog[data-fju-view="account"] .fju-account-admin-box h3{color:#244669}
+#fju-account-dialog[data-fju-view="account"] .fju-account-admin-box p{color:#536477}
+#fju-account-dialog[data-fju-view="account"] .fju-account-admin{background:#e7eef8;color:#24486e!important}
+#fju-account-dialog[data-fju-view="account"] #fju-account-logout{color:#bd2545;padding:14px 12px}
+#fju-account-dialog[data-fju-view="account"] #fju-preferred-language-settings{
+ background:#fff!important;border:1px solid #e1e7ed!important;border-radius:16px!important;
+ color:#34445a!important;padding:17px!important
+}
+#fju-account-dialog[data-fju-view="account"] #fju-preferred-language-select{background:#f5f7fa!important;color:#243950!important;border-color:#d3dce8!important}
+#fju-account-dialog .fju-youth-tile:focus-visible,
+#fju-account-dialog .fju-youth-back:focus-visible,
+#fju-account-dialog .fju-youth-edit:focus-visible{outline:3px solid #ac3956;outline-offset:2px}
+@media(max-width:740px){
+ #fju-account-dialog[data-fju-view="account"]{width:calc(100vw - 18px);max-width:500px;max-height:calc(100dvh - 26px);border-radius:22px}
+ #fju-account-dialog[data-fju-view="account"] .fju-account-body{padding:15px 15px 22px}
+ .fju-youth-greeting{padding:17px}
+ #fju-account-dialog .fju-youth-tile{min-height:120px}
+}
+@media(prefers-reduced-motion:reduce){#fju-account-dialog .fju-youth-tile{transition:none}}
