@@ -146,7 +146,14 @@ async function start(){
  void loadCommenter();
  void refreshComments();
 }
-window.addEventListener('fju:article-ready',()=>void start());
+window.addEventListener('fju:article-ready',()=>{
+ if(!initialized){void start();return}
+ h.querySelector('h2').textContent=t().title;
+ h.querySelector('p').textContent=t().subtitle;
+ more.textContent=t().more;
+ void loadCommenter();
+ void refreshComments();
+});
 void start();
 db.auth.onAuthStateChange(()=>{if(initialized)queueMicrotask(()=>{void loadCommenter();void refreshComments()})});
 window.addEventListener('pageshow',()=>{if(initialized)void loadCommenter()});
