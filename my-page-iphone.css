@@ -104,3 +104,13 @@
  #fju-account-dialog .fju-youth-tile{min-height:120px}
 }
 @media(prefers-reduced-motion:reduce){#fju-account-dialog .fju-youth-tile{transition:none}}
+
+/* Salvos por conta: itens reais, removíveis, com conforto no iPhone. */
+#fju-youth-saved-list{display:flex;flex-direction:column;gap:9px;margin:15px 0;text-align:left}
+#fju-youth-saved-list .fju-youth-saved-item{display:flex;align-items:center;gap:8px;border:1px solid #e2e9f2;border-radius:12px;background:#f9fbfd;padding:11px}
+#fju-youth-saved-list .fju-youth-saved-item a{flex:1;min-width:0;color:#214a75;font-size:13px;font-weight:750;text-decoration:none;overflow-wrap:anywhere;line-height:1.4}
+#fju-youth-saved-list .fju-youth-saved-item button{border:0;background:#fff0f3;color:#b3294a;border-radius:50%;font-size:21px;min-width:33px;min-height:33px;cursor:pointer}
+#fju-youth-saved-list .fju-youth-saved-empty{font-size:13px;text-align:center;color:#61738a;margin:12px 0}
+#fju-youth-settings-content{text-align:left}
+#fju-youth-settings-content .fju-account-admin-box{margin:12px 0}
+#fju-youth-settings-content #fju-account-logout{margin-top:15px}
