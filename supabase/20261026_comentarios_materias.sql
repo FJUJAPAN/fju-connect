@@ -14,6 +14,14 @@ CREATE TABLE IF NOT EXISTS public.fju_materias_comentarios(
   removido_em timestamptz,
   removido_por uuid REFERENCES auth.users(id)
 );
+
+-- Compatibilidade com instalações anteriores que já criaram a tabela
+-- sem os campos de moderação. CREATE TABLE IF NOT EXISTS não altera
+-- a estrutura de uma tabela existente; acrescentar sem apagar registros.
+ALTER TABLE public.fju_materias_comentarios
+  ADD COLUMN IF NOT EXISTS removido_em timestamptz,
+  ADD COLUMN IF NOT EXISTS removido_por uuid REFERENCES auth.users(id);
+
 CREATE INDEX IF NOT EXISTS fju_comentarios_materia_data
   ON public.fju_materias_comentarios(materia_id,criado_em DESC,id DESC)
   WHERE removido_em IS NULL;
