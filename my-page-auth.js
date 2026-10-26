@@ -2,6 +2,7 @@
    Compartilha o Supabase Auth com /fju-connect-admin/ na mesma origem GitHub Pages.
    Não autoriza funções administrativas: isso depende de perfis + RLS no Supabase. */
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import './my-page-menu.js?v=20261026-iphone';
 
 const client=createClient(
   'https://hmacroktklgwkofxsygv.supabase.co',
@@ -27,14 +28,14 @@ let preferredLanguageUser=null;
 function normalizedLanguage(value){const v=String(value||'').toLowerCase();return v.startsWith('ja')||v==='jp'?'ja':v.startsWith('en')?'en':'pt';}
 function preferredLanguageUI(){
  let section=byId('fju-preferred-language-settings');
- if(!section){section=document.createElement('section');section.id='fju-preferred-language-settings';section.style.cssText='margin:20px 0;padding:18px;border:1px solid #ffffff30;border-radius:16px;background:#ffffff08';
+ if(!section){section=document.createElement('section');section.id='fju-preferred-language-settings';section.style.cssText='margin:16px 0;padding:16px;border:1px solid #e4e9f2;border-radius:16px;background:#f8faff;color:#15243d';
  const heading=document.createElement('h3');heading.id='fju-preferred-language-title';heading.style.margin='0 0 8px';
  const desc=document.createElement('p');desc.id='fju-preferred-language-description';desc.style.margin='0 0 12px';
- const select=document.createElement('select');select.id='fju-preferred-language-select';select.style.cssText='width:100%;min-height:46px;border-radius:10px;padding:10px;background:#182641;color:white;border:1px solid #ffffff55';
+ const select=document.createElement('select');select.id='fju-preferred-language-select';select.style.cssText='width:100%;min-height:46px;border-radius:10px;padding:10px;background:white;color:#14243d;border:1px solid #d3ddea';
  [['pt','Português'],['ja','日本語'],['en','English']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);});
  const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
  section.append(heading,desc,select,feedback);
- myPage.append(section);
+ byId('fju-mypage-profile')?.append(section);
  select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
  }
  const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
@@ -516,11 +517,13 @@ async function loadAccount(){
     await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
-    byId('fju-account-member-note').hidden=verifiedAdmin;
+    byId('fju-mypage-admin-tile').hidden=!verifiedAdmin;
+    byId('fju-account-member-note').hidden=true;
     const church=byId('fju-account-church');
     church.hidden=!churchName;
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
     showView('account');
+    window.FjuMyPageUI?.navigate('home');
     localize();
     preferredLanguageUI();
   }catch(e){
@@ -640,7 +643,7 @@ client.auth.onAuthStateChange(event=>{
     setTimeout(()=>{void loadAccount();},0);
   }
 });
-localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
+localeSelect?.addEventListener('change',()=>{localize();window.FjuMyPageUI?.localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
 localize();
 void loadAccount();
