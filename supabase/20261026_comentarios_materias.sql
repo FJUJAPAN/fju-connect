@@ -23,8 +23,8 @@ CREATE INDEX IF NOT EXISTS fju_comentarios_autor_data
 ALTER TABLE public.fju_materias_comentarios ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.fju_materias_comentarios FROM PUBLIC,anon,authenticated;
 
--- Foto exibida publicamente APENAS depois de opt-in explícito do usuário na interface.
--- O bucket original fju-inscricoes-fotos continua privado.
+-- Ao PUBLICAR, o usuário torna pública uma CÓPIA da foto que já está no seu perfil.
+-- A interface explica isso ao lado do botão Comentar. Os buckets originais continuam privados.
 INSERT INTO storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
 VALUES ('fju-comentarios-avatars','fju-comentarios-avatars',true,358400,ARRAY['image/jpeg'])
 ON CONFLICT (id) DO UPDATE SET
@@ -60,6 +60,11 @@ RETURNS text LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
      JOIN public.fju_jovens j ON j.id=v.jovem_id
      WHERE v.usuario_id=p_usuario_id AND v.ativo=true AND j.excluido_em IS NULL
      LIMIT 1),
+   (SELECT NULLIF(btrim(c.nome_exibicao),'')
+     FROM public.fju_coordenador_cards c
+     JOIN public.fju_perfis p ON p.usuario_id=c.usuario_id
+     WHERE c.usuario_id=p_usuario_id AND p.ativo AND p.papel IN ('coordenador','nacional')
+     LIMIT 1),
    (SELECT NULLIF(btrim(i.nome),'')
      FROM public.fju_inscricoes_jovens i
      WHERE i.usuario_id=p_usuario_id AND i.status IN ('pendente','aprovado')
@@ -87,6 +92,10 @@ BEGIN
  IF v_uid IS NULL THEN RAISE EXCEPTION 'Faça login para comentar'; END IF;
  v_nome:=public.fju_nome_autor_comentario(v_uid);
  IF v_nome IS NULL THEN RAISE EXCEPTION 'Conclua seu cadastro na FJU JAPAN antes de comentar'; END IF;
+ IF NOT EXISTS (SELECT 1 FROM storage.objects
+   WHERE bucket_id='fju-comentarios-avatars'
+   AND name=v_uid::text||'/perfil.jpg') THEN
+  RAISE EXCEPTION 'Cadastre a foto de perfil antes de comentar'; END IF;
  IF NOT EXISTS (SELECT 1 FROM public.fju_materias WHERE id=p_materia_id AND status='publicada')
  THEN RAISE EXCEPTION 'Esta matéria não está disponível para comentários'; END IF;
  v_texto:=btrim(coalesce(p_texto,''));
@@ -110,11 +119,7 @@ RETURNS TABLE(
  id uuid,autor_id uuid,autor_nome text,texto text,criado_em timestamptz,avatar_path text
 ) LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
  SELECT c.id,c.autor_id,c.autor_nome,c.texto,c.criado_em,
-  CASE WHEN EXISTS(
-    SELECT 1 FROM storage.objects o
-    WHERE o.bucket_id='fju-comentarios-avatars'
-      AND o.name=c.autor_id::text||'/perfil.jpg'
-  ) THEN (c.autor_id::text||'/perfil.jpg')::text ELSE NULL::text END AS avatar_path
+  (c.autor_id::text||'/perfil.jpg')::text AS avatar_path
  FROM public.fju_materias_comentarios c
  JOIN public.fju_materias m ON m.id=c.materia_id
  WHERE c.materia_id=p_materia_id AND m.status='publicada' AND c.removido_em IS NULL
