@@ -46,3 +46,32 @@
  .fju-comments-form-actions{gap:7px}
  .fju-comments-submit{padding:11px 12px}
 }
+
+/* Interações em comentários: coração, respostas com hierarquia única e acessibilidade. */
+.fju-comment-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:9px 0 0}
+.fju-comment-like,.fju-comment-reply-toggle{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:999px;background:transparent;padding:7px 10px;color:#5b6d85;cursor:pointer;font-size:12.5px;min-height:35px;line-height:1.1}
+.fju-comment-like:hover,.fju-comment-reply-toggle:hover{background:#f2f6fb;color:#133e70}
+.fju-comment-like:focus-visible,.fju-comment-reply-toggle:focus-visible{outline:2px solid #367dcf;outline-offset:2px}
+.fju-comment-like.is-liked{color:#e0265b;background:#fff0f5;font-weight:800}
+.fju-comment-like:disabled,.fju-comment-reply-toggle:disabled{opacity:.55;cursor:wait}
+.fju-comment-heart{font-size:21px;line-height:1;color:inherit;margin-right:2px}
+.fju-comment-feedback{display:block;flex:1 1 100%;font-size:12px;color:#b02e40;line-height:1.5;min-height:0}
+.fju-comment-feedback:empty{display:none}
+.fju-comment-thread{width:100%;margin:12px 0 1px;padding:10px 0 0 14px;border-left:2px solid #e2eaf5}
+.fju-comment-thread[hidden]{display:none!important}
+.fju-comment-replies{display:flex;flex-direction:column;gap:0}
+.fju-comment-is-reply{padding:13px 0;border-bottom:1px solid #edf1f7}
+.fju-comment-is-reply:first-child{border-top:0}
+.fju-comment-is-reply .fju-comment-avatar{width:32px;height:32px;min-width:32px}
+.fju-comment-reply-form{margin-top:15px;padding:13px 14px;border:1px solid #e4ebf5;border-radius:12px;background:#f8faff}
+.fju-comment-reply-identity{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#243c60;font-size:13px}
+.fju-comment-mini-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover}
+.fju-comment-compose .fju-comments-text{min-height:66px;font-size:13px;line-height:1.6}
+.fju-comment-compose .fju-comments-submit{margin-top:9px}
+.fju-comment-reply-hint{font-size:13px;color:#60758f;line-height:1.5}
+.fju-comment-thread>.fju-comments-more{margin:10px 0}
+@media(max-width:600px){
+ .fju-comment-thread{padding-left:10px;margin-top:10px}
+ .fju-comment-reply-form{padding:11px}
+ .fju-comment-like,.fju-comment-reply-toggle{min-height:37px}
+}
