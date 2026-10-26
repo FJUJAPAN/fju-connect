@@ -27,7 +27,7 @@ test('nome do comentário sempre vem do perfil FJU autenticado',()=>{
  assert.match(sql,/fju_vinculos_conta_jovem/);
  assert.match(sql,/fju_inscricoes_jovens/);
  assert.match(sql,/fju_coordenador_cards/);
- assert.match(sql,/INSERT INTO public\.fju_materias_comentarios\(materia_id,autor_id,autor_nome,texto\)/);
+ assert.match(sql,/INSERT INTO public\.fju_materias_comentarios_perfil\(materia_id,autor_id,autor_nome,texto\)/);
  assert.doesNotMatch(js,/p_autor_nome/);
 });
 test('foto original permanece privada e publicação envia cópia automática',()=>{
@@ -49,4 +49,11 @@ test('interface só aparece em matéria publicada',()=>{
  assert.match(html,/comentarios-materias\.js\?v=/);
  assert.match(html,/comentarios-materias\.css\?v=/);
  assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length);
+});
+
+test('tabela identificada é independente do esquema legado sem excluir dados',()=>{
+ assert.match(sql,/CREATE TABLE IF NOT EXISTS public\.fju_materias_comentarios_perfil\(/);
+ assert.match(sql,/CREATE INDEX IF NOT EXISTS fju_comentarios_perfil_materia_data/);
+ assert.doesNotMatch(sql,/CREATE TABLE IF NOT EXISTS public\.fju_materias_comentarios\(/);
+ assert.doesNotMatch(sql,/DROP TABLE|DELETE FROM public\.fju_materias_comentarios|TRUNCATE/);
 });
