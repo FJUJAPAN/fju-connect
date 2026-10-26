@@ -1,0 +1,33 @@
+name: FJU JAPAN - My Page iPhone
+on:
+  push:
+    branches: [main]
+    paths:
+      - my-page-dashboard.js
+      - my-page-auth.js
+      - my-page-auth.css
+      - index.html
+      - materia.html
+      - tests/my-page-dashboard.test.mjs
+      - .github/workflows/my-page-dashboard.yml
+  pull_request:
+    paths:
+      - my-page-dashboard.js
+      - my-page-auth.js
+      - my-page-auth.css
+      - index.html
+      - materia.html
+      - tests/my-page-dashboard.test.mjs
+      - .github/workflows/my-page-dashboard.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/my-page-dashboard.test.mjs
