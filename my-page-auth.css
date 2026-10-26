@@ -108,3 +108,59 @@ html,body{max-width:100%;overflow-x:clip}
   input,textarea,select{font-size:16px}
   #fju-account-dialog{max-width:calc(100vw - 24px)}
 }
+
+/* MY PAGE · painel iPhone, visual claro e independente da tela de login */
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])){width:min(550px,calc(100vw - 20px));max-width:550px;background:#f6f8fc;color:#192b48;border-color:#dae3f0;color-scheme:light;box-shadow:0 26px 86px #06162e60}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-top{background:#fff;border-bottom:1px solid #e8edf4;padding:18px 22px 15px}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-top small{color:#e41f49;letter-spacing:1.4px}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-top h2{color:#132b4d;font-size:23px;letter-spacing:-.5px}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-top p{display:none}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) #fju-account-close{color:#2b4263;border-color:#e5eaf2;background:#f1f4f9;font-size:23px;border-radius:50%;width:35px;height:35px}
+#fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-body{padding:18px 20px 24px;background:#f6f8fc}
+#fju-account-my-page .fju-dash-root [hidden]{display:none!important}
+#fju-account-my-page .fju-dash-summary{display:flex;align-items:center;gap:14px;border:1px solid #e6ebf3;border-radius:20px;padding:18px 16px;background:#fff;box-shadow:0 3px 14px #14325309}
+#fju-account-my-page #fju-dash-picture,#fju-account-my-page .fju-dash-fallback{width:68px;height:68px;min-width:68px;border-radius:18px;object-fit:cover;background:#e7eef8;box-shadow:0 0 0 1px #e6edf8}
+#fju-account-my-page .fju-dash-fallback{display:grid;place-items:center;color:#1e487f;font:800 17px 'Space Grotesk',sans-serif}
+#fju-account-my-page .fju-dash-identity{min-width:0;flex:1}
+#fju-account-my-page #fju-dash-kicker{font-size:11px;letter-spacing:.6px;color:#e32348;font-weight:800;text-transform:uppercase}
+#fju-account-my-page #fju-dash-person{font-size:21px;line-height:1.24;letter-spacing:-.5px;margin:4px 0 3px;color:#142b4e;overflow-wrap:anywhere}
+#fju-account-my-page #fju-dash-place{color:#64768e;font-size:12.5px;margin:0}
+#fju-account-my-page .fju-dash-rank{display:inline-flex;color:#355b89;font-size:11px;font-weight:750;margin-top:6px}
+#fju-account-my-page .fju-dash-section-heading{font-size:14px;color:#17314f;margin:22px 3px 12px;font-weight:800;letter-spacing:-.1px}
+#fju-account-my-page .fju-dash-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#fju-account-my-page .fju-dash-tile{display:flex;min-width:0;min-height:125px;flex-direction:column;align-items:flex-start;justify-content:center;text-decoration:none;text-align:left;gap:5px;padding:15px 17px;border:1px solid #e7ecf4;border-radius:19px;background:#fff;box-shadow:0 4px 13px #0a2d5408;cursor:pointer;transition:transform .12s ease,background .12s ease;-webkit-tap-highlight-color:transparent;color:#203651}
+#fju-account-my-page .fju-dash-tile:active{transform:scale(.975);background:#f3f7fc}
+#fju-account-my-page .fju-dash-tile:focus-visible,#fju-account-my-page .fju-dash-back:focus-visible,#fju-account-my-page .fju-dash-saved-row button:focus-visible{outline:2px solid #245cb1;outline-offset:2px}
+#fju-account-my-page .fju-dash-tile-icon{width:39px;height:39px;display:grid;place-items:center;margin-bottom:4px;border-radius:12px;background:#eff4fd;color:#215c9c}
+#fju-account-my-page .fju-dash-tile-icon.checkin{background:#eef7ff;color:#116da5}
+#fju-account-my-page .fju-dash-tile-icon.interactions{background:#fff0f3;color:#d92d51}
+#fju-account-my-page .fju-dash-tile-icon.events{background:#f0f5ff;color:#4866af}
+#fju-account-my-page .fju-dash-tile-icon.saved{background:#fff6e7;color:#ab701e}
+#fju-account-my-page .fju-dash-tile-icon.settings{background:#f1f3f6;color:#5c6b7d}
+#fju-account-my-page .fju-dash-tile-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#fju-account-my-page .fju-dash-tile strong{font-size:14px;line-height:1.2;letter-spacing:-.15px;font-weight:800;color:#233c5c}
+#fju-account-my-page .fju-dash-tile small{font-size:11px;line-height:1.3;color:#8390a2;font-weight:500}
+#fju-account-my-page .fju-dash-back{display:inline-flex;align-items:center;min-height:39px;padding:7px 12px;border:1px solid #e2e9f3;border-radius:11px;color:#245b96;background:#fff;font-size:12.5px;font-weight:800;cursor:pointer}
+#fju-account-my-page #fju-dash-detail>.fju-dash-section-heading{margin:17px 2px 15px;font-size:18px}
+#fju-account-my-page #fju-dash-profile,#fju-account-my-page #fju-dash-settings,#fju-account-my-page #fju-dash-saved{min-width:0}
+#fju-account-my-page #fju-dash-profile .fju-member-collectible{margin:0 auto 16px;max-width:100%;transform:none}
+#fju-account-my-page .fju-account-identity{border-radius:15px}
+#fju-account-my-page #fju-dash-settings #fju-preferred-language-settings{margin:0 0 15px!important;border:1px solid #e4eaf2!important;background:#fff!important;color:#1a3555!important;padding:17px!important}
+#fju-account-my-page #fju-dash-settings #fju-preferred-language-title{color:#17375e}
+#fju-account-my-page #fju-dash-settings #fju-preferred-language-description{color:#526783}
+#fju-account-my-page #fju-dash-settings #fju-preferred-language-select{border:1px solid #d1ddec!important;background:#f7f9fd!important;color:#193652!important}
+#fju-account-my-page #fju-dash-settings #fju-account-logout{color:#ba2548;min-height:45px}
+#fju-account-my-page .fju-dash-saved-row{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #e6ebf2;border-radius:13px;margin-bottom:10px;padding:13px}
+#fju-account-my-page .fju-dash-saved-row a{flex:1;min-width:0;color:#284d78;font-size:13px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}
+#fju-account-my-page .fju-dash-saved-row button{border:0;border-radius:50%;background:#f6f8fc;color:#bd294d;width:33px;height:33px;font-size:20px;cursor:pointer}
+#fju-account-my-page .fju-dash-empty{padding:22px 18px;border:1px dashed #dce5f0;border-radius:15px;background:#fff;color:#64748b;font-size:13px;text-align:center}
+#fju-account-my-page .fju-dash-note{font-size:11px;color:#77869b;line-height:1.5}
+#fju-account-my-page .fju-dash-browse{display:block;border-radius:12px;background:#173e74;color:#fff;text-align:center;padding:13px;text-decoration:none;font-size:13px;font-weight:750}
+@media(max-width:600px){
+ #fju-account-dialog:has(#fju-account-my-page:not([hidden])){width:calc(100vw - 12px);max-width:calc(100vw - 12px);max-height:calc(100dvh - 22px);border-radius:20px}
+ #fju-account-dialog:has(#fju-account-my-page:not([hidden])) .fju-account-body{padding:15px 16px 20px}
+ #fju-account-my-page .fju-dash-summary{padding:15px 13px}
+ #fju-account-my-page .fju-dash-grid{gap:10px}
+ #fju-account-my-page .fju-dash-tile{min-height:115px;padding:13px 15px}
+}
+@media(prefers-reduced-motion:reduce){#fju-account-my-page .fju-dash-tile{transition:none}}
