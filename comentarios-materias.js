@@ -8,9 +8,9 @@ const articleId=new URLSearchParams(location.search).get('id');
 const isUuid=/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(articleId||'');
 const lang=()=>{const raw=document.documentElement.lang;return raw==='ja'?'ja':raw==='en'?'en':'pt'};
 const labels={
- pt:{title:'Comentários',subtitle:'Converse sobre esta matéria com a comunidade FJU.',loading:'Carregando comentários…',empty:'Seja o primeiro a comentar!',signin:'Para comentar, entre com sua conta FJU JAPAN.',login:'Entrar na My Page',registration:'Complete seu cadastro na FJU JAPAN para comentar.',photoMissing:'Cadastre uma foto no seu perfil antes de comentar.',photoError:'Não foi possível carregar sua foto do perfil.',preview:'Seu nome e sua foto serão exibidos publicamente.',placeholder:'Escreva seu comentário…',send:'Publicar comentário',sending:'Publicando…',more:'Ver mais comentários',failed:'Não foi possível carregar os comentários.',sendError:'Não foi possível publicar: ',nameLabel:'Você está comentando como',delete:'Excluir',confirmDelete:'Excluir este comentário?',deleted:'Comentário excluído.',count:'caracteres restantes',date:'Publicado em',photoAlt:'Foto de perfil de',check:'Consultando seu perfil…',limit:'Até 600 caracteres.',profile:'Abrir My Page',noPhoto:'Foto indisponível',unknown:'Perfil indisponível',like:'Curtir',unlike:'Descurtir',reply:'Responder',replies:'Respostas',replyPlaceholder:'Escreva uma resposta…',postReply:'Enviar resposta',moreReplies:'Ver mais respostas',noReplies:'Nenhuma resposta ainda.',interactLogin:'Entre na FJU JAPAN para curtir ou responder.',featureUnavailable:'Curtidas e respostas estarão disponíveis após atualizar o Supabase.',replySent:'Resposta publicada!',likeFailed:'Não foi possível atualizar a curtida: '},
- ja:{title:'コメント',subtitle:'FJUの仲間と記事について話しましょう。',loading:'コメントを読み込み中…',empty:'最初のコメントを投稿しましょう！',signin:'コメントにはFJU JAPANアカウントでログインしてください。',login:'My Pageでログイン',registration:'コメントするにはFJU JAPANの登録を完了してください。',photoMissing:'コメントするにはプロフィール写真を登録してください。',photoError:'プロフィール写真を読み込めませんでした。',preview:'投稿すると、名前とプロフィール写真が公開されます。',placeholder:'コメントを入力…',send:'コメントを投稿',sending:'投稿中…',more:'もっと見る',failed:'コメントを読み込めませんでした。',sendError:'投稿できませんでした: ',nameLabel:'投稿者',delete:'削除',confirmDelete:'このコメントを削除しますか？',deleted:'コメントを削除しました。',count:'残り文字数',date:'投稿日',photoAlt:'プロフィール写真：',check:'プロフィールを確認中…',limit:'600文字以内で入力してください。',profile:'My Pageを開く',noPhoto:'写真なし',unknown:'プロフィールが見つかりません',like:'いいね',unlike:'いいねを取り消す',reply:'返信',replies:'返信',replyPlaceholder:'返信を書く…',postReply:'返信する',moreReplies:'返信をもっと見る',noReplies:'まだ返信はありません。',interactLogin:'いいね・返信にはFJU JAPANへのログインが必要です。',featureUnavailable:'Supabaseの更新後に「いいね」と返信が利用できます。',replySent:'返信を投稿しました！',likeFailed:'いいねを更新できません: '},
- en:{title:'Comments',subtitle:'Join the FJU community conversation.',loading:'Loading comments…',empty:'Be the first to comment!',signin:'Sign in with your FJU JAPAN account to comment.',login:'Sign in to My Page',registration:'Complete your FJU JAPAN registration to comment.',photoMissing:'Add a profile photo before commenting.',photoError:'Could not load your profile photo.',preview:'Your name and profile photo will be shown publicly.',placeholder:'Write a comment…',send:'Post comment',sending:'Posting…',more:'Show more comments',failed:'Could not load comments.',sendError:'Could not post: ',nameLabel:'Commenting as',delete:'Delete',confirmDelete:'Delete this comment?',deleted:'Comment deleted.',count:'characters remaining',date:'Posted',photoAlt:'Profile photo of',check:'Checking your profile…',limit:'Up to 600 characters.',profile:'Open My Page',noPhoto:'Photo unavailable',unknown:'Profile unavailable',like:'Like',unlike:'Unlike',reply:'Reply',replies:'Replies',replyPlaceholder:'Write a reply…',postReply:'Post reply',moreReplies:'More replies',noReplies:'No replies yet.',interactLogin:'Sign in to FJU JAPAN to like or reply.',featureUnavailable:'Likes and replies will be available after the Supabase update.',replySent:'Reply posted!',likeFailed:'Could not update like: '}
+ pt:{title:'Comentários',subtitle:'Converse sobre esta matéria com a comunidade FJU.',loading:'Carregando comentários…',empty:'Seja o primeiro a comentar!',signin:'Para comentar, entre com sua conta FJU JAPAN.',login:'Entrar na My Page',registration:'Complete seu cadastro na FJU JAPAN para comentar.',photoMissing:'Cadastre uma foto no seu perfil antes de comentar.',photoError:'Não foi possível carregar sua foto do perfil.',preview:'Seu nome e sua foto serão exibidos publicamente.',placeholder:'Escreva seu comentário…',send:'Publicar comentário',sending:'Publicando…',more:'Ver mais comentários',failed:'Não foi possível carregar os comentários.',sendError:'Não foi possível publicar: ',nameLabel:'Você está comentando como',delete:'Excluir',confirmDelete:'Excluir este comentário?',deleted:'Comentário excluído.',count:'caracteres restantes',date:'Publicado em',photoAlt:'Foto de perfil de',check:'Consultando seu perfil…',limit:'Até 600 caracteres.',profile:'Abrir My Page',noPhoto:'Foto indisponível',unknown:'Perfil indisponível',like:'Curtir',unlike:'Descurtir',reply:'Responder',replies:'Respostas',replyPlaceholder:'Escreva uma resposta…',postReply:'Enviar resposta',moreReplies:'Ver mais respostas',noReplies:'Nenhuma resposta ainda.',interactLogin:'Entre na FJU JAPAN para curtir ou responder.',featureUnavailable:'Curtidas e respostas estarão disponíveis após atualizar o Supabase.',replySent:'Resposta publicada!',likeFailed:'Não foi possível atualizar a curtida: ',edit:'Editar',edited:'Editado',saveEdit:'Salvar alteração',cancelEdit:'Cancelar',editLabel:'Editar seu comentário',editFailed:'Não foi possível editar: ',editEmpty:'Escreva entre 1 e 600 caracteres.'},
+ ja:{title:'コメント',subtitle:'FJUの仲間と記事について話しましょう。',loading:'コメントを読み込み中…',empty:'最初のコメントを投稿しましょう！',signin:'コメントにはFJU JAPANアカウントでログインしてください。',login:'My Pageでログイン',registration:'コメントするにはFJU JAPANの登録を完了してください。',photoMissing:'コメントするにはプロフィール写真を登録してください。',photoError:'プロフィール写真を読み込めませんでした。',preview:'投稿すると、名前とプロフィール写真が公開されます。',placeholder:'コメントを入力…',send:'コメントを投稿',sending:'投稿中…',more:'もっと見る',failed:'コメントを読み込めませんでした。',sendError:'投稿できませんでした: ',nameLabel:'投稿者',delete:'削除',confirmDelete:'このコメントを削除しますか？',deleted:'コメントを削除しました。',count:'残り文字数',date:'投稿日',photoAlt:'プロフィール写真：',check:'プロフィールを確認中…',limit:'600文字以内で入力してください。',profile:'My Pageを開く',noPhoto:'写真なし',unknown:'プロフィールが見つかりません',like:'いいね',unlike:'いいねを取り消す',reply:'返信',replies:'返信',replyPlaceholder:'返信を書く…',postReply:'返信する',moreReplies:'返信をもっと見る',noReplies:'まだ返信はありません。',interactLogin:'いいね・返信にはFJU JAPANへのログインが必要です。',featureUnavailable:'Supabaseの更新後に「いいね」と返信が利用できます。',replySent:'返信を投稿しました！',likeFailed:'いいねを更新できません: ',edit:'編集',edited:'編集済み',saveEdit:'変更を保存',cancelEdit:'キャンセル',editLabel:'自分のコメントを編集',editFailed:'編集できません: ',editEmpty:'1～600文字で入力してください。'},
+ en:{title:'Comments',subtitle:'Join the FJU community conversation.',loading:'Loading comments…',empty:'Be the first to comment!',signin:'Sign in with your FJU JAPAN account to comment.',login:'Sign in to My Page',registration:'Complete your FJU JAPAN registration to comment.',photoMissing:'Add a profile photo before commenting.',photoError:'Could not load your profile photo.',preview:'Your name and profile photo will be shown publicly.',placeholder:'Write a comment…',send:'Post comment',sending:'Posting…',more:'Show more comments',failed:'Could not load comments.',sendError:'Could not post: ',nameLabel:'Commenting as',delete:'Delete',confirmDelete:'Delete this comment?',deleted:'Comment deleted.',count:'characters remaining',date:'Posted',photoAlt:'Profile photo of',check:'Checking your profile…',limit:'Up to 600 characters.',profile:'Open My Page',noPhoto:'Photo unavailable',unknown:'Profile unavailable',like:'Like',unlike:'Unlike',reply:'Reply',replies:'Replies',replyPlaceholder:'Write a reply…',postReply:'Post reply',moreReplies:'More replies',noReplies:'No replies yet.',interactLogin:'Sign in to FJU JAPAN to like or reply.',featureUnavailable:'Likes and replies will be available after the Supabase update.',replySent:'Reply posted!',likeFailed:'Could not update like: ',edit:'Edit',edited:'Edited',saveEdit:'Save changes',cancelEdit:'Cancel',editLabel:'Edit your comment',editFailed:'Could not edit: ',editEmpty:'Enter 1–600 characters.'}
 };
 const t=()=>labels[lang()]||labels.pt;
 const element=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=String(text);return x};
@@ -18,7 +18,7 @@ const status=(area,text,error=false)=>{area.textContent=text;area.classList.togg
 const prettyTime=(value)=>{try{return new Intl.DateTimeFormat(lang()==='ja'?'ja-JP':lang()==='en'?'en-US':'pt-BR',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Tokyo'}).format(new Date(value));}catch(_){return ''}};
 const publicAvatar=(path)=>db.storage.from('fju-comentarios-avatars').getPublicUrl(path).data.publicUrl;
 const profileLink=()=>{const a=element('a','fju-comments-login',t().login);a.href='./#my-page';return a};
-let currentUser=null,allowedName='',roleNational=false,profileBlob=null,previewUrl=null,moreOffset=0,hasMore=false,busy=false,loadVersion=0,interactionEnabled=false,avatarReadyForSession=false;
+let currentUser=null,allowedName='',roleNational=false,profileBlob=null,previewUrl=null,moreOffset=0,hasMore=false,busy=false,loadVersion=0,interactionEnabled=false,avatarReadyForSession=false,editingEnabled=false;
 function clearPreview(){if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}profileBlob=null;avatarReadyForSession=false}
 function canInteract(){return !!(interactionEnabled&&currentUser&&allowedName&&profileBlob)}
 function showInteractionError(box,error){
@@ -51,6 +51,19 @@ function renderComment(row,isReply=false){
  head.append(element('strong','fju-comment-name',row.autor_nome));
  const time=element('time','fju-comment-time',prettyTime(row.criado_em));
  time.dateTime=row.criado_em;head.append(time);
+ let editedBadge=null;
+ function updateEdited(value){
+  if(!value)return;
+  if(!editedBadge){editedBadge=element('span','fju-comment-edited');time.after(editedBadge)}
+  editedBadge.textContent=t().edited;
+  editedBadge.title=t().edited+' · '+prettyTime(value);
+ }
+ updateEdited(row.editado_em);
+ let editButton=null;
+ if(currentUser?.id===row.autor_id&&editingEnabled){
+  editButton=element('button','fju-comment-edit',t().edit);editButton.type='button';
+  head.append(editButton);
+ }
  if(currentUser&&(currentUser.id===row.autor_id||roleNational)){
   const remove=element('button','fju-comment-delete',t().delete);remove.type='button';
   remove.addEventListener('click',async()=>{
@@ -61,7 +74,53 @@ function renderComment(row,isReply=false){
    await refreshComments();
   });head.append(remove);
  }
- body.append(head,element('p','fju-comment-text',row.texto));
+ const commentText=element('p','fju-comment-text',row.texto);
+ body.append(head,commentText);
+ if(editButton){
+  const editor=element('div','fju-comment-editor');editor.hidden=true;
+  const form=element('form','fju-comment-edit-form');
+  const label=element('label','fju-comment-edit-label',t().editLabel);
+  const textarea=element('textarea','fju-comments-text');
+  textarea.maxLength=600;textarea.required=true;textarea.rows=3;textarea.value=row.texto;
+  label.append(textarea);
+  const footer=element('div','fju-comment-edit-actions');
+  const counter=element('small','fju-comments-counter');
+  const cancel=element('button','fju-comment-cancel',t().cancelEdit);cancel.type='button';
+  const save=element('button','fju-comments-submit',t().saveEdit);save.type='submit';
+  const feedback=element('p','fju-comments-feedback');feedback.setAttribute('role','status');
+  const count=()=>{counter.textContent=(600-textarea.value.length)+' '+t().count};
+  textarea.addEventListener('input',count);count();
+  footer.append(counter,cancel,save);form.append(label,footer,feedback);
+  editor.append(form);commentText.after(editor);
+  const close=()=>{editor.hidden=true;commentText.hidden=false;editButton.disabled=false;editButton.setAttribute('aria-expanded','false');status(feedback,'')};
+  editButton.setAttribute('aria-expanded','false');
+  editButton.addEventListener('click',()=>{
+   if(!editor.hidden){close();return}
+   textarea.value=commentText.textContent;count();commentText.hidden=true;
+   editor.hidden=false;editButton.setAttribute('aria-expanded','true');textarea.focus();
+  });
+  cancel.addEventListener('click',close);
+  let saving=false;
+  form.addEventListener('submit',async event=>{
+   event.preventDefault();
+   if(saving)return;
+   const text=textarea.value.trim();
+   if(text.length<1||text.length>600){status(feedback,t().editEmpty,true);return}
+   saving=true;save.disabled=true;cancel.disabled=true;
+   status(feedback,t().sending);
+   try{
+    const {data:{user},error:userError}=await db.auth.getUser();
+    if(userError||!user||user.id!==row.autor_id)throw new Error(t().signin);
+    const {data,error}=await db.rpc('fju_editar_comentario_materia',{
+     p_comentario_id:row.id,p_texto:text
+    });
+    if(error)throw error;
+    commentText.textContent=text;updateEdited(data);
+    close();
+   }catch(error){status(feedback,t().editFailed+(error?.message||''),true)}
+   finally{saving=false;save.disabled=false;cancel.disabled=false}
+  });
+ }
  if(interactionEnabled){
   const actions=element('div','fju-comment-actions');
   let liked=Boolean(row.curtiu),count=Number(row.curtidas||0);
@@ -102,9 +161,15 @@ function renderComment(row,isReply=false){
     loadingReplies=true;threadMore.disabled=true;
     if(reset){replyOffset=0;threadList.replaceChildren();status(threadStatus,t().loading)}
     try{
-     const {data,error}=await db.rpc('fju_listar_respostas_comentario',{
+     let {data,error}=await db.rpc('fju_listar_respostas_comentario_v2',{
       p_comentario_id:row.id,p_limite:20,p_offset:replyOffset
      });
+     if(error){
+      const fallback=await db.rpc('fju_listar_respostas_comentario',{
+       p_comentario_id:row.id,p_limite:20,p_offset:replyOffset
+      });
+      data=fallback.data;error=fallback.error;
+     }
      if(error)throw error;
      const rows=Array.isArray(data)?data:[];
      status(threadStatus,reset&&!rows.length?t().noReplies:'');
@@ -164,9 +229,16 @@ async function appendPage(reset=false){
  const ver=++loadVersion;
  if(reset){moreOffset=0;hasMore=false;list.replaceChildren();status(message,t().loading)}
  more.disabled=true;
- let {data,error}=await db.rpc('fju_listar_interacoes_materia',{
+ let {data,error}=await db.rpc('fju_listar_interacoes_materia_v2',{
   p_materia_id:articleId,p_limite:20,p_offset:moreOffset
  });
+ editingEnabled=!error;
+ if(error){
+  const existing=await db.rpc('fju_listar_interacoes_materia',{
+   p_materia_id:articleId,p_limite:20,p_offset:moreOffset
+  });
+  data=existing.data;error=existing.error;
+ }
  interactionEnabled=!error;
  if(error){
   // Antes da migração SQL, a listagem original segue funcionando.
