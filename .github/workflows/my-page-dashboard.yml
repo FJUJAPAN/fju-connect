@@ -1,0 +1,35 @@
+name: FJU JAPAN - My Page Dashboard
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'my-page-auth.js'
+      - 'my-page-auth.css'
+      - 'my-page-iphone.css'
+      - 'tests/my-page-dashboard.test.mjs'
+      - '.github/workflows/my-page-dashboard.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'my-page-auth.js'
+      - 'my-page-auth.css'
+      - 'my-page-iphone.css'
+      - 'tests/my-page-dashboard.test.mjs'
+      - '.github/workflows/my-page-dashboard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  my-page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar navegação, visual e funções existentes da My Page
+        run: node --test tests/my-page-dashboard.test.mjs
