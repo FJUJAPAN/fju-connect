@@ -2,6 +2,7 @@
    Compartilha o Supabase Auth com /fju-connect-admin/ na mesma origem GitHub Pages.
    Não autoriza funções administrativas: isso depende de perfis + RLS no Supabase. */
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {mountFjuMyPage,setFjuMyPageLanguage,clearFjuMyPage} from './my-page-dashboard.js?v=20261026-iphone';
 
 const client=createClient(
   'https://hmacroktklgwkofxsygv.supabase.co',
@@ -205,6 +206,7 @@ function localize(){
   byId('fju-account-role-label').textContent=t('roleLabel');
   byId('fju-account-role-value').textContent=t(lastRole||'member');
   localizeSignup();
+  setFjuMyPageLanguage(lang());
 }
 const signupLabels={
  pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
@@ -516,13 +518,14 @@ async function loadAccount(){
     await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
     accountAccess.hidden=!verifiedAdmin;
-    byId('fju-account-member-note').hidden=verifiedAdmin;
+    byId('fju-account-member-note').hidden=true;
     const church=byId('fju-account-church');
     church.hidden=!churchName;
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
     showView('account');
     localize();
     preferredLanguageUI();
+    mountFjuMyPage(user.id,lang());
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
@@ -629,6 +632,7 @@ client.auth.onAuthStateChange(event=>{
     return;
   }
   if(event==='SIGNED_OUT'){
+    clearFjuMyPage();
     passwordRecovery=false;
     updateSequence++;
     authenticated=false;userEmail='';lastRole='';
