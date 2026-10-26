@@ -552,6 +552,20 @@ async function loadAccount(){
     }
     await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
+    // Keep the verified administrative route visible at the top of My Page.
+    // Never infer privileges from local state: verifiedAdmin comes from fju_perfis.
+    let adminShortcut=byId('fju-verified-admin-shortcut');
+    if(!adminShortcut){
+      adminShortcut=document.createElement('a');
+      adminShortcut.id='fju-verified-admin-shortcut';
+      adminShortcut.style.cssText='display:block;margin:12px 0 20px;padding:17px 20px;border-radius:16px;background:#b91c36;color:#fff;font-weight:800;text-decoration:none;text-align:center;font-size:16px';
+      myPage.prepend(adminShortcut);
+    }
+    adminShortcut.hidden=!verifiedAdmin;
+    if(verifiedAdmin){
+      adminShortcut.href=adminButton?.href||new URL('fju-connect-admin/',window.location.origin+'/').href;
+      adminShortcut.textContent=lastRole==='national'?'Painel Nacional · Aprovações':'Painel do Coordenador · Solicitações';
+    }
     accountAccess.hidden=!verifiedAdmin;
     byId('fju-account-member-note').hidden=verifiedAdmin;
     const church=byId('fju-account-church');
