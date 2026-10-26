@@ -44,42 +44,6 @@ function preferredLanguageUI(){
 
 
 
-const youthMenuLabels={
- pt:{check:'Check-in',rank:'Minha patente',comments:'Comentários',settings:'Configurações',hint:'Minha presença',evolution:'Minha evolução',interactions:'Minhas interações',account:'Conta e idioma',back:'Voltar ao menu',rankInfo:'Sua patente atual aparece no cartão do perfil.',commentsInfo:'Veja as matérias e participe com seu nome e foto.'},
- ja:{check:'チェックイン',rank:'私のランク',comments:'コメント',settings:'設定',hint:'出席記録',evolution:'私の成長',interactions:'私の交流',account:'アカウントと言語',back:'メニューに戻る',rankInfo:'現在のランクはプロフィールカードに表示されています。',commentsInfo:'記事を開いて、名前と写真でコメントできます。'},
- en:{check:'Check-in',rank:'My rank',comments:'Comments',settings:'Settings',hint:'My attendance',evolution:'My progress',interactions:'My interactions',account:'Account and language',back:'Back to menu',rankInfo:'Your current rank is shown on your profile card.',commentsInfo:'Open articles to comment using your profile name and photo.'}
-};
-function renderYouthMenu(isAdmin){
- let root=byId('fju-youth-menu');
- if(!root){root=document.createElement('section');root.id='fju-youth-menu';root.style.cssText='margin:20px 0;color:#17233b;font-family:inherit';
- const style=document.createElement('style');style.textContent='#fju-youth-menu .fju-youth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#fju-youth-menu .fju-youth-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:112px;padding:16px;border:1px solid #e2e7ee;border-radius:18px;background:#fff;color:#17233b;text-align:left;box-shadow:0 4px 18px #15213b0b;cursor:pointer;font:inherit}#fju-youth-menu .fju-youth-tile:focus-visible{outline:3px solid #d71935;outline-offset:2px}#fju-youth-menu .fju-youth-icon{font-size:23px;color:#d71935}#fju-youth-menu .fju-youth-tile strong{font-size:15px}#fju-youth-menu .fju-youth-tile small{font-size:12px;color:#64748b}#fju-youth-menu .fju-youth-panel{padding:16px;border-radius:18px;background:#fff;border:1px solid #e2e7ee}#fju-youth-menu .fju-youth-back{border:0;background:none;color:#b91c36;font:inherit;font-weight:700;padding:8px 0;cursor:pointer}';document.head.append(style);
- byId('fju-member-collectible')?.insertAdjacentElement('afterend',root);
- }
- root.hidden=isAdmin;if(isAdmin)return;
- const l=youthMenuLabels[lang()]||youthMenuLabels.pt;
- root.replaceChildren();
- const grid=document.createElement('div');grid.className='fju-youth-grid';root.append(grid);
- const panel=document.createElement('div');panel.className='fju-youth-panel';panel.hidden=true;root.append(panel);
- const entries=[['check','⌖','check-in/','hint'],['rank','★',null,'evolution'],['comments','☏',null,'interactions'],['settings','⚙',null,'account']];
- for(const [key,icon,url,sub] of entries){
- const button=document.createElement('button');button.type='button';button.className='fju-youth-tile';
- const symbol=document.createElement('span');symbol.className='fju-youth-icon';symbol.textContent=icon;
- const title=document.createElement('strong');title.textContent=l[key];const detail=document.createElement('small');detail.textContent=l[sub];
- button.append(symbol,title,detail);grid.append(button);
- button.addEventListener('click',()=>{
- if(url){window.location.href=new URL(url,document.baseURI).href;return;}
- grid.hidden=true;panel.hidden=false;panel.replaceChildren();
- const back=document.createElement('button');back.type='button';back.className='fju-youth-back';back.textContent='‹ '+l.back;
- back.addEventListener('click',()=>{panel.hidden=true;grid.hidden=false;});panel.append(back);
- const heading=document.createElement('h3');heading.textContent=l[key];panel.append(heading);
- if(key==='settings'){const language=byId('fju-preferred-language-settings');if(language){language.hidden=false;panel.append(language);}}
- else{const p=document.createElement('p');p.textContent=l[key==='rank'?'rankInfo':'commentsInfo'];panel.append(p);
- if(key==='comments'){const a=document.createElement('a');a.href=new URL('./',document.baseURI).href;a.textContent=l.commentsInfo;panel.append(a);}}
- });
- }
- const oldLanguage=byId('fju-preferred-language-settings');if(oldLanguage&&oldLanguage.parentElement!==panel)oldLanguage.hidden=true;
-}
-
 const translations={
   pt:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
@@ -96,6 +60,7 @@ const translations={
     church:'Igreja',adminTitle:'Área administrativa',
     adminDescription:'Acesse as fichas, os relatórios e as autorizações de sua responsabilidade.',
     openAdmin:'Entrar no painel administrativo',
+    youthOverline:'MINHA PÁGINA',youthMenuHeading:'Acesso rápido',youthProfile:'Meu Perfil',youthInteractions:'Interações',youthEvents:'Eventos',youthSaved:'Salvos',youthSettings:'Ajustes',youthAdmin:'Painel',youthBack:'‹ Voltar',youthInteractionsTitle:'Faça parte da conversa',youthInteractionsText:'Participe das matérias da FJU, curta e responda com seu perfil.',youthOpenArticles:'Abrir matérias',youthSavedTitle:'Matérias salvas',youthSavedText:'Veja suas matérias favoritas neste aparelho.',
     memberDescription:'Sua MY PAGE de jovem está em preparação. Você pode continuar usando o site da FJU normalmente.',
     loginError:'Não foi possível entrar. Confira seu e-mail e senha.',
     sessionError:'Não foi possível verificar sua sessão. Tente novamente.',
@@ -124,6 +89,7 @@ const translations={
     church:'教会',adminTitle:'管理者ページ',
     adminDescription:'担当する登録カード、報告、承認を確認できます。',
     openAdmin:'管理パネルを開く',
+    youthOverline:'マイページ',youthMenuHeading:'メニュー',youthProfile:'プロフィール',youthInteractions:'交流',youthEvents:'イベント',youthSaved:'保存済み',youthSettings:'設定',youthAdmin:'管理パネル',youthBack:'‹ メニューへ',youthInteractionsTitle:'コミュニティに参加',youthInteractionsText:'記事にコメントしたり、いいねや返信をしたりできます。',youthOpenArticles:'記事を見る',youthSavedTitle:'保存した記事',youthSavedText:'この端末で保存した記事です。',
     memberDescription:'青年用MY PAGEは現在準備中です。FJU公式サイトは引き続きご利用いただけます。',
     loginError:'ログインできませんでした。メールアドレスとパスワードをご確認ください。',
     sessionError:'セッションを確認できませんでした。もう一度お試しください。',
@@ -152,6 +118,7 @@ const translations={
     church:'Church',adminTitle:'Administrative area',
     adminDescription:'Open the youth records, weekly reports, and approvals you manage.',
     openAdmin:'Open administrative panel',
+    youthOverline:'MY PAGE',youthMenuHeading:'Quick access',youthProfile:'My Profile',youthInteractions:'Interactions',youthEvents:'Events',youthSaved:'Saved',youthSettings:'Settings',youthAdmin:'Dashboard',youthBack:'‹ Back',youthInteractionsTitle:'Join the conversation',youthInteractionsText:'Comment on FJU stories, like and reply using your profile.',youthOpenArticles:'Open articles',youthSavedTitle:'Saved articles',youthSavedText:'Articles saved on this device.',
     memberDescription:'The youth MY PAGE is being prepared. You can keep browsing the FJU website.',
     loginError:'Could not sign in. Check your email and password.',
     sessionError:'Could not verify the current session. Please try again.',
@@ -242,6 +209,7 @@ function localize(){
   byId('fju-account-role-label').textContent=t('roleLabel');
   byId('fju-account-role-value').textContent=t(lastRole||'member');
   localizeSignup();
+  localizeYouthDashboard();
 }
 const signupLabels={
  pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
@@ -403,6 +371,7 @@ function showView(view){
     ['loading',loading]
   ];
   for(const [id,node] of forms)node.hidden=view!==id;
+  dialog.dataset.fjuView=view; // Aparência clara somente na My Page, não no login.
   signupOpen.hidden=view!=='login';
   byId('fju-account-title').textContent=
     view==='forgot'?t('forgotTitle'):view==='reset'?t('resetTitle'):t('title');
@@ -477,6 +446,79 @@ async function renderYouthSignup(user,isAdmin,current){
 
   });
 }
+
+
+/* Painel My Page: ligar botões reais e preservar o cadastro original. */
+let activeYouthPane='home',activeYouthUserId='';
+const youthId=id=>byId('fju-youth-'+id);
+function localizeYouthDashboard(){
+ const title=byId('fju-youth-subpage-title');
+ if(title&&activeYouthPane!=='home'){
+  title.textContent=t({profile:'youthProfile',interactions:'youthInteractions',saved:'youthSaved',settings:'youthSettings'}[activeYouthPane]||'youthProfile');
+ }
+}
+function youthPanel(tab='home'){
+ activeYouthPane=tab;
+ const home=youthId('dashboard'),head=youthId('subpage-head');
+ if(!home||!head)return;
+ home.hidden=tab!=='home';head.hidden=tab==='home';
+ for(const pane of myPage.querySelectorAll('.fju-youth-content-pane')){
+  pane.hidden=pane.id!=='fju-youth-'+tab+'-pane';
+ }
+ localizeYouthDashboard();
+ if(tab==='saved')renderYouthSaved();
+ dialog.scrollTop=0;
+}
+function syncYouthIdentity(verifiedAdmin){
+ const name=byId('fju-member-card-name')?.textContent?.trim()||'FJU JAPAN';
+ const church=byId('fju-member-card-polo')?.textContent||'';
+ const rank=byId('fju-member-card-rank')?.textContent||'';
+ byId('fju-youth-hero-name').textContent=name;
+ byId('fju-youth-hero-polo').textContent=church;
+ const rankNode=byId('fju-youth-hero-rank');
+ rankNode.hidden=!rank||rank.includes('definida pela liderança');
+ if(!rankNode.hidden)rankNode.textContent=rank;
+ const existing=byId('fju-member-card-photo'),hero=byId('fju-youth-hero-photo');
+ const url=existing&&!existing.hidden?existing.src:'';
+ if(url){hero.src=url;hero.hidden=false}else{hero.removeAttribute('src');hero.hidden=true}
+ byId('fju-youth-hero-fallback').hidden=!!url;
+ byId('fju-youth-hero-fallback').textContent=name.charAt(0).toUpperCase()||'F';
+ const adminTile=byId('fju-youth-admin-tile');
+ if(adminTile)adminTile.hidden=!verifiedAdmin;
+ if(byId('fju-account-member-note'))byId('fju-account-member-note').hidden=true;
+}
+function youthSavedKey(){return activeYouthUserId?'fju_saved_articles_v1_'+activeYouthUserId:''}
+function youthSavedRead(){
+ if(!activeYouthUserId)return [];
+ try{const all=JSON.parse(localStorage.getItem(youthSavedKey())||'[]');return Array.isArray(all)?all.filter(x=>x&&typeof x.title==='string'&&/^[0-9a-f-]{36}$/i.test(x.id)).slice(0,100):[]}catch(_){return []}
+}
+function renderYouthSaved(){
+ const list=byId('fju-youth-saved-list');if(!list)return;
+ list.replaceChildren();
+ const all=youthSavedRead();
+ const language=lang();
+ if(!all.length){
+  const empty=document.createElement('p');empty.className='fju-youth-saved-empty';
+  empty.textContent=language==='ja'?'保存した記事はまだありません。':language==='en'?'No saved articles yet.':'Você ainda não salvou matérias.';
+  list.append(empty);
+ }
+ for(const item of all){
+  const entry=document.createElement('div');entry.className='fju-youth-saved-item';
+  const a=document.createElement('a');a.textContent=item.title.slice(0,160);a.href='./materia.html?id='+encodeURIComponent(item.id);
+  const remove=document.createElement('button');remove.type='button';remove.textContent='×';
+  remove.setAttribute('aria-label',language==='ja'?'保存を解除':language==='en'?'Remove saved article':'Remover dos salvos');
+  remove.addEventListener('click',()=>{
+   const remaining=youthSavedRead().filter(x=>x.id!==item.id);
+   localStorage.setItem(youthSavedKey(),JSON.stringify(remaining));
+   renderYouthSaved();
+  });
+  entry.append(a,remove);list.append(entry);
+ }
+}
+for(const button of document.querySelectorAll('[data-fju-youth-panel]')){
+ button.addEventListener('click',()=>youthPanel(button.dataset.fjuYouthPanel));
+}
+byId('fju-youth-back')?.addEventListener('click',()=>youthPanel('home'));
 
 async function loadAccount(){
   const current=++updateSequence;
@@ -574,7 +616,13 @@ async function loadAccount(){
     showView('account');
     localize();
     preferredLanguageUI();
-    renderYouthMenu(verifiedAdmin);
+    activeYouthUserId=user.id;
+    const settings=byId('fju-youth-settings-content');
+    if(settings){
+      for(const node of [byId('fju-preferred-language-settings'),accountAccess,byId('fju-account-logout')])if(node)settings.append(node);
+    }
+    syncYouthIdentity(verifiedAdmin);
+    youthPanel(byId('fju-youth-signup')?.querySelector('form')?'profile':'home');
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
@@ -681,6 +729,7 @@ client.auth.onAuthStateChange(event=>{
     return;
   }
   if(event==='SIGNED_OUT'){
+    activeYouthUserId='';youthPanel('home');
     passwordRecovery=false;
     updateSequence++;
     authenticated=false;userEmail='';lastRole='';
@@ -692,7 +741,7 @@ client.auth.onAuthStateChange(event=>{
     setTimeout(()=>{void loadAccount();},0);
   }
 });
-localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser){preferredLanguageUI();renderYouthMenu(lastRole!=='member');}});
+localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
 localize();
 void loadAccount();
