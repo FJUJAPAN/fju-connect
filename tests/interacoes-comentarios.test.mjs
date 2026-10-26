@@ -58,8 +58,8 @@ test('o fluxo anterior continua funcionando e o CSS é responsivo',()=>{
  assert.match(sql,/CREATE OR REPLACE FUNCTION public\.fju_listar_comentarios_materia\(/);
  assert.match(sql,/c\.parent_id IS NULL/);
  assert.match(js,/fju_listar_comentarios_materia/);
- assert.match(page,/comentarios-materias\.js\?v=20261026-interacoes/);
- assert.match(page,/comentarios-materias\.css\?v=20261026-interacoes/);
+ assert.match(page,/comentarios-materias\.js\?v=20261026-(?:interacoes|editar)/);
+ assert.match(page,/comentarios-materias\.css\?v=20261026-(?:interacoes|editar)/);
  assert.match(css,/fju-comment-thread/);
  assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length);
  assert.doesNotMatch(sql,/^\s*(?:DROP\s+TABLE|TRUNCATE\s+TABLE)\b/gm);
