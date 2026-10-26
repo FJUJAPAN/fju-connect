@@ -1,0 +1,48 @@
+/* Comentários das matérias · FJU JAPAN — leitura pública, publicação com perfil. */
+#fju-materia-comments[hidden]{display:none!important}
+.fju-comments{margin:26px 0 0;padding:clamp(19px,4vw,32px);border:1px solid #dce4ef;background:#fff;border-radius:17px;box-shadow:0 12px 38px #1023420d;color:#183454}
+.fju-comments-title{display:flex;flex-direction:column;gap:5px;margin-bottom:22px}
+.fju-comments-title h2{margin:0;font-size:clamp(23px,4vw,28px);font-weight:850;line-height:1.2;letter-spacing:-.02em}
+.fju-comments-title p{margin:0;color:#6b7c90;font-size:13.5px;line-height:1.6}
+.fju-comments-login-area:not(:empty){margin:0 0 20px}
+.fju-comments-login-area>p{margin:0 0 10px;color:#4e637f;font-size:14px;line-height:1.6}
+.fju-comments-login{display:inline-flex;min-height:44px;align-items:center;justify-content:center;border-radius:10px;padding:10px 17px;background:#1c477c;color:#fff!important;text-decoration:none;font-weight:760;font-size:13px}
+.fju-comments-login:hover{background:#123358}
+.fju-comments-who{display:flex;gap:11px;align-items:center}
+.fju-comments-own-avatar,.fju-comment-avatar{width:44px;height:44px;min-width:44px;border-radius:50%;object-fit:cover;border:2px solid #e1eafa;background:#e5ecf6}
+.fju-comments-identity{display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.25}
+.fju-comments-identity small{font-size:11px;font-weight:700;color:#6d7c91}
+.fju-comments-identity strong{font-size:14px;color:#1c3557;overflow-wrap:anywhere}
+.fju-comments-form{margin:0 0 25px;padding:14px;background:#f7f9fd;border:1px solid #e3eaf4;border-radius:14px}
+.fju-comments-text{display:block;width:100%;resize:vertical;min-height:100px;padding:12px 14px;background:#fff;color:#173354;border:1px solid #ccd9e8;border-radius:10px;font:14px/1.65 system-ui,'Noto Sans JP',sans-serif}
+.fju-comments-text:focus-visible{outline:3px solid #9dc7fc;outline-offset:1px}
+.fju-comments-public-notice{font-size:11px;color:#647891;line-height:1.55;margin:10px 0 9px}
+.fju-comments-form-actions{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.fju-comments-counter{font-size:11px;color:#78879a}
+.fju-comments-submit,.fju-comments-more{border:0;border-radius:10px;padding:12px 17px;min-height:44px;background:#193f72;color:#fff;cursor:pointer;font:740 13px system-ui,'Noto Sans JP',sans-serif}
+.fju-comments-submit:hover,.fju-comments-more:hover{background:#102f55}
+.fju-comments-submit:disabled,.fju-comments-more:disabled{cursor:wait;opacity:.65}
+.fju-comments-feedback,.fju-comments-status{min-height:1.5em;color:#677c98;font-size:13px;line-height:1.5;margin:8px 0}
+.fju-comments-feedback.is-error,.fju-comments-status.is-error,.fju-comments-login-area.is-error{color:#b12c43}
+.fju-comments-list{display:flex;flex-direction:column}
+.fju-comment{display:flex;align-items:flex-start;gap:12px;padding:19px 0;border-bottom:1px solid #ecf0f5}
+.fju-comment:first-child{border-top:1px solid #ecf0f5}
+.fju-comment-main{flex:1;min-width:0}
+.fju-comment-head{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.fju-comment-name{font-size:14px;color:#143860;line-height:1.35;overflow-wrap:anywhere}
+.fju-comment-time{color:#8290a3;font-size:11px;white-space:nowrap}
+.fju-comment-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;font-size:14px;line-height:1.65;color:#2a415e}
+.fju-comment-delete{margin-left:auto;border:0;background:transparent;padding:5px 3px;color:#8c4658;font-size:12px;text-decoration:underline;cursor:pointer}
+.fju-comment-delete:hover{color:#a51e3c}
+.fju-comment-avatar-error{font-size:0}
+.fju-comments-more{display:block;margin:20px auto 2px;background:#eff5ff;color:#24487a}
+.fju-comments-more:hover{background:#e1ecfd}
+.fju-comments-more[hidden]{display:none!important}
+@media(max-width:600px){
+ .fju-comments{padding:19px 15px;margin-top:18px;border-radius:14px}
+ .fju-comment{gap:10px;padding:15px 0}
+ .fju-comments-own-avatar,.fju-comment-avatar{width:40px;height:40px;min-width:40px}
+ .fju-comment-time{font-size:10px}
+ .fju-comments-form-actions{gap:7px}
+ .fju-comments-submit{padding:11px 12px}
+}
