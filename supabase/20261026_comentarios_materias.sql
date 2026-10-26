@@ -1,10 +1,10 @@
 -- FJU JAPAN | Comentários nas matérias publicados por usuários cadastrados.
 -- Execute MANUALMENTE no Supabase SQL Editor depois do merge deste PR.
 -- Comentários públicos; identidade do autor derivada exclusivamente do cadastro.
--- Foto só se o usuário copiar voluntariamente a foto privada para bucket de avatar público.
+-- O envio do comentário copia automaticamente a foto de perfil para um avatar público, com aviso ao usuário.
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS public.fju_materias_comentarios(
+CREATE TABLE IF NOT EXISTS public.fju_materias_comentarios_perfil(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   materia_id uuid NOT NULL REFERENCES public.fju_materias(id) ON DELETE CASCADE,
   autor_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -15,21 +15,18 @@ CREATE TABLE IF NOT EXISTS public.fju_materias_comentarios(
   removido_por uuid REFERENCES auth.users(id)
 );
 
--- Compatibilidade com instalações anteriores que já criaram a tabela
--- sem os campos de moderação. CREATE TABLE IF NOT EXISTS não altera
--- a estrutura de uma tabela existente; acrescentar sem apagar registros.
-ALTER TABLE public.fju_materias_comentarios
-  ADD COLUMN IF NOT EXISTS removido_em timestamptz,
-  ADD COLUMN IF NOT EXISTS removido_por uuid REFERENCES auth.users(id);
+-- O banco já possui uma tabela antiga chamada fju_materias_comentarios, com
+-- colunas diferentes. A nova tabela abaixo usa nome próprio, preservando
+-- integralmente a tabela antiga e seus registros. Não há DROP TABLE nem DELETE.
 
-CREATE INDEX IF NOT EXISTS fju_comentarios_materia_data
-  ON public.fju_materias_comentarios(materia_id,criado_em DESC,id DESC)
+CREATE INDEX IF NOT EXISTS fju_comentarios_perfil_materia_data
+  ON public.fju_materias_comentarios_perfil(materia_id,criado_em DESC,id DESC)
   WHERE removido_em IS NULL;
-CREATE INDEX IF NOT EXISTS fju_comentarios_autor_data
-  ON public.fju_materias_comentarios(autor_id,criado_em DESC);
+CREATE INDEX IF NOT EXISTS fju_comentarios_perfil_autor_data
+  ON public.fju_materias_comentarios_perfil(autor_id,criado_em DESC);
 
-ALTER TABLE public.fju_materias_comentarios ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON TABLE public.fju_materias_comentarios FROM PUBLIC,anon,authenticated;
+ALTER TABLE public.fju_materias_comentarios_perfil ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.fju_materias_comentarios_perfil FROM PUBLIC,anon,authenticated;
 
 -- Ao PUBLICAR, o usuário torna pública uma CÓPIA da foto que já está no seu perfil.
 -- A interface explica isso ao lado do botão Comentar. Os buckets originais continuam privados.
@@ -110,13 +107,13 @@ BEGIN
  IF char_length(v_texto) NOT BETWEEN 1 AND 600 THEN
    RAISE EXCEPTION 'Escreva de 1 a 600 caracteres'; END IF;
  PERFORM pg_advisory_xact_lock(hashtextextended('comentario-fju-'||v_uid::text,0));
- IF EXISTS(SELECT 1 FROM public.fju_materias_comentarios
+ IF EXISTS(SELECT 1 FROM public.fju_materias_comentarios_perfil
   WHERE autor_id=v_uid AND criado_em>now()-INTERVAL '20 seconds') THEN
   RAISE EXCEPTION 'Aguarde 20 segundos antes de comentar novamente'; END IF;
- IF (SELECT count(*) FROM public.fju_materias_comentarios
+ IF (SELECT count(*) FROM public.fju_materias_comentarios_perfil
    WHERE autor_id=v_uid AND criado_em>now()-INTERVAL '24 hours')>=30 THEN
   RAISE EXCEPTION 'Limite de comentários atingido. Tente novamente amanhã'; END IF;
- INSERT INTO public.fju_materias_comentarios(materia_id,autor_id,autor_nome,texto)
+ INSERT INTO public.fju_materias_comentarios_perfil(materia_id,autor_id,autor_nome,texto)
  VALUES(p_materia_id,v_uid,v_nome,v_texto) RETURNING id INTO v_id;
  RETURN v_id;
 END;$$;
@@ -128,7 +125,7 @@ RETURNS TABLE(
 ) LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
  SELECT c.id,c.autor_id,c.autor_nome,c.texto,c.criado_em,
   (c.autor_id::text||'/perfil.jpg')::text AS avatar_path
- FROM public.fju_materias_comentarios c
+ FROM public.fju_materias_comentarios_perfil c
  JOIN public.fju_materias m ON m.id=c.materia_id
  WHERE c.materia_id=p_materia_id AND m.status='publicada' AND c.removido_em IS NULL
  ORDER BY c.criado_em DESC,c.id DESC
@@ -141,7 +138,7 @@ RETURNS void LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path='' AS $$
 DECLARE v_autor uuid;v_permitido boolean;
 BEGIN
  IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Faça login'; END IF;
- SELECT c.autor_id INTO v_autor FROM public.fju_materias_comentarios c
+ SELECT c.autor_id INTO v_autor FROM public.fju_materias_comentarios_perfil c
  WHERE c.id=p_comentario_id AND c.removido_em IS NULL FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'Comentário não encontrado'; END IF;
  v_permitido:=v_autor=auth.uid() OR EXISTS(
@@ -149,7 +146,7 @@ BEGIN
   WHERE p.usuario_id=auth.uid() AND p.ativo=true AND p.papel='nacional'
  );
  IF NOT v_permitido THEN RAISE EXCEPTION 'Sem permissão para excluir este comentário'; END IF;
- UPDATE public.fju_materias_comentarios
+ UPDATE public.fju_materias_comentarios_perfil
  SET removido_em=now(),removido_por=auth.uid() WHERE id=p_comentario_id;
 END;$$;
 
