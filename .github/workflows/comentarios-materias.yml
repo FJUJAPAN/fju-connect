@@ -1,0 +1,33 @@
+name: FJU JAPAN - Comentários das matérias
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'comentarios-materias.js'
+      - 'comentarios-materias.css'
+      - 'materia.html'
+      - 'supabase/20261026_comentarios_materias.sql'
+      - 'tests/comentarios-materias.test.mjs'
+      - '.github/workflows/comentarios-materias.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'comentarios-materias.js'
+      - 'comentarios-materias.css'
+      - 'materia.html'
+      - 'supabase/20261026_comentarios_materias.sql'
+      - 'tests/comentarios-materias.test.mjs'
+      - '.github/workflows/comentarios-materias.yml'
+permissions:
+  contents: read
+jobs:
+  verify-comments:
+    runs-on: ubuntu-latest
+    name: Validar comentários e segurança
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar comentários, cadastro, foto e nome
+        run: node --test tests/comentarios-materias.test.mjs
