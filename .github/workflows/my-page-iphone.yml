@@ -1,0 +1,31 @@
+name: FJU JAPAN - My Page Menu Functional
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'my-page-auth.js'
+      - 'my-page-iphone.css'
+      - 'materia.html'
+      - 'tests/my-page-iphone.test.mjs'
+      - '.github/workflows/my-page-iphone.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'my-page-auth.js'
+      - 'my-page-iphone.css'
+      - 'materia.html'
+      - 'tests/my-page-iphone.test.mjs'
+      - '.github/workflows/my-page-iphone.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/my-page-iphone.test.mjs
