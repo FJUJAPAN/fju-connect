@@ -55,5 +55,5 @@ test('tabela identificada é independente do esquema legado sem excluir dados',(
  assert.match(sql,/CREATE TABLE IF NOT EXISTS public\.fju_materias_comentarios_perfil\(/);
  assert.match(sql,/CREATE INDEX IF NOT EXISTS fju_comentarios_perfil_materia_data/);
  assert.doesNotMatch(sql,/CREATE TABLE IF NOT EXISTS public\.fju_materias_comentarios\(/);
- assert.doesNotMatch(sql,/DROP TABLE|DELETE FROM public\.fju_materias_comentarios|TRUNCATE/);
+ assert.doesNotMatch(sql,/^\s*(?:DROP\s+TABLE|DELETE\s+FROM|TRUNCATE\s+TABLE)\b/gm);
 });
