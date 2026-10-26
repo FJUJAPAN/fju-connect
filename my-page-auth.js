@@ -358,6 +358,7 @@ signupForm.addEventListener('submit',async event=>{
 });
 
 function showView(view){
+  dialog.dataset.view=view;
   const forms=[
     ['login',loginForm],
     ['signup',signupForm],
