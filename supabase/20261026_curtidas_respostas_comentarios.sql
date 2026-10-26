@@ -82,7 +82,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
  WHERE c.id=p_comentario_id AND c.parent_id IS NULL
  AND c.removido_em IS NULL AND r.removido_em IS NULL
  AND r.materia_id=c.materia_id AND m.status='publicada'
- ORDER BY r.criado_em ASC,r.id ASC
+ ORDER BY r.criado_em DESC,r.id DESC
  LIMIT least(greatest(coalesce(p_limite,20),1),50)
  OFFSET least(greatest(coalesce(p_offset,0),0),10000);
 $$;
