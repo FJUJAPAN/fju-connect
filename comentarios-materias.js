@@ -18,8 +18,8 @@ const status=(area,text,error=false)=>{area.textContent=text;area.classList.togg
 const prettyTime=(value)=>{try{return new Intl.DateTimeFormat(lang()==='ja'?'ja-JP':lang()==='en'?'en-US':'pt-BR',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Tokyo'}).format(new Date(value));}catch(_){return ''}};
 const publicAvatar=(path)=>db.storage.from('fju-comentarios-avatars').getPublicUrl(path).data.publicUrl;
 const profileLink=()=>{const a=element('a','fju-comments-login',t().login);a.href='./#my-page';return a};
-let currentUser=null,allowedName='',roleNational=false,profileBlob=null,previewUrl=null,moreOffset=0,hasMore=false,busy=false,loadVersion=0,interactionEnabled=false;
-function clearPreview(){if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}profileBlob=null}
+let currentUser=null,allowedName='',roleNational=false,profileBlob=null,previewUrl=null,moreOffset=0,hasMore=false,busy=false,loadVersion=0,interactionEnabled=false,avatarReadyForSession=false;
+function clearPreview(){if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}profileBlob=null;avatarReadyForSession=false}
 function canInteract(){return !!(interactionEnabled&&currentUser&&allowedName&&profileBlob)}
 function showInteractionError(box,error){
  const text=error?.message||String(error||t().interactLogin);
@@ -31,9 +31,12 @@ async function checkCommenter(){
  if(error||!user||user.id!==currentUser?.id)throw new Error(t().interactLogin);
  // Garante que a foto da My Page usada no comentário/resposta
  // é a mesma do perfil, sem solicitação de novo upload ao usuário.
- const upload=await db.storage.from('fju-comentarios-avatars')
-  .upload(user.id+'/perfil.jpg',profileBlob,{upsert:true,contentType:'image/jpeg',cacheControl:'60'});
- if(upload.error)throw upload.error;
+ if(!avatarReadyForSession){
+  const upload=await db.storage.from('fju-comentarios-avatars')
+   .upload(user.id+'/perfil.jpg',profileBlob,{upsert:true,contentType:'image/jpeg',cacheControl:'60'});
+  if(upload.error)throw upload.error;
+  avatarReadyForSession=true;
+ }
  return user;
 }
 function renderComment(row,isReply=false){
@@ -247,6 +250,7 @@ async function loadCommenter(){
    const {error:uploadError}=await db.storage.from('fju-comentarios-avatars')
      .upload(validUser.id+'/perfil.jpg',profileBlob,{upsert:true,contentType:'image/jpeg',cacheControl:'60'});
    if(uploadError)throw uploadError;
+   avatarReadyForSession=true;
    const {error}=await db.rpc('fju_publicar_comentario_materia',{p_materia_id:articleId,p_texto:msg});
    if(error)throw error;
    input.value='';counter.textContent='600 '+t().count;status(feedback,'');
