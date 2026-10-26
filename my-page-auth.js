@@ -43,6 +43,43 @@ function preferredLanguageUI(){
 }
 
 
+
+const youthMenuLabels={
+ pt:{check:'Check-in',rank:'Minha patente',comments:'Comentários',settings:'Configurações',hint:'Minha presença',evolution:'Minha evolução',interactions:'Minhas interações',account:'Conta e idioma',back:'Voltar ao menu',rankInfo:'Sua patente atual aparece no cartão do perfil.',commentsInfo:'Veja as matérias e participe com seu nome e foto.'},
+ ja:{check:'チェックイン',rank:'私のランク',comments:'コメント',settings:'設定',hint:'出席記録',evolution:'私の成長',interactions:'私の交流',account:'アカウントと言語',back:'メニューに戻る',rankInfo:'現在のランクはプロフィールカードに表示されています。',commentsInfo:'記事を開いて、名前と写真でコメントできます。'},
+ en:{check:'Check-in',rank:'My rank',comments:'Comments',settings:'Settings',hint:'My attendance',evolution:'My progress',interactions:'My interactions',account:'Account and language',back:'Back to menu',rankInfo:'Your current rank is shown on your profile card.',commentsInfo:'Open articles to comment using your profile name and photo.'}
+};
+function renderYouthMenu(isAdmin){
+ let root=byId('fju-youth-menu');
+ if(!root){root=document.createElement('section');root.id='fju-youth-menu';root.style.cssText='margin:20px 0;color:#17233b;font-family:inherit';
+ const style=document.createElement('style');style.textContent='#fju-youth-menu .fju-youth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#fju-youth-menu .fju-youth-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:112px;padding:16px;border:1px solid #e2e7ee;border-radius:18px;background:#fff;color:#17233b;text-align:left;box-shadow:0 4px 18px #15213b0b;cursor:pointer;font:inherit}#fju-youth-menu .fju-youth-tile:focus-visible{outline:3px solid #d71935;outline-offset:2px}#fju-youth-menu .fju-youth-icon{font-size:23px;color:#d71935}#fju-youth-menu .fju-youth-tile strong{font-size:15px}#fju-youth-menu .fju-youth-tile small{font-size:12px;color:#64748b}#fju-youth-menu .fju-youth-panel{padding:16px;border-radius:18px;background:#fff;border:1px solid #e2e7ee}#fju-youth-menu .fju-youth-back{border:0;background:none;color:#b91c36;font:inherit;font-weight:700;padding:8px 0;cursor:pointer}';document.head.append(style);
+ byId('fju-member-collectible')?.insertAdjacentElement('afterend',root);
+ }
+ root.hidden=isAdmin;if(isAdmin)return;
+ const l=youthMenuLabels[lang()]||youthMenuLabels.pt;
+ root.replaceChildren();
+ const grid=document.createElement('div');grid.className='fju-youth-grid';root.append(grid);
+ const panel=document.createElement('div');panel.className='fju-youth-panel';panel.hidden=true;root.append(panel);
+ const entries=[['check','⌖','check-in/','hint'],['rank','★',null,'evolution'],['comments','☏',null,'interactions'],['settings','⚙',null,'account']];
+ for(const [key,icon,url,sub] of entries){
+ const button=document.createElement('button');button.type='button';button.className='fju-youth-tile';
+ const symbol=document.createElement('span');symbol.className='fju-youth-icon';symbol.textContent=icon;
+ const title=document.createElement('strong');title.textContent=l[key];const detail=document.createElement('small');detail.textContent=l[sub];
+ button.append(symbol,title,detail);grid.append(button);
+ button.addEventListener('click',()=>{
+ if(url){window.location.href=new URL(url,document.baseURI).href;return;}
+ grid.hidden=true;panel.hidden=false;panel.replaceChildren();
+ const back=document.createElement('button');back.type='button';back.className='fju-youth-back';back.textContent='‹ '+l.back;
+ back.addEventListener('click',()=>{panel.hidden=true;grid.hidden=false;});panel.append(back);
+ const heading=document.createElement('h3');heading.textContent=l[key];panel.append(heading);
+ if(key==='settings'){const language=byId('fju-preferred-language-settings');if(language){language.hidden=false;panel.append(language);}}
+ else{const p=document.createElement('p');p.textContent=l[key==='rank'?'rankInfo':'commentsInfo'];panel.append(p);
+ if(key==='comments'){const a=document.createElement('a');a.href=new URL('./',document.baseURI).href;a.textContent=l.commentsInfo;panel.append(a);}}
+ });
+ }
+ const oldLanguage=byId('fju-preferred-language-settings');if(oldLanguage&&oldLanguage.parentElement!==panel)oldLanguage.hidden=true;
+}
+
 const translations={
   pt:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
@@ -523,6 +560,7 @@ async function loadAccount(){
     showView('account');
     localize();
     preferredLanguageUI();
+    renderYouthMenu(verifiedAdmin);
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
@@ -640,7 +678,7 @@ client.auth.onAuthStateChange(event=>{
     setTimeout(()=>{void loadAccount();},0);
   }
 });
-localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
+localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser){preferredLanguageUI();renderYouthMenu(lastRole!=='member');}});
 renderHeaderAccount(null);
 localize();
 void loadAccount();
