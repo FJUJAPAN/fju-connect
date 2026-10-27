@@ -325,7 +325,7 @@ async function sendCoordinatorSignup(user,details,photo){
  if(photoError)throw photoError;
  const {error}=await client.rpc('fju_solicitar_cadastro_coordenador',{p_polo_id:details.polo,p_nome:details.name});
  if(error)throw error;
- sessionStorage.removeItem('fju-youth-pending-signup');
+ sessionStorage.removeItem('fju-coordinator-pending-signup');
 }
 async function sendDetailedSignup(user,details,photo){
  const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
@@ -424,12 +424,12 @@ signupForm.addEventListener('submit',async event=>{
   const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
-   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro'},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro',requested_polo_id:isCoordinatorSignup()?details.polo:null},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
   created=true;
-  sessionStorage.setItem(isYouthSignup()?'fju-youth-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
+  sessionStorage.setItem(isCoordinatorSignup()?'fju-coordinator-pending-signup':isYouthSignup()?'fju-youth-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
   if(data.session){
    if(isCoordinatorSignup())await sendCoordinatorSignup(data.user,details,photo);
    else if(isYouthSignup())await sendDetailedSignup(data.user,details,photo);
@@ -524,6 +524,29 @@ async function renderYouthSignup(user,isAdmin,current){
       }catch(err){status.textContent=err.message;button.disabled=false;}
     });
     return pendingGroup.group;
+  }
+  // Contas do link exclusivo nunca devem cair na inscrição de jovens.
+  if(user.user_metadata?.requested_role==='coordenador'){
+    let pendingCoordinator=null;
+    try{pendingCoordinator=JSON.parse(sessionStorage.getItem('fju-coordinator-pending-signup')||'null');}catch(_){}
+    if(pendingCoordinator?.email?.toLowerCase()!==user.email?.toLowerCase())pendingCoordinator=null;
+    const poloId=pendingCoordinator?.polo||user.user_metadata?.requested_polo_id;
+    title.textContent='Cadastro de coordenador FJU';
+    const {data:requests,error:requestError}=await client.from('fju_cadastros_coordenadores').select('status').eq('usuario_id',user.id).limit(1);
+    // A tabela é restrita por RLS; não confundir ausência de leitura com ausência de pedido.
+    if(requestError){status.textContent='Aguardando análise do Nacional. Caso ainda não tenha enviado o pedido, conclua abaixo.';}
+    else if(requests?.length){status.textContent='Pedido registrado. Aguarde aprovação do Nacional.';return;}
+    if(!poloId){status.textContent='Não encontramos o polo escolhido. Entre novamente pelo link exclusivo de coordenadores para selecionar seu polo.';return;}
+    status.textContent='Confirme o envio do seu pedido de coordenador para o Nacional.';
+    const form=document.createElement('form');form.style.display='grid';form.style.gap='10px';
+    const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.required=true;
+    const button=document.createElement('button');button.type='submit';button.textContent='Enviar pedido ao Nacional';
+    form.append(photo,button);container.append(form);
+    form.addEventListener('submit',async e=>{e.preventDefault();button.disabled=true;try{
+      await sendCoordinatorSignup(user,{polo:poloId,name:pendingCoordinator?.name||user.user_metadata?.full_name||user.email},await prepareSignupPhoto(photo.files[0]));
+      form.remove();status.textContent='Pedido de coordenador enviado. Aguarde aprovação do Nacional.';
+    }catch(err){status.textContent='Não foi possível enviar: '+err.message;button.disabled=false;}});
+    return;
   }
   const {data:existing,error:existingError}=await client.rpc('fju_consultar_minha_inscricao');
   if(current!==updateSequence||passwordRecovery)return;
