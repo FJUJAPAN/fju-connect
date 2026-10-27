@@ -821,3 +821,14 @@ localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser
 renderHeaderAccount(null);
 localize();
 void loadAccount();
+// Link direto para cadastro: /fju-connect/?cadastro=1
+if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
+  void (async()=>{
+    await openAccount();
+    if(!authenticated && !passwordRecovery){
+      signupFeedback();
+      showView('signup');
+      await loadSignupPolos();
+    }
+  })();
+}
