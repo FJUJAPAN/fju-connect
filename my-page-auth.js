@@ -366,8 +366,8 @@ async function loadSignupPolos(){
 const signupDetails=createSignupDetails();
 const signupGroup=document.createElement('select');signupGroup.id='fju-signup-group';
 signupGroup.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
-for(const [value,label] of [['FJU_COORDENADOR','COORDENADOR FJU'],['FJU','FJU (jovem)'],['FTU','FTU'],['Calebe','Calebe'],['EVG','EVG'],['Obreiros','Obreiros'],['Membros','Membros da igreja']])signupGroup.add(new Option(label,value));
-const isCoordinatorSignup=()=>signupGroup.value==='FJU_COORDENADOR';
+for(const [value,label] of [['FJU','FJU (jovem)'],['FTU','FTU'],['Calebe','Calebe'],['EVG','EVG'],['Obreiros','Obreiros'],['Membros','Membros da igreja']])signupGroup.add(new Option(label,value));
+const isCoordinatorSignup=()=>new URLSearchParams(window.location.search).get('cadastro')==='1'&&new URLSearchParams(window.location.search).get('tipo')==='coordenador';
 const isYouthSignup=()=>signupGroup.value==='FJU'||isCoordinatorSignup();
 function syncSignupGroup(){
  const youth=isYouthSignup();
@@ -827,7 +827,7 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
     showDialog();
     await loadAccount();
     if(!authenticated && !passwordRecovery){
-      if(new URLSearchParams(window.location.search).get('tipo')==='coordenador')signupGroup.value='FJU_COORDENADOR';
+      if(new URLSearchParams(window.location.search).get('tipo')==='coordenador'){signupGroup.value='FJU';signupGroup.closest('label')?.setAttribute('hidden','');signupGroup.style.display='none';}
       signupFeedback();
       showView('signup');
       await loadSignupPolos();
