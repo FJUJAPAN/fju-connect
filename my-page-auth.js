@@ -346,7 +346,26 @@ async function loadSignupPolos(){
  for(const item of data||[]){const option=document.createElement('option');option.value=item.id;option.textContent='FJU '+item.nome;signupPolo.append(option);}
 }
 const signupDetails=createSignupDetails();
-signupForm.append(signupTitle,signupName,signupDetails.root,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
+const signupGroup=document.createElement('select');signupGroup.id='fju-signup-group';
+signupGroup.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
+for(const [value,label] of [['FJU','FJU (jovem)'],['FTU','FTU'],['Calebe','Calebe'],['EVG','EVG'],['Obreiros','Obreiros'],['Membros','Membros da igreja']])signupGroup.add(new Option(label,value));
+const isYouthSignup=()=>signupGroup.value==='FJU';
+function syncSignupGroup(){
+ const youth=isYouthSignup();
+ signupDetails.root.hidden=!youth;signupPolo.hidden=!youth;signupProjects.hidden=!youth;
+ for(const field of Object.values(signupDetails.fields))field.required=youth;
+ signupPolo.required=youth;
+ signupTitle.textContent=youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
+}
+signupGroup.addEventListener('change',syncSignupGroup);
+async function finishChurchGroupSignup(user,details,photo){
+ const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
+ if(photoError)throw photoError;
+ const {error}=await client.rpc('fju_cadastrar_grupo_igreja',{p_nome:details.name,p_grupo:details.group});
+ if(error)throw error;
+ sessionStorage.removeItem('fju-church-pending-signup');
+}
+signupForm.append(signupTitle,signupGroup,signupName,signupDetails.root,signupEmail,signupPassword,signupConfirm,signupPolo,signupProjects,signupNotice,signupSubmit,signupBack);
 function signupFeedback(message='',error=false){
  signupNotice.textContent=message;signupNotice.style.display=message?'block':'none';
  signupNotice.style.background=error?'#fff0f0':'#eaf7ef';signupNotice.style.color=error?'#9b1c1c':'#176339';
@@ -357,14 +376,14 @@ function localizeSignup(){
  const t=signupText();signupOpen.textContent=t.create;signupTitle.textContent=t.title;
  for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
- signupDetails.localize();
+ signupDetails.localize();syncSignupGroup();
 }
 signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
+ const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:signupGroup.value,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
  let created=false;
  try{
@@ -376,12 +395,13 @@ signupForm.addEventListener('submit',async event=>{
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
   created=true;
-  sessionStorage.setItem('fju-youth-pending-signup',JSON.stringify(details));
+  sessionStorage.setItem(isYouthSignup()?'fju-youth-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
   if(data.session){
-   await sendDetailedSignup(data.user,details,photo);
-   signupForm.reset();await loadAccount();setFeedback('Conta e inscrição enviadas ao coordenador!');
+   if(isYouthSignup())await sendDetailedSignup(data.user,details,photo);
+   else await finishChurchGroupSignup(data.user,details,photo);
+   signupForm.reset();syncSignupGroup();await loadAccount();setFeedback(isYouthSignup()?'Conta e inscrição enviadas ao coordenador!':'Conta da igreja criada!');
   }else{
-   signupForm.reset();showView('login');setFeedback('Conta criada! Confirme seu e-mail e entre na My Page para concluir a inscrição e selecionar novamente a foto.');
+   signupForm.reset();syncSignupGroup();showView('login');setFeedback('Conta criada! Confirme seu e-mail e entre na My Page para concluir o cadastro.');
   }
  }catch(error){
   if(created){
