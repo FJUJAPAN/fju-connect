@@ -104,3 +104,28 @@
  #fju-account-dialog .fju-youth-tile{min-height:120px}
 }
 @media(prefers-reduced-motion:reduce){#fju-account-dialog .fju-youth-tile{transition:none}}
+
+/* Conta autenticada: alteração de senha discreta dentro de Meu Perfil. */
+#fju-account-dialog[data-fju-view="account"] .fju-profile-security{
+ margin:12px 0 0;padding:16px;background:#fff;border:1px solid #e4e8ee;border-radius:16px;color:#243950
+}
+.fju-profile-security-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fju-profile-security-head h4{margin:0;font-size:14px;font-weight:800;color:#243950}
+#fju-account-dialog[data-fju-view="account"] #fju-profile-password-toggle{
+ background:#f0f3f8;border:1px solid #dae3ed;border-radius:10px;color:#294666;
+ font-size:12px;font-weight:750;min-height:39px;padding:8px 12px;cursor:pointer
+}
+#fju-profile-password-form{margin-top:15px!important;display:grid;gap:8px}
+#fju-account-dialog[data-fju-view="account"] #fju-profile-password-form label{display:block;color:#3e536e;margin:8px 0 0;font-size:12px}
+#fju-account-dialog[data-fju-view="account"] #fju-profile-password-form input{
+ background:#f8fafc;border:1px solid #cfdae7;color:#223b58;border-radius:10px;
+ width:100%;min-height:44px;padding:10px 12px;font-size:16px
+}
+#fju-account-dialog[data-fju-view="account"] #fju-profile-password-save{
+ background:#b91c36;color:#fff;border:0;border-radius:10px;min-height:44px;
+ font-size:13px;font-weight:750;padding:10px 16px;margin-top:6px;cursor:pointer
+}
+#fju-profile-password-save:disabled{opacity:.6;cursor:wait}
+#fju-profile-password-status{font-size:12px;line-height:1.55;color:#3c607f;margin:8px 0 0}
+#fju-profile-password-status:empty{display:none}
+#fju-profile-password-toggle:focus-visible,#fju-profile-password-save:focus-visible{outline:3px solid #a42b47;outline-offset:2px}
