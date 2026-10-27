@@ -11,7 +11,8 @@ test('foto permanece visível e obrigatória para todos os grupos',()=>{
  assert.match(auth,/signupDetails\.root\.hidden=false;/);
  assert.match(auth,/field\.required=key==='photo'\|\|youth/);
  assert.match(auth,/if\(key!=='photo'\)field\.closest\('label'\)\.style\.display=youth\?'grid':'none'/);
- assert.match(auth,/signupPolo\.required=youth;/);
+ assert.match(auth,/signupPolo\.required=youth\|\|isCoordinatorSignup\(\);/);
+ assert.match(auth,/signupProjects\.hidden=!youth\|\|isCoordinatorSignup\(\);/);
 });
 
 test('escolha do grupo é recuperável após confirmação de email',()=>{

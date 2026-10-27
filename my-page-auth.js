@@ -386,8 +386,8 @@ function syncSignupGroup(){
   if(key!=='photo')field.closest('label').style.display=youth?'grid':'none';
  }
  signupDetails.rank.hidden=!youth;
- signupPolo.hidden=!youth;signupProjects.hidden=!youth;
- signupPolo.required=youth;
+ signupPolo.hidden=!(youth||isCoordinatorSignup());signupProjects.hidden=!youth||isCoordinatorSignup();
+ signupPolo.required=youth||isCoordinatorSignup();
  if(!youth&&!signupInProgress)signupSubmit.disabled=false;
  signupTitle.textContent=isCoordinatorSignup()?({pt:'Cadastro de Coordenador FJU',ja:'FJUコーディネーター登録',en:'FJU Coordinator Registration'}[lang()]):youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
 }
