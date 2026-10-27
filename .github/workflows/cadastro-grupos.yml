@@ -1,0 +1,32 @@
+name: FJU JAPAN - Cadastro de grupos
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'my-page-auth.js'
+      - 'index.html'
+      - 'supabase/20261027_cadastro_grupos_igreja.sql'
+      - 'tests/cadastro-grupos-igreja.test.mjs'
+      - '.github/workflows/cadastro-grupos.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'my-page-auth.js'
+      - 'index.html'
+      - 'supabase/20261027_cadastro_grupos_igreja.sql'
+      - 'tests/cadastro-grupos-igreja.test.mjs'
+      - '.github/workflows/cadastro-grupos.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar sintaxe
+        run: node --check my-page-auth.js
+      - name: Testar cadastro de grupos
+        run: node --test tests/cadastro-grupos-igreja.test.mjs
