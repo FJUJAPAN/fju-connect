@@ -820,15 +820,17 @@ client.auth.onAuthStateChange(event=>{
 localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
 localize();
-void loadAccount();
-// Link direto para cadastro: /fju-connect/?cadastro=1
+// Evita duas verificações de sessão simultâneas e abre cadastro direto.
 if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
   void (async()=>{
-    await openAccount();
+    showDialog();
+    await loadAccount();
     if(!authenticated && !passwordRecovery){
       signupFeedback();
       showView('signup');
       await loadSignupPolos();
     }
   })();
+}else{
+  void loadAccount();
 }
