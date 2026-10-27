@@ -30,10 +30,27 @@ test('não duplica menus, links admin nem anuncia função Salvos pendente',()=>
  assert.doesNotMatch(js,/function renderYouthMenu/);
  assert.match(js,/if\(savedTile\)savedTile\.hidden=true/);
  assert.doesNotMatch(js,/fju-verified-admin-shortcut/);
- assert.match(html,/my-page-auth\.js\?v=20261027-my-page-navegacao/);
+ assert.match(html,/my-page-auth\.js\?v=\d{8}-[\w-]+/);
 });
 test('labels portugueses, japoneses e ingleses para o dashboard',()=>{
  assert.match(js,/youthMenuHeading:'Acesso rápido'/);
  assert.match(js,/youthMenuHeading:'クイックアクセス'/);
  assert.match(js,/youthMenuHeading:'Quick access'/);
+});
+
+test('troca de idioma atualiza metadados e não chama menu excluído',()=>{
+ assert.match(js,/preferredLanguageUser=data\?\.user\|\|/);
+ assert.doesNotMatch(js,/renderYouthMenu\(/);
+ assert.match(js,/localeSelect\?\.addEventListener\('change'/);
+});
+test('alteração de senha na My Page tem confirmação e tradução',()=>{
+ for(const id of ['fju-profile-password-form','fju-profile-password-new','fju-profile-password-confirm','fju-profile-password-status']){
+  assert.match(html,new RegExp('id="'+id+'"'));
+ }
+ assert.match(js,/client\.auth\.updateUser\(\{password:newPassword\}\)/);
+ assert.match(js,/newPassword\.length<8\|\|newPassword!==confirmPassword/);
+ assert.match(js,/profilePasswordForm\?\.addEventListener\('submit'/);
+ for(const translation of ["profileSecurityTitle:'Segurança da conta'","profileSecurityTitle:'アカウントのセキュリティ'","profileSecurityTitle:'Account security'"]){
+  assert.ok(js.includes(translation));
+ }
 });
