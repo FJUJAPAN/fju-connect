@@ -381,7 +381,12 @@ function syncSignupGroup(){
  signupPolo.hidden=!youth;signupProjects.hidden=!youth;
  signupPolo.required=youth;
  if(!youth&&!signupInProgress)signupSubmit.disabled=false;
- signupTitle.textContent=youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
+ const coordinatorEntry=new URLSearchParams(location.search).get('cadastro')==='coordenador';
+ signupTitle.textContent=coordinatorEntry&&youth?({pt:'CADASTRO — COORDENADOR FJU',ja:'FJUコーディネーター登録',en:'FJU COORDINATOR REGISTRATION'}[lang()]):youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
+ if(coordinatorEntry&&youth){
+  signupNotice.textContent=({pt:'Solicitação de acesso como Coordenador FJU. O acesso ao painel só será liberado após aprovação do Nacional.',ja:'FJUコーディネーターの登録申請です。管理画面の利用には全国管理者の承認が必要です。',en:'FJU Coordinator access request. Admin access requires National approval.'}[lang()]);
+  signupNotice.style.display='block';signupNotice.style.background='#eef2fb';signupNotice.style.color='#19264b';
+ }
 }
 signupGroup.addEventListener('change',syncSignupGroup);
 async function finishChurchGroupSignup(user,details,photo){
@@ -821,7 +826,7 @@ localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser
 renderHeaderAccount(null);
 localize();
 // Evita duas verificações de sessão simultâneas e abre cadastro direto.
-if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
+if(new URLSearchParams(window.location.search).['1','coordenador'].includes(new URLSearchParams(window.location.search).get('cadastro'))){
   void (async()=>{
     showDialog();
     await loadAccount();
