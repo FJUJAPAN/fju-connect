@@ -283,7 +283,7 @@ function createSignupDetails(){
   fields.nationality.value=value;
  }
  localize();
- return {root,fields,localize,values:()=>({birth:fields.birth.value,phone:fields.phone.value.trim(),nationality:fields.nationality.value})};
+ return {root,fields,rank,localize,values:()=>({birth:fields.birth.value,phone:fields.phone.value.trim(),nationality:fields.nationality.value})};
 }
 async function prepareSignupPhoto(file){
  if(!file)throw new Error('Selecione sua foto de perfil.');
@@ -352,9 +352,17 @@ for(const [value,label] of [['FJU','FJU (jovem)'],['FTU','FTU'],['Calebe','Caleb
 const isYouthSignup=()=>signupGroup.value==='FJU';
 function syncSignupGroup(){
  const youth=isYouthSignup();
- signupDetails.root.hidden=!youth;signupPolo.hidden=!youth;signupProjects.hidden=!youth;
- for(const field of Object.values(signupDetails.fields))field.required=youth;
+ // A foto é obrigatória tanto para jovens quanto para os demais grupos.
+ // Só os dados da ficha (nascimento, telefone e nacionalidade) são exclusivos da FJU.
+ signupDetails.root.hidden=false;
+ for(const [key,field] of Object.entries(signupDetails.fields)){
+  field.required=key==='photo'||youth;
+  if(key!=='photo')field.closest('label').style.display=youth?'grid':'none';
+ }
+ signupDetails.rank.hidden=!youth;
+ signupPolo.hidden=!youth;signupProjects.hidden=!youth;
  signupPolo.required=youth;
+ if(!youth&&!signupInProgress)signupSubmit.disabled=false;
  signupTitle.textContent=youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
 }
 signupGroup.addEventListener('change',syncSignupGroup);
@@ -390,7 +398,7 @@ signupForm.addEventListener('submit',async event=>{
   const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
-   options:{data:{full_name:details.name},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:details.name,signup_group:details.group},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
@@ -448,17 +456,32 @@ async function renderYouthSignup(user,isAdmin,current){
   const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
   const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
   container.append(title,status);
-  const {data:groups}=await client.rpc('fju_meu_grupo_igreja');
+  const {data:groups,error:groupError}=await client.rpc('fju_meu_grupo_igreja');
   if(current!==updateSequence||passwordRecovery)return;
   const group=Array.isArray(groups)?groups[0]:groups;
+  const churchGroups=['FTU','Calebe','EVG','Obreiros','Membros'];
+  const requestedChurchGroup=churchGroups.includes(user.user_metadata?.signup_group)?user.user_metadata.signup_group:null;
   if(group){
-    title.textContent='Minha conta da igreja';
-    status.textContent=group.grupo+' · Conta ativa para comentários e check-in.';
+    sessionStorage.removeItem('fju-church-pending-signup');
+    title.textContent=({pt:'Minha conta da igreja',ja:'教会アカウント',en:'My church account'}[lang()]);
+    status.textContent=group.grupo+' · '+({pt:'Conta ativa para comentários e check-in.',ja:'コメントとチェックインをご利用いただけます。',en:'Account active for comments and check-in.'}[lang()]);
+    byId('fju-member-card-name').textContent=group.nome;
+    byId('fju-member-card-polo').textContent=group.grupo;
+    byId('fju-member-card-project').textContent='FJU CONNECT JAPAN';
+    byId('fju-member-card-rank').textContent=({pt:'Conta da igreja',ja:'教会アカウント',en:'Church account'}[lang()]);
+    return;
+  }
+  if(groupError&&requestedChurchGroup){
+    title.textContent=({pt:'Cadastro da igreja',ja:'教会アカウント登録',en:'Church registration'}[lang()]);
+    status.textContent=({pt:'O cadastro dos grupos está temporariamente indisponível. Avise a administração da igreja.',ja:'現在、グループ登録をご利用いただけません。教会の管理者にお問い合わせください。',en:'Church group registration is currently unavailable. Please contact the church administrator.'}[lang()]);
     return;
   }
   let pendingGroup=null;
   try{pendingGroup=JSON.parse(sessionStorage.getItem('fju-church-pending-signup')||'null');}catch(_){}
-  if(pendingGroup?.email===user.email){
+  // A escolha do grupo fica também no Supabase Auth para concluir em outro aparelho.
+  // Nunca usamos o metadado para conceder privilégios: o servidor valida o cadastro.
+  if(!pendingGroup&&requestedChurchGroup)pendingGroup={email:user.email,name:user.user_metadata?.full_name||'',group:requestedChurchGroup};
+  if(pendingGroup?.email?.toLowerCase()===user.email?.toLowerCase()){
     title.textContent='Concluir conta da igreja';
     const form=document.createElement('form');
     const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.required=true;
