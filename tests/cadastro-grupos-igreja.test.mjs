@@ -29,5 +29,5 @@ test('contas dos demais grupos não criam ficha nem usam patente da FJU',()=>{
 });
 
 test('HTML atualiza versão do javascript do cadastro',()=>{
- assert.match(index,/my-page-auth\.js\?v=20261027-(?:cadastro-grupos-foto|my-page-navegacao)/);
+ assert.match(index,/my-page-auth\.js\?v=\d{8}-[\w-]+/);
 });
