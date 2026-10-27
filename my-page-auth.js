@@ -448,6 +448,31 @@ async function renderYouthSignup(user,isAdmin,current){
   const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
   const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
   container.append(title,status);
+  const {data:groups}=await client.rpc('fju_meu_grupo_igreja');
+  if(current!==updateSequence||passwordRecovery)return;
+  const group=Array.isArray(groups)?groups[0]:groups;
+  if(group){
+    title.textContent='Minha conta da igreja';
+    status.textContent=group.grupo+' · Conta ativa para comentários e check-in.';
+    return;
+  }
+  let pendingGroup=null;
+  try{pendingGroup=JSON.parse(sessionStorage.getItem('fju-church-pending-signup')||'null');}catch(_){}
+  if(pendingGroup?.email===user.email){
+    title.textContent='Concluir conta da igreja';
+    const form=document.createElement('form');
+    const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.required=true;
+    const button=document.createElement('button');button.textContent='Concluir cadastro';
+    form.append(photo,button);container.append(form);
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();button.disabled=true;
+      try{
+        await finishChurchGroupSignup(user,pendingGroup,await prepareSignupPhoto(photo.files[0]));
+        form.remove();status.textContent='Cadastro concluído. Comentários e check-in liberados.';
+      }catch(err){status.textContent=err.message;button.disabled=false;}
+    });
+    return;
+  }
   const {data:existing,error:existingError}=await client.rpc('fju_consultar_minha_inscricao');
   if(current!==updateSequence||passwordRecovery)return;
   // RETURNS TABLE RPC yields [] when no inscription exists. An empty array is truthy.
