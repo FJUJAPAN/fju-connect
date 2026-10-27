@@ -367,7 +367,8 @@ const signupDetails=createSignupDetails();
 const signupGroup=document.createElement('select');signupGroup.id='fju-signup-group';
 signupGroup.style.cssText='padding:12px;border-radius:10px;background:white;color:#172033';
 for(const [value,label] of [['FJU','FJU (jovem)'],['FTU','FTU'],['Calebe','Calebe'],['EVG','EVG'],['Obreiros','Obreiros'],['Membros','Membros da igreja']])signupGroup.add(new Option(label,value));
-const isYouthSignup=()=>signupGroup.value==='FJU';
+const isCoordinatorSignup=()=>new URLSearchParams(window.location.search).get('cadastro')==='1'&&new URLSearchParams(window.location.search).get('tipo')==='coordenador';
+const isYouthSignup=()=>signupGroup.value==='FJU'||isCoordinatorSignup();
 function syncSignupGroup(){
  const youth=isYouthSignup();
  // A foto é obrigatória tanto para jovens quanto para os demais grupos.
@@ -381,7 +382,7 @@ function syncSignupGroup(){
  signupPolo.hidden=!youth;signupProjects.hidden=!youth;
  signupPolo.required=youth;
  if(!youth&&!signupInProgress)signupSubmit.disabled=false;
- signupTitle.textContent=youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
+ signupTitle.textContent=isCoordinatorSignup()?({pt:'Cadastro de Coordenador FJU',ja:'FJUコーディネーター登録',en:'FJU Coordinator Registration'}[lang()]):youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
 }
 signupGroup.addEventListener('change',syncSignupGroup);
 async function finishChurchGroupSignup(user,details,photo){
@@ -409,14 +410,14 @@ signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:signupGroup.value,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
+ const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:isCoordinatorSignup()?'FJU':signupGroup.value,requested_role:isCoordinatorSignup()?'coordenador':null,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
  let created=false;
  try{
   const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
-   options:{data:{full_name:details.name,signup_group:details.group},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro'},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
@@ -826,6 +827,7 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
     showDialog();
     await loadAccount();
     if(!authenticated && !passwordRecovery){
+      if(new URLSearchParams(window.location.search).get('tipo')==='coordenador'){signupGroup.value='FJU';signupGroup.closest('label')?.setAttribute('hidden','');signupGroup.style.display='none';}
       signupFeedback();
       showView('signup');
       await loadSignupPolos();
