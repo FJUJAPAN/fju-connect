@@ -18,6 +18,9 @@ const loading=byId('fju-account-loading');
 const accountAccess=byId('fju-account-admin-access');
 const adminButton=byId('fju-account-admin-link');
 const localeSelect=byId('language');
+const profilePasswordForm=byId('fju-profile-password-form');
+const profilePasswordToggle=byId('fju-profile-password-toggle');
+const profilePasswordStatus=byId('fju-profile-password-status');
 const languageSettingsText={
  pt:{title:'Idioma preferido',description:'Escolha o idioma padrão da sua conta FJU Connect.',saved:'Idioma salvo no seu perfil.',failed:'Não foi possível salvar o idioma no perfil.'},
  ja:{title:'表示言語',description:'FJU Connectアカウントの表示言語を選択してください。',saved:'プロフィールに言語を保存しました。',failed:'言語を保存できませんでした。'},
@@ -35,7 +38,7 @@ function preferredLanguageUI(){
  const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
  section.append(heading,desc,select,feedback);
  byId('fju-account-logout')?.insertAdjacentElement('beforebegin',section);
- select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
+ select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {data,error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;preferredLanguageUser=data?.user||{...preferredLanguageUser,user_metadata:{...(preferredLanguageUser.user_metadata||{}),preferred_language:value}};localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
  }
  const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
  byId('fju-preferred-language-select').value=normalizedLanguage(preferredLanguageUser?.user_metadata?.preferred_language||localeSelect?.value||'pt');
@@ -115,6 +118,7 @@ const translations={
     passwordMismatch:'As senhas precisam ser iguais e ter pelo menos 8 caracteres.',
     updatingPassword:'Atualizando senha...',passwordUpdated:'Senha alterada. Entre novamente.',
     passwordUpdateError:'Não foi possível alterar a senha.',
+    profileSecurityTitle:'Segurança da conta',profileChangePassword:'Alterar senha',profilePasswordSaved:'Senha atualizada com sucesso.',profilePasswordFailed:'Não foi possível alterar a senha. Entre novamente e tente outra vez.',
     close:'Fechar'
   },
   ja:{
@@ -144,6 +148,7 @@ const translations={
     passwordMismatch:'8文字以上の同じパスワードを2回入力してください。',
     updatingPassword:'保存しています...',passwordUpdated:'パスワードを変更しました。再度ログインしてください。',
     passwordUpdateError:'パスワードを変更できませんでした。',
+    profileSecurityTitle:'アカウントのセキュリティ',profileChangePassword:'パスワードを変更',profilePasswordSaved:'パスワードを更新しました。',profilePasswordFailed:'パスワードを更新できませんでした。再度ログインしてお試しください。',
     close:'閉じる'
   },
   en:{
@@ -173,6 +178,7 @@ const translations={
     passwordMismatch:'Enter matching passwords of at least 8 characters.',
     updatingPassword:'Saving password...',passwordUpdated:'Password updated. Please sign in again.',
     passwordUpdateError:'Could not update the password.',
+    profileSecurityTitle:'Account security',profileChangePassword:'Change password',profilePasswordSaved:'Password updated successfully.',profilePasswordFailed:'Could not change your password. Please sign in again and retry.',
     close:'Close'
   }
 };
@@ -746,7 +752,43 @@ resetForm.addEventListener('submit',async event=>{
   }catch(e){setFeedback(t('passwordUpdateError'),true);}
   finally{button.disabled=false;}
 });
+function resetProfilePassword(){
+ profilePasswordForm?.reset();
+ if(profilePasswordForm)profilePasswordForm.hidden=true;
+ if(profilePasswordToggle)profilePasswordToggle.setAttribute('aria-expanded','false');
+ if(profilePasswordStatus)profilePasswordStatus.textContent='';
+}
+profilePasswordToggle?.addEventListener('click',()=>{
+ if(!profilePasswordForm)return;
+ const willOpen=profilePasswordForm.hidden;
+ profilePasswordForm.hidden=!willOpen;
+ profilePasswordToggle.setAttribute('aria-expanded',String(willOpen));
+ if(willOpen)byId('fju-profile-password-new')?.focus();
+ else profilePasswordForm.reset();
+ profilePasswordStatus.textContent='';
+});
+profilePasswordForm?.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const newPassword=byId('fju-profile-password-new').value;
+ const confirmPassword=byId('fju-profile-password-confirm').value;
+ const saveButton=byId('fju-profile-password-save');
+ if(newPassword.length<8||newPassword!==confirmPassword){
+  profilePasswordStatus.textContent=t('passwordMismatch');
+  return;
+ }
+ saveButton.disabled=true;
+ profilePasswordStatus.textContent=t('updatingPassword');
+ try{
+  const {error}=await client.auth.updateUser({password:newPassword});
+  if(error)throw error;
+  resetProfilePassword();
+  profilePasswordStatus.textContent=t('profilePasswordSaved');
+ }catch(e){
+  profilePasswordStatus.textContent=t('profilePasswordFailed');
+ }finally{saveButton.disabled=false;}
+});
 byId('fju-account-logout').addEventListener('click',async()=>{
+  resetProfilePassword();
   try{
     await client.auth.signOut();
     authenticated=false;userEmail='';lastRole='';
@@ -763,6 +805,7 @@ client.auth.onAuthStateChange(event=>{
     return;
   }
   if(event==='SIGNED_OUT'){
+    resetProfilePassword();
     passwordRecovery=false;
     updateSequence++;
     authenticated=false;userEmail='';lastRole='';
@@ -774,7 +817,7 @@ client.auth.onAuthStateChange(event=>{
     setTimeout(()=>{void loadAccount();},0);
   }
 });
-localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser){preferredLanguageUI();renderYouthMenu(lastRole!=='member');}});
+localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
 localize();
 void loadAccount();
