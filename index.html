@@ -1389,6 +1389,33 @@ toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttrib
 })();
 </script>
 <script type="module" src="./my-page-auth.js?v=20261027-cadastro-direto-2"></script>
+<script id="fju-direct-signup-fallback">
+/* Abre o cadastro mesmo quando a inicialização assíncrona do login atrasa. */
+if(new URLSearchParams(location.search).get('cadastro')==='1'){
+  document.addEventListener('DOMContentLoaded',()=>{
+    const dialog=document.getElementById('fju-account-dialog');
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries++;
+      const signup=document.getElementById('fju-account-signup-open');
+      if(dialog && signup){
+        clearInterval(timer);
+        if(!dialog.open)dialog.showModal();
+        // Aciona o fluxo existente de cadastro, inclusive o carregamento de polos.
+        signup.click();
+        dialog.scrollTop=0;
+      }else if(tries>=100){
+        clearInterval(timer);
+        const link=document.createElement('button');
+        link.textContent='Abrir cadastro FJU Connect';
+        link.style.cssText='position:fixed;bottom:20px;left:5%;width:90%;padding:16px;background:#c8192e;color:white;border:0;border-radius:14px;z-index:99999;font-weight:700';
+        link.onclick=()=>document.querySelector('[data-fju-account-open]')?.click();
+        document.body.append(link);
+      }
+    },100);
+  });
+}
+</script>
 <script defer src="./universal-highlights.js"></script>
 <script id="fju-app-gesture-lock">
 /* FJU JAPAN: prevent accidental page magnification on iOS Safari.
