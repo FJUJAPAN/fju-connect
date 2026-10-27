@@ -320,6 +320,13 @@ async function prepareSignupPhoto(file){
   throw new Error('Não foi possível reduzir a foto. Escolha outra imagem.');
  }finally{URL.revokeObjectURL(url);}
 }
+async function sendCoordinatorSignup(user,details,photo){
+ const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
+ if(photoError)throw photoError;
+ const {error}=await client.rpc('fju_solicitar_cadastro_coordenador',{p_polo_id:details.polo,p_nome:details.name});
+ if(error)throw error;
+ sessionStorage.removeItem('fju-youth-pending-signup');
+}
 async function sendDetailedSignup(user,details,photo){
  const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
  if(photoError)throw photoError;
@@ -424,7 +431,8 @@ signupForm.addEventListener('submit',async event=>{
   created=true;
   sessionStorage.setItem(isYouthSignup()?'fju-youth-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
   if(data.session){
-   if(isYouthSignup())await sendDetailedSignup(data.user,details,photo);
+   if(isCoordinatorSignup())await sendCoordinatorSignup(data.user,details,photo);
+   else if(isYouthSignup())await sendDetailedSignup(data.user,details,photo);
    else await finishChurchGroupSignup(data.user,details,photo);
    signupForm.reset();syncSignupGroup();await loadAccount();setFeedback(isYouthSignup()?'Conta e inscrição enviadas ao coordenador!':'Conta da igreja criada!');
   }else{
