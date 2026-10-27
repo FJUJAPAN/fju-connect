@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - 'supabase/20261027_cadastro_grupos_igreja.sql'
       - 'tests/cadastro-grupos-igreja.test.mjs'
+      - 'tests/my-page-navegacao.test.mjs'
       - '.github/workflows/cadastro-grupos.yml'
   push:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'index.html'
       - 'supabase/20261027_cadastro_grupos_igreja.sql'
       - 'tests/cadastro-grupos-igreja.test.mjs'
+      - 'tests/my-page-navegacao.test.mjs'
       - '.github/workflows/cadastro-grupos.yml'
 permissions:
   contents: read
@@ -29,4 +31,4 @@ jobs:
       - name: Validar sintaxe
         run: node --check my-page-auth.js
       - name: Testar cadastro de grupos
-        run: node --test tests/cadastro-grupos-igreja.test.mjs
+        run: node --test tests/cadastro-grupos-igreja.test.mjs tests/my-page-navegacao.test.mjs
