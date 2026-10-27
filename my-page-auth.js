@@ -34,7 +34,7 @@ function preferredLanguageUI(){
  [['pt','Português'],['ja','日本語'],['en','English']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option);});
  const feedback=document.createElement('p');feedback.id='fju-preferred-language-feedback';feedback.setAttribute('role','status');feedback.style.margin='8px 0 0';
  section.append(heading,desc,select,feedback);
- myPage.append(section);
+ byId('fju-account-logout')?.insertAdjacentElement('beforebegin',section);
  select.addEventListener('change',async()=>{if(!preferredLanguageUser)return;const value=select.value;select.disabled=true;feedback.textContent='';try{const {error}=await client.auth.updateUser({data:{preferred_language:value}});if(error)throw error;localStorage.setItem('fju_lang',value);localStorage.setItem('fju_language',value);localStorage.setItem('fju-connect-lang',value);if(localeSelect){localeSelect.value=value;localeSelect.dispatchEvent(new Event('change'));}feedback.textContent=languageSettingsText[value].saved;}catch(err){feedback.textContent=languageSettingsText[lang()].failed;select.value=normalizedLanguage(preferredLanguageUser.user_metadata?.preferred_language||lang());}finally{select.disabled=false;}});
  }
  const l=lang(),words=languageSettingsText[l];byId('fju-preferred-language-title').textContent=words.title;byId('fju-preferred-language-description').textContent=words.description;
@@ -44,46 +44,54 @@ function preferredLanguageUI(){
 
 
 
-const youthMenuLabels={
- pt:{check:'Check-in',rank:'Minha patente',comments:'Comentários',settings:'Configurações',hint:'Minha presença',evolution:'Minha evolução',interactions:'Minhas interações',account:'Conta e idioma',back:'Voltar ao menu',rankInfo:'Sua patente atual aparece no cartão do perfil.',commentsInfo:'Veja as matérias e participe com seu nome e foto.'},
- ja:{check:'チェックイン',rank:'私のランク',comments:'コメント',settings:'設定',hint:'出席記録',evolution:'私の成長',interactions:'私の交流',account:'アカウントと言語',back:'メニューに戻る',rankInfo:'現在のランクはプロフィールカードに表示されています。',commentsInfo:'記事を開いて、名前と写真でコメントできます。'},
- en:{check:'Check-in',rank:'My rank',comments:'Comments',settings:'Settings',hint:'My attendance',evolution:'My progress',interactions:'My interactions',account:'Account and language',back:'Back to menu',rankInfo:'Your current rank is shown on your profile card.',commentsInfo:'Open articles to comment using your profile name and photo.'}
+const youthPaneLabels={
+ pt:{profile:'Meu Perfil',interactions:'Interações',saved:'Salvos',churchAccount:'Conta da igreja'},
+ ja:{profile:'マイプロフィール',interactions:'交流',saved:'保存済み',churchAccount:'教会アカウント'},
+ en:{profile:'My Profile',interactions:'Interactions',saved:'Saved',churchAccount:'Church account'}
 };
-function renderYouthMenu(isAdmin){
- let root=byId('fju-youth-menu');
- if(!root){root=document.createElement('section');root.id='fju-youth-menu';root.style.cssText='margin:20px 0;color:#17233b;font-family:inherit';
- const style=document.createElement('style');style.textContent='#fju-youth-menu .fju-youth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#fju-youth-menu .fju-youth-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:112px;padding:16px;border:1px solid #e2e7ee;border-radius:18px;background:#fff;color:#17233b;text-align:left;box-shadow:0 4px 18px #15213b0b;cursor:pointer;font:inherit}#fju-youth-menu .fju-youth-tile:focus-visible{outline:3px solid #d71935;outline-offset:2px}#fju-youth-menu .fju-youth-icon{font-size:23px;color:#d71935}#fju-youth-menu .fju-youth-tile strong{font-size:15px}#fju-youth-menu .fju-youth-tile small{font-size:12px;color:#64748b}#fju-youth-menu .fju-youth-panel{padding:16px;border-radius:18px;background:#fff;border:1px solid #e2e7ee}#fju-youth-menu .fju-youth-back{border:0;background:none;color:#b91c36;font:inherit;font-weight:700;padding:8px 0;cursor:pointer}';document.head.append(style);
- byId('fju-member-collectible')?.insertAdjacentElement('afterend',root);
+let activeYouthPane='';
+function showYouthPane(target=''){
+ const valid=['profile','interactions','saved'];
+ activeYouthPane=valid.includes(target)?target:'';
+ const home=byId('fju-youth-dashboard'),head=byId('fju-youth-subpage-head');
+ if(home)home.hidden=!!activeYouthPane;
+ if(head)head.hidden=!activeYouthPane;
+ for(const pane of valid){
+  const node=byId('fju-youth-'+pane+'-pane');
+  if(node)node.hidden=activeYouthPane!==pane;
  }
- root.hidden=isAdmin;if(isAdmin)return;
- const l=youthMenuLabels[lang()]||youthMenuLabels.pt;
- root.replaceChildren();
- const grid=document.createElement('div');grid.className='fju-youth-grid';root.append(grid);
- const panel=document.createElement('div');panel.className='fju-youth-panel';panel.hidden=true;root.append(panel);
- const entries=[['check','⌖','check-in/','hint'],['rank','★',null,'evolution'],['comments','☏',null,'interactions'],['settings','⚙',null,'account']];
- for(const [key,icon,url,sub] of entries){
- const button=document.createElement('button');button.type='button';button.className='fju-youth-tile';
- const symbol=document.createElement('span');symbol.className='fju-youth-icon';symbol.textContent=icon;
- const title=document.createElement('strong');title.textContent=l[key];const detail=document.createElement('small');detail.textContent=l[sub];
- button.append(symbol,title,detail);grid.append(button);
- button.addEventListener('click',()=>{
- if(url){window.location.href=new URL(url,document.baseURI).href;return;}
- grid.hidden=true;panel.hidden=false;panel.replaceChildren();
- const back=document.createElement('button');back.type='button';back.className='fju-youth-back';back.textContent='‹ '+l.back;
- back.addEventListener('click',()=>{panel.hidden=true;grid.hidden=false;});panel.append(back);
- const heading=document.createElement('h3');heading.textContent=l[key];panel.append(heading);
- if(key==='settings'){const language=byId('fju-preferred-language-settings');if(language){language.hidden=false;panel.append(language);}}
- else{const p=document.createElement('p');p.textContent=l[key==='rank'?'rankInfo':'commentsInfo'];panel.append(p);
- if(key==='comments'){const a=document.createElement('a');a.href=new URL('./',document.baseURI).href;a.textContent=l.commentsInfo;panel.append(a);}}
- });
+ if(activeYouthPane){
+  byId('fju-youth-subpage-title').textContent=youthPaneLabels[lang()][activeYouthPane];
  }
- const oldLanguage=byId('fju-preferred-language-settings');if(oldLanguage&&oldLanguage.parentElement!==panel)oldLanguage.hidden=true;
+ if(dialog?.open)dialog.scrollTop=0;
+}
+function syncYouthHero(isAdmin=false,churchGroup=null){
+ const profileName=byId('fju-member-card-name')?.textContent?.trim()||userEmail.split('@')[0]||'FJU JAPAN';
+ const profileChurch=byId('fju-member-card-polo')?.textContent?.trim()||'FJU JAPAN';
+ const src=byId('fju-member-card-photo');
+ byId('fju-youth-hero-name').textContent=profileName;
+ byId('fju-youth-hero-polo').textContent=churchGroup||profileChurch;
+ const pic=byId('fju-youth-hero-photo'),fallback=byId('fju-youth-hero-fallback');
+ const photoSrc=src&&!src.hidden?src.getAttribute('src'):'';
+ if(photoSrc){pic.src=photoSrc;pic.hidden=false;fallback.hidden=true;}
+ else{pic.removeAttribute('src');pic.hidden=true;fallback.hidden=false;fallback.textContent=profileName.charAt(0).toUpperCase()||'F';}
+ const rank=byId('fju-youth-hero-rank');
+ const rawRank=byId('fju-member-card-rank')?.textContent?.trim()||'';
+ const rankText=isAdmin?t(lastRole):churchGroup?'':rawRank;
+ rank.hidden=!rankText||/Patente definida|rank will be assigned/i.test(rankText);
+ if(!rank.hidden)rank.textContent=rankText;
+ if(churchGroup){
+  byId('fju-member-card-polo').textContent=churchGroup;
+  byId('fju-member-card-project').textContent='FJU CONNECT JAPAN';
+  byId('fju-member-card-rank').textContent=youthPaneLabels[lang()].churchAccount;
+ }
 }
 
 const translations={
   pt:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'Sua conta FJU Connect JAPAN, sem sair do site oficial.',
+    youthOverline:'MINHA PÁGINA',youthMenuHeading:'Acesso rápido',youthProfile:'Meu Perfil',youthInteractions:'Interações',youthEvents:'Eventos',youthSaved:'Salvos',youthAdmin:'Painel',youthMenuCaption:'Sua área FJU Connect, em um só lugar.',youthBack:'‹ Voltar',youthInteractionsTitle:'Faça parte da conversa',youthInteractionsText:'Participe das matérias da FJU com seu perfil.',youthOpenArticles:'Abrir matérias',youthSavedTitle:'Seus conteúdos favoritos',youthSavedText:'Esta função está em preparação.',
     loading:'Verificando sua conta...',
     email:'E-mail',password:'Senha',loginButton:'Entrar',
     forgotLink:'Esqueci minha senha',forgotTitle:'Recuperar acesso',
@@ -112,6 +120,7 @@ const translations={
   ja:{
     loginHeader:'ログイン',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'FJU公式サイトから離れずにログインできます。',
+    youthOverline:'マイページ',youthMenuHeading:'クイックアクセス',youthProfile:'マイプロフィール',youthInteractions:'交流',youthEvents:'イベント',youthSaved:'保存済み',youthAdmin:'管理パネル',youthMenuCaption:'FJU Connectの機能をここから利用できます。',youthBack:'‹ 戻る',youthInteractionsTitle:'交流に参加しよう',youthInteractionsText:'プロフィールを使ってFJUの記事にコメントできます。',youthOpenArticles:'記事を見る',youthSavedTitle:'保存したコンテンツ',youthSavedText:'準備中の機能です。',
     loading:'アカウントを確認しています...',
     email:'メールアドレス',password:'パスワード',loginButton:'ログイン',
     forgotLink:'パスワードを忘れた方',forgotTitle:'パスワードの再設定',
@@ -140,6 +149,7 @@ const translations={
   en:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'Sign in without leaving the official FJU site.',
+    youthOverline:'MY PAGE',youthMenuHeading:'Quick access',youthProfile:'My Profile',youthInteractions:'Interactions',youthEvents:'Events',youthSaved:'Saved',youthAdmin:'Dashboard',youthMenuCaption:'Your FJU Connect space, all in one place.',youthBack:'‹ Back',youthInteractionsTitle:'Join the conversation',youthInteractionsText:'Join the discussion on FJU articles with your profile.',youthOpenArticles:'Open articles',youthSavedTitle:'Your saved content',youthSavedText:'This feature is coming soon.',
     loading:'Checking your account...',
     email:'Email',password:'Password',loginButton:'Sign in',
     forgotLink:'Forgot password?',forgotTitle:'Recover access',
@@ -242,6 +252,8 @@ function localize(){
   byId('fju-account-role-label').textContent=t('roleLabel');
   byId('fju-account-role-value').textContent=t(lastRole||'member');
   localizeSignup();
+  if(activeYouthPane)byId('fju-youth-subpage-title').textContent=youthPaneLabels[lang()][activeYouthPane];
+  byId('fju-youth-hero-edit')?.setAttribute('aria-label',t('youthProfile'));
 }
 const signupLabels={
  pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
@@ -422,6 +434,7 @@ signupForm.addEventListener('submit',async event=>{
 });
 
 function showView(view){
+  dialog.dataset.fjuView=view;
   const forms=[
     ['login',loginForm],
     ['signup',signupForm],
@@ -452,7 +465,7 @@ async function renderYouthSignup(user,isAdmin,current){
   }
   container.replaceChildren();
   container.hidden=isAdmin;
-  if(isAdmin)return;
+  if(isAdmin)return null;
   const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
   const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
   container.append(title,status);
@@ -469,12 +482,12 @@ async function renderYouthSignup(user,isAdmin,current){
     byId('fju-member-card-polo').textContent=group.grupo;
     byId('fju-member-card-project').textContent='FJU CONNECT JAPAN';
     byId('fju-member-card-rank').textContent=({pt:'Conta da igreja',ja:'教会アカウント',en:'Church account'}[lang()]);
-    return;
+    return group.grupo;
   }
   if(groupError&&requestedChurchGroup){
     title.textContent=({pt:'Cadastro da igreja',ja:'教会アカウント登録',en:'Church registration'}[lang()]);
     status.textContent=({pt:'O cadastro dos grupos está temporariamente indisponível. Avise a administração da igreja.',ja:'現在、グループ登録をご利用いただけません。教会の管理者にお問い合わせください。',en:'Church group registration is currently unavailable. Please contact the church administrator.'}[lang()]);
-    return;
+    return requestedChurchGroup;
   }
   let pendingGroup=null;
   try{pendingGroup=JSON.parse(sessionStorage.getItem('fju-church-pending-signup')||'null');}catch(_){}
@@ -492,9 +505,10 @@ async function renderYouthSignup(user,isAdmin,current){
       try{
         await finishChurchGroupSignup(user,pendingGroup,await prepareSignupPhoto(photo.files[0]));
         form.remove();status.textContent='Cadastro concluído. Comentários e check-in liberados.';
+        await loadAccount();
       }catch(err){status.textContent=err.message;button.disabled=false;}
     });
-    return;
+    return pendingGroup.group;
   }
   const {data:existing,error:existingError}=await client.rpc('fju_consultar_minha_inscricao');
   if(current!==updateSequence||passwordRecovery)return;
@@ -618,31 +632,27 @@ async function loadAccount(){
         if(cardPhoto){cardPhoto.src=headerAvatarObjectUrl;cardPhoto.hidden=false;}
       }
     }
-    await renderYouthSignup(user,verifiedAdmin,current);
+    const churchGroup=await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
-    // Keep the verified administrative route visible at the top of My Page.
-    // Never infer privileges from local state: verifiedAdmin comes from fju_perfis.
-    let adminShortcut=byId('fju-verified-admin-shortcut');
-    if(!adminShortcut){
-      adminShortcut=document.createElement('a');
-      adminShortcut.id='fju-verified-admin-shortcut';
-      adminShortcut.style.cssText='display:block;margin:12px 0 20px;padding:17px 20px;border-radius:16px;background:#b91c36;color:#fff;font-weight:800;text-decoration:none;text-align:center;font-size:16px';
-      myPage.prepend(adminShortcut);
+    // Show administrative entry only after verified fju_perfis roles.
+    const adminTile=byId('fju-youth-admin-tile');
+    if(adminTile){
+      adminTile.hidden=!verifiedAdmin;
+      if(verifiedAdmin)adminTile.href=adminButton?.href||'https://fjujapan.github.io/fju-connect-admin/';
     }
-    adminShortcut.hidden=!verifiedAdmin;
-    if(verifiedAdmin){
-      adminShortcut.href=adminButton?.href||new URL('fju-connect-admin/',window.location.origin+'/').href;
-      adminShortcut.textContent=lastRole==='national'?'Painel Nacional · Aprovações':'Painel do Coordenador · Solicitações';
-    }
+    // Do not advertise unimplemented saved articles.
+    const savedTile=dialog.querySelector('[data-fju-youth-panel="saved"]');
+    if(savedTile)savedTile.hidden=true;
     accountAccess.hidden=!verifiedAdmin;
-    byId('fju-account-member-note').hidden=verifiedAdmin;
+    byId('fju-account-member-note').hidden=true;
     const church=byId('fju-account-church');
     church.hidden=!churchName;
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
     showView('account');
     localize();
     preferredLanguageUI();
-    renderYouthMenu(verifiedAdmin);
+    syncYouthHero(verifiedAdmin,churchGroup);
+    showYouthPane();
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
@@ -666,6 +676,10 @@ document.addEventListener('click',event=>{
   event.preventDefault();
   void openAccount();
 });
+for(const tile of dialog.querySelectorAll('[data-fju-youth-panel]')){
+ tile.addEventListener('click',()=>showYouthPane(tile.dataset.fjuYouthPanel));
+}
+byId('fju-youth-back').addEventListener('click',()=>showYouthPane());
 byId('fju-account-close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{
   if(event.target===dialog)dialog.close();
