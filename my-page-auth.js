@@ -449,6 +449,8 @@ signupForm.addEventListener('submit',async event=>{
 });
 
 function showView(view){
+  // The loading view must never be presented to the user.
+  if(view==='loading')return;
   dialog.dataset.fjuView=view;
   const forms=[
     ['login',loginForm],
@@ -779,7 +781,7 @@ function renderUnifiedCoordinatorPage(enabled){
 
 async function loadAccount({keepAccountVisible=false}={}){
   const current=++updateSequence;
-  if(!passwordRecovery&&!keepAccountVisible&&!(authenticated&&dialog.dataset.fjuView==='account'))showView('loading');
+  // Validate in the background; never switch the UI to a verification splash.
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
@@ -893,10 +895,7 @@ async function openAccount(){
   }
   // On a cold load, finish validation before displaying the modal.
   await loadAccount();
-  if(!passwordRecovery&&dialog.dataset.fjuView==='loading'){
-    // A stale asynchronous result must never expose the loading screen.
-    await loadAccount();
-  }
+  // The modal only becomes visible after authentication and role checks finish.
   showDialog();
 }
 
