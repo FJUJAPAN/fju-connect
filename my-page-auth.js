@@ -777,9 +777,9 @@ function renderUnifiedCoordinatorPage(enabled){
  }
 }
 
-async function loadAccount(){
+async function loadAccount({keepAccountVisible=false}={}){
   const current=++updateSequence;
-  if(!passwordRecovery)showView('loading');
+  if(!passwordRecovery&&!keepAccountVisible)showView('loading');
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
@@ -881,10 +881,12 @@ async function loadAccount(){
   }
 }
 async function openAccount(){
+  const alreadySignedIn=authenticated&&lastRole&&myPage&&!myPage.hidden;
+  if(alreadySignedIn)showView('account');
   showDialog();
   setFeedback();
   if(passwordRecovery){showView('reset');return;}
-  await loadAccount();
+  await loadAccount({keepAccountVisible:Boolean(alreadySignedIn)});
 }
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
   trigger.addEventListener('click',event=>{event.preventDefault();void openAccount();});
