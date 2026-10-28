@@ -648,11 +648,19 @@ function renderUnifiedCoordinatorPage(enabled){
      frame.style.height=Math.min(height+24,16000)+'px';
     };
     fit();
+    // Observe structural changes only. Watching style changes causes a resize loop
+    // because fit() itself writes the iframe height.
+    frame._fjuMutationObserver?.disconnect();
     const observer=new MutationObserver(()=>requestAnimationFrame(fit));
-    observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+    observer.observe(doc.body,{subtree:true,childList:true,characterData:true});
+    frame._fjuMutationObserver=observer;
     frame._fjuResizeObserver?.disconnect();
-    frame._fjuResizeObserver=new ResizeObserver(fit);
-    frame._fjuResizeObserver.observe(doc.body);
+    if(typeof ResizeObserver!=='undefined'){
+     frame._fjuResizeObserver=new ResizeObserver(()=>requestAnimationFrame(fit));
+     frame._fjuResizeObserver.observe(doc.body);
+    }
+    doc.defaultView?.addEventListener('resize',fit,{passive:true});
+
    }catch(error){console.warn('Painel integrado: ajuste visual indisponível',error);}
   });
   section.append(bar,frame);
