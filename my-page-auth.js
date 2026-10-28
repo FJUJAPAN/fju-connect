@@ -620,6 +620,41 @@ function renderUnifiedCoordinatorPage(enabled){
   const frame=document.createElement('iframe');
   frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='eager';
   frame.style.cssText='display:block;width:100%;height:75dvh;min-height:560px;border:0;border-radius:16px;background:#f4f6f9';
+  // Same-origin admin page: compact its chrome when embedded in My Page.
+  frame.addEventListener('load',()=>{
+   try{
+    const doc=frame.contentDocument;
+    if(!doc||!doc.head)return;
+    if(!doc.getElementById('fju-my-page-embedded-style')){
+     const style=doc.createElement('style');
+     style.id='fju-my-page-embedded-style';
+     style.textContent=`
+       html,body{background:#f4f6fa!important;overflow-x:hidden!important}
+       body>header,body>footer,.fju-session-bar,.fju-validation-notice,
+       #fju-my-page,#fju-admin-language-settings,.fju-content-toolbar,
+       .fju-overview-intro,.fju-actions-title{display:none!important}
+       #app,.fju-admin-workspace,.fju-admin-content{margin-top:0!important;padding-top:0!important}
+       .fju-admin-workspace{min-height:0!important}
+       .fju-admin-content{padding:8px!important}
+       #inicio{margin-top:0!important}
+       @media(max-width:700px){.fju-admin-content{padding:4px!important}}
+     `;
+     doc.head.append(style);
+    }
+    // Expand the frame to its document, so the iPhone has only one scrolling area.
+    const fit=()=>{
+     if(!frame.isConnected||section.dataset.enabled!=='1')return;
+     const height=Math.max(600,doc.documentElement.scrollHeight,doc.body?.scrollHeight||0);
+     frame.style.height=Math.min(height+24,16000)+'px';
+    };
+    fit();
+    const observer=new MutationObserver(()=>requestAnimationFrame(fit));
+    observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style']});
+    frame._fjuResizeObserver?.disconnect();
+    frame._fjuResizeObserver=new ResizeObserver(fit);
+    frame._fjuResizeObserver.observe(doc.body);
+   }catch(error){console.warn('Painel integrado: ajuste visual indisponível',error);}
+  });
   section.append(bar,frame);
   byId('fju-youth-dashboard').insertAdjacentElement('afterend',section);
   byId('fju-youth-back')?.addEventListener('click',()=>{
