@@ -631,6 +631,8 @@ function renderUnifiedCoordinatorPage(enabled){
      style.textContent=`
        html,body{background:#f4f6fa!important;overflow-x:hidden!important;overflow-y:hidden!important;height:auto!important;min-height:0!important}
        body>header,body>footer,.fju-session-bar,.fju-validation-notice,
+       #fju-coord-personal-area a.fju-coord-personal-link[href='#fju-coord-personal-detail']:has([data-personal-key='journey']),
+       #fju-coord-personal-area a.fju-coord-personal-link:has([data-personal-key='projects']){display:none!important}
        #fju-my-page,#fju-admin-language-settings,.fju-content-toolbar,
        .fju-overview-intro,.fju-actions-title{display:none!important}
        #app,.fju-admin-workspace,.fju-admin-content{margin-top:0!important;padding-top:0!important}
@@ -681,6 +683,16 @@ function renderUnifiedCoordinatorPage(enabled){
      `;
      doc.head.append(style);
     }
+    // Remove stale personal shortcuts even when Safari reuses an old admin script.
+    const cleanLegacyShortcuts=()=>{
+     for(const key of ['journey','projects']){
+      doc.querySelectorAll('[data-personal-key="'+key+'"]').forEach(label=>{
+       const tile=label.closest('.fju-coord-personal-link');
+       if(tile)tile.remove();
+      });
+     }
+    };
+    cleanLegacyShortcuts();
     // Expand the frame to its document, so the iPhone has only one scrolling area.
     const fit=()=>{
      if(!frame.isConnected||section.dataset.enabled!=='1')return;
@@ -711,7 +723,7 @@ function renderUnifiedCoordinatorPage(enabled){
     // Observe structural changes only. Watching style changes causes a resize loop
     // because fit() itself writes the iframe height.
     frame._fjuMutationObserver?.disconnect();
-    const observer=new MutationObserver(()=>requestAnimationFrame(fit));
+    const observer=new MutationObserver(()=>{cleanLegacyShortcuts();requestAnimationFrame(fit);});
     observer.observe(doc.body,{subtree:true,childList:true,characterData:true});
     frame._fjuMutationObserver=observer;
     frame._fjuResizeObserver?.disconnect();
