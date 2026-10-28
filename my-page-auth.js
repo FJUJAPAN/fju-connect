@@ -598,6 +598,49 @@ async function renderYouthSignup(user,isAdmin,current){
   });
 }
 
+
+// Coordinator My Page: the verified leadership dashboard lives inside My Page.
+// Both GitHub Pages paths share one origin and the same Supabase Auth storage key.
+// The admin application still checks fju_perfis and Supabase RLS independently.
+function renderUnifiedCoordinatorPage(enabled){
+ let section=byId('fju-coordinator-unified');
+ if(!section){
+  section=document.createElement('section');
+  section.id='fju-coordinator-unified';
+  section.style.cssText='width:100%;min-width:0;margin:0 auto';
+  const bar=document.createElement('div');
+  bar.style.cssText='display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 8px';
+  const title=document.createElement('strong');title.id='fju-coordinator-unified-title';title.textContent='Painel de Controle';
+  const profile=document.createElement('button');profile.type='button';profile.textContent='Meu perfil';profile.style.cssText='padding:9px 14px;border-radius:12px;border:1px solid #d6dce8;background:#fff;color:#15213d';
+  profile.addEventListener('click',()=>{section.hidden=true;showYouthPane('profile');});
+  bar.append(title,profile);
+  const frame=document.createElement('iframe');frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='lazy';frame.style.cssText='display:block;width:100%;height:min(78dvh,960px);min-height:520px;border:0;border-radius:16px;background:#f4f6f9';
+  section.append(bar,frame);
+  byId('fju-youth-dashboard').insertAdjacentElement('afterend',section);
+  const back=byId('fju-youth-back');
+  back?.addEventListener('click',()=>{if(!section.dataset.enabled)return;section.hidden=false;byId('fju-youth-dashboard').hidden=true;});
+ }
+ section.dataset.enabled=enabled?'1':'';
+ section.hidden=!enabled;
+ const home=byId('fju-youth-dashboard');
+ if(enabled){
+  home.hidden=true;
+  const frame=byId('fju-coordinator-unified-frame');
+  if(!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/';
+  const l=lang();
+  byId('fju-coordinator-unified-title').textContent=l==='ja'?'管理パネル':l==='en'?'Control Panel':'Painel de Controle';
+  section.querySelector('button').textContent=l==='ja'?'マイプロフィール':l==='en'?'My profile':'Meu perfil';
+  // Fit the existing modal to the administration interface on mobile and desktop.
+  dialog.style.width='min(100vw - 12px,1200px)';
+  dialog.style.maxWidth='1200px';
+ }else{
+  dialog.style.removeProperty('width');
+  dialog.style.removeProperty('max-width');
+  const frame=byId('fju-coordinator-unified-frame');
+  if(frame?.getAttribute('src'))frame.removeAttribute('src');
+ }
+}
+
 async function loadAccount(){
   const current=++updateSequence;
   if(!passwordRecovery)showView('loading');
@@ -672,6 +715,7 @@ async function loadAccount(){
     }
     const churchGroup=await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
+    // Coordenadores autenticados recebem o acesso administrativo somente após validação de papel e polo.
     // Show administrative entry only after verified fju_perfis roles.
     const adminTile=byId('fju-youth-admin-tile');
     if(adminTile){
@@ -691,6 +735,7 @@ async function loadAccount(){
     preferredLanguageUI();
     syncYouthHero(verifiedAdmin,churchGroup);
     showYouthPane();
+    renderUnifiedCoordinatorPage(verifiedAdmin);
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
