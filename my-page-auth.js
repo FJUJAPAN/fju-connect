@@ -636,6 +636,46 @@ function renderUnifiedCoordinatorPage(enabled){
        #app,.fju-admin-workspace,.fju-admin-content{margin-top:0!important;padding-top:0!important}
        .fju-admin-workspace{min-height:0!important}
        .fju-admin-content{padding:8px!important}
+       /* Compact dashboard icons: avoid stretched grid rows and empty vertical bands. */
+       #inicio .fju-dashboard-actions,
+       #inicio .fju-personal-actions,
+       #inicio .fju-my-area-grid,
+       #inicio .fju-app-grid{
+         display:grid!important;
+         grid-template-columns:repeat(3,minmax(0,1fr))!important;
+         grid-auto-rows:max-content!important;
+         align-content:start!important;
+         align-items:start!important;
+         gap:14px 8px!important;
+         min-height:0!important;
+         height:auto!important;
+         margin:12px 0 22px!important;
+       }
+       #inicio .fju-dashboard-actions>*,
+       #inicio .fju-personal-actions>*,
+       #inicio .fju-my-area-grid>*,
+       #inicio .fju-app-grid>*{
+         align-self:start!important;
+         min-height:0!important;
+         height:auto!important;
+         margin:0!important;
+       }
+       #inicio .fju-dashboard-actions .fju-action-card{
+         padding:10px 4px!important;
+         gap:5px!important;
+       }
+       #inicio .fju-dashboard-actions .fju-action-card .fju-action-icon{
+         width:58px!important;height:58px!important;
+         margin:0 auto 4px!important;
+       }
+       #inicio .fju-dashboard-actions .fju-action-card>span:not(.fju-action-icon),
+       #inicio .fju-dashboard-actions .fju-action-arrow{display:none!important}
+       #inicio .fju-dashboard-actions .fju-action-card strong{
+         font-size:12px!important;line-height:1.25!important;
+         text-align:center!important;overflow-wrap:anywhere!important
+       }
+       #inicio .fju-dashboard-actions .fju-action-card{box-shadow:none!important}
+       #inicio .fju-dashboard-actions+*{margin-top:12px!important}
        #inicio{margin-top:0!important}
        @media(max-width:700px){.fju-admin-content{padding:4px!important}}
      `;
