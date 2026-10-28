@@ -893,6 +893,10 @@ async function openAccount(){
   }
   // On a cold load, finish validation before displaying the modal.
   await loadAccount();
+  if(!passwordRecovery&&dialog.dataset.fjuView==='loading'){
+    // A stale asynchronous result must never expose the loading screen.
+    await loadAccount();
+  }
   showDialog();
 }
 
@@ -1035,10 +1039,10 @@ client.auth.onAuthStateChange(event=>{
     renderHeaderAccount(null);
     showView('login');
     localize();
-  }else if(event==='SIGNED_IN'&&!passwordRecovery&&!signupInProgress){
-    // Agendar para depois que o SDK liberar o lock interno do auth.
-    setTimeout(()=>{void loadAccount({keepAccountVisible:authenticated&&dialog.dataset.fjuView==='account'});},0);
   }
+  // SIGNED_IN is already handled by initial loadAccount() and the login
+  // submit handler. Reloading here races with those requests and can leave
+  // the modal stuck on "Verificando sua conta..." on iOS.
 });
 localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
