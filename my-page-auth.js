@@ -779,7 +779,7 @@ function renderUnifiedCoordinatorPage(enabled){
 
 async function loadAccount({keepAccountVisible=false}={}){
   const current=++updateSequence;
-  if(!passwordRecovery&&!keepAccountVisible)showView('loading');
+  if(!passwordRecovery&&!keepAccountVisible&&!(authenticated&&dialog.dataset.fjuView==='account'))showView('loading');
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
@@ -881,13 +881,21 @@ async function loadAccount({keepAccountVisible=false}={}){
   }
 }
 async function openAccount(){
-  const alreadySignedIn=authenticated&&lastRole&&myPage&&!myPage.hidden;
-  if(alreadySignedIn)showView('account');
-  showDialog();
   setFeedback();
-  if(passwordRecovery){showView('reset');return;}
-  await loadAccount({keepAccountVisible:Boolean(alreadySignedIn)});
+  if(passwordRecovery){showDialog();showView('reset');return;}
+  // Do not expose the verification screen while the account modal opens.
+  // The auth session and role are still validated before privileged content.
+  if(authenticated&&lastRole&&myPage&&!myPage.hidden){
+    showView('account');
+    showDialog();
+    void loadAccount({keepAccountVisible:true});
+    return;
+  }
+  // On a cold load, finish validation before displaying the modal.
+  await loadAccount();
+  showDialog();
 }
+
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
   trigger.addEventListener('click',event=>{event.preventDefault();void openAccount();});
 }
@@ -1029,7 +1037,7 @@ client.auth.onAuthStateChange(event=>{
     localize();
   }else if(event==='SIGNED_IN'&&!passwordRecovery&&!signupInProgress){
     // Agendar para depois que o SDK liberar o lock interno do auth.
-    setTimeout(()=>{void loadAccount();},0);
+    setTimeout(()=>{void loadAccount({keepAccountVisible:authenticated&&dialog.dataset.fjuView==='account'});},0);
   }
 });
 localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
