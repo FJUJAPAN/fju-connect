@@ -612,28 +612,49 @@ function renderUnifiedCoordinatorPage(enabled){
   bar.style.cssText='display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 8px';
   const title=document.createElement('strong');title.id='fju-coordinator-unified-title';title.textContent='Painel de Controle';
   const profile=document.createElement('button');profile.type='button';profile.textContent='Meu perfil';profile.style.cssText='padding:9px 14px;border-radius:12px;border:1px solid #d6dce8;background:#fff;color:#15213d';
-  profile.addEventListener('click',()=>{section.hidden=true;showYouthPane('profile');});
+  profile.addEventListener('click',()=>{
+   section.style.setProperty('display','none','important');
+   showYouthPane('profile');
+  });
   bar.append(title,profile);
-  const frame=document.createElement('iframe');frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='lazy';frame.style.cssText='display:block;width:100%;height:min(78dvh,960px);min-height:520px;border:0;border-radius:16px;background:#f4f6f9';
+  const frame=document.createElement('iframe');
+  frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='eager';
+  frame.style.cssText='display:block;width:100%;height:75dvh;min-height:560px;border:0;border-radius:16px;background:#f4f6f9';
   section.append(bar,frame);
   byId('fju-youth-dashboard').insertAdjacentElement('afterend',section);
-  const back=byId('fju-youth-back');
-  back?.addEventListener('click',()=>{if(!section.dataset.enabled)return;section.hidden=false;byId('fju-youth-dashboard').hidden=true;});
+  byId('fju-youth-back')?.addEventListener('click',()=>{
+   if(section.dataset.enabled!=='1')return;
+   section.style.removeProperty('display');
+   section.hidden=false;
+   byId('fju-youth-dashboard')?.style.setProperty('display','none','important');
+  });
  }
- section.dataset.enabled=enabled?'1':'';
+ section.dataset.enabled=enabled?'1':'0';
  section.hidden=!enabled;
  const home=byId('fju-youth-dashboard');
+ const access=byId('fju-account-admin-access');
+ const adminTile=byId('fju-youth-admin-tile');
  if(enabled){
-  home.hidden=true;
+  // CSS grid styles override the HTML hidden attribute in some mobile browsers.
+  // Force the old menu offscreen: coordinator sees their dashboard immediately.
+  home?.style.setProperty('display','none','important');
+  access?.style.setProperty('display','none','important');
+  adminTile?.style.setProperty('display','none','important');
+  section.style.removeProperty('display');
+  section.style.setProperty('display','block','important');
   const frame=byId('fju-coordinator-unified-frame');
   if(!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/';
   const l=lang();
   byId('fju-coordinator-unified-title').textContent=l==='ja'?'管理パネル':l==='en'?'Control Panel':'Painel de Controle';
-  section.querySelector('button').textContent=l==='ja'?'マイプロフィール':l==='en'?'My profile':'Meu perfil';
-  // Fit the existing modal to the administration interface on mobile and desktop.
-  dialog.style.width='min(100vw - 12px,1200px)';
-  dialog.style.maxWidth='1200px';
+  const profileLabel=section.querySelector('button');
+  profileLabel.textContent=l==='ja'?'マイプロフィール':l==='en'?'My profile':'Meu perfil';
+  dialog.style.setProperty('width','calc(100vw - 12px)','important');
+  dialog.style.setProperty('max-width','1200px','important');
  }else{
+  home?.style.removeProperty('display');
+  access?.style.removeProperty('display');
+  adminTile?.style.removeProperty('display');
+  section.style.removeProperty('display');
   dialog.style.removeProperty('width');
   dialog.style.removeProperty('max-width');
   const frame=byId('fju-coordinator-unified-frame');
