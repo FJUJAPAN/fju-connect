@@ -691,10 +691,19 @@ function renderUnifiedCoordinatorPage(enabled){
       return !el.classList.contains('hidden')&&!el.hidden&&css.display!=='none';
      });
      const shell=doc.getElementById('fju-coord-app-shell');
-     const target=visiblePanel?.id==='inicio'&&shell?shell:visiblePanel||shell;
-     if(!target)return;
-     const rect=target.getBoundingClientRect();
-     const measured=Math.ceil(rect.bottom+(doc.defaultView?.scrollY||0)+12);
+     // Measure actual visible children, never the stretched parent panel.
+     // A flex/grid parent may occupy an entire viewport despite empty content.
+     const root=visiblePanel?.id==='inicio'&&shell?shell:visiblePanel||shell;
+     if(!root)return;
+     const visible=el=>{
+      if(el.hidden||el.closest('[hidden],.hidden'))return false;
+      const cs=doc.defaultView.getComputedStyle(el);
+      return cs.display!=='none'&&cs.visibility!=='hidden'&&cs.position!=='fixed'&&cs.position!=='absolute';
+     };
+     const children=[...root.children].filter(visible);
+     const bottoms=children.map(el=>el.getBoundingClientRect().bottom).filter(Number.isFinite);
+     if(!bottoms.length)return;
+     const measured=Math.ceil(Math.max(...bottoms)+(doc.defaultView?.scrollY||0)+12);
      const height=Math.max(180,Math.min(measured,16000));
      if(Math.abs(frame.offsetHeight-height)>4)frame.style.height=height+'px';
     };
