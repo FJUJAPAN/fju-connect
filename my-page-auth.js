@@ -746,7 +746,7 @@ function renderUnifiedCoordinatorPage(enabled){
   section.style.removeProperty('display');
   section.style.setProperty('display','block','important');
   const frame=byId('fju-coordinator-unified-frame');
-  if(!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/';
+  if(!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/?embed=1&ui=20261028-no-journey-252';
   const l=lang();
   byId('fju-coordinator-unified-title').textContent=l==='ja'?'管理パネル':l==='en'?'Control Panel':'Painel de Controle';
   const profileLabel=section.querySelector('button');
