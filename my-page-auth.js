@@ -619,7 +619,7 @@ function renderUnifiedCoordinatorPage(enabled){
   bar.append(title,profile);
   const frame=document.createElement('iframe');
   frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='eager';
-  frame.style.cssText='display:block;width:100%;height:75dvh;min-height:560px;border:0;border-radius:16px;background:#f4f6f9';
+  frame.style.cssText='display:block;width:100%;height:420px;min-height:0;border:0;border-radius:16px;background:#f4f6f9';
   // Same-origin admin page: compact its chrome when embedded in My Page.
   frame.addEventListener('load',()=>{
    try{
@@ -684,8 +684,20 @@ function renderUnifiedCoordinatorPage(enabled){
     // Expand the frame to its document, so the iPhone has only one scrolling area.
     const fit=()=>{
      if(!frame.isConnected||section.dataset.enabled!=='1')return;
-     const height=Math.max(600,doc.documentElement.scrollHeight,doc.body?.scrollHeight||0);
-     frame.style.height=Math.min(height+24,16000)+'px';
+     // The admin document can have a tall min-height even when its actual
+     // content is short. Measure the bottom of the visible active panel instead.
+     const visiblePanel=[...doc.querySelectorAll('#app .panel')].find(el=>{
+      const css=doc.defaultView.getComputedStyle(el);
+      return !el.classList.contains('hidden')&&!el.hidden&&css.display!=='none';
+     });
+     const shell=doc.getElementById('fju-coord-app-shell');
+     const target=visiblePanel?.id==='inicio'&&shell?shell:visiblePanel||shell;
+     if(!target)return;
+     const rect=target.getBoundingClientRect();
+     const top=doc.documentElement.getBoundingClientRect().top;
+     const measured=Math.ceil(rect.bottom-top+28);
+     const height=Math.max(280,Math.min(measured,16000));
+     if(Math.abs(frame.offsetHeight-height)>4)frame.style.height=height+'px';
     };
     fit();
     // Observe structural changes only. Watching style changes causes a resize loop
