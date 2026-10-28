@@ -672,6 +672,7 @@ async function loadAccount(){
     }
     const churchGroup=await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
+    // Coordenadores autenticados recebem o acesso administrativo somente após validação de papel e polo.
     // Show administrative entry only after verified fju_perfis roles.
     const adminTile=byId('fju-youth-admin-tile');
     if(adminTile){
