@@ -629,12 +629,12 @@ function renderUnifiedCoordinatorPage(enabled){
      const style=doc.createElement('style');
      style.id='fju-my-page-embedded-style';
      style.textContent=`
-       html,body{background:#f4f6fa!important;overflow-x:hidden!important}
+       html,body{background:#f4f6fa!important;overflow-x:hidden!important;overflow-y:hidden!important;height:auto!important;min-height:0!important}
        body>header,body>footer,.fju-session-bar,.fju-validation-notice,
        #fju-my-page,#fju-admin-language-settings,.fju-content-toolbar,
        .fju-overview-intro,.fju-actions-title{display:none!important}
        #app,.fju-admin-workspace,.fju-admin-content{margin-top:0!important;padding-top:0!important}
-       .fju-admin-workspace{min-height:0!important}
+       .fju-admin-workspace,.fju-admin-content,#app,#inicio{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
        .fju-admin-content{padding:8px!important}
        /* Compact dashboard icons: avoid stretched grid rows and empty vertical bands. */
        #inicio .fju-dashboard-actions,
@@ -694,9 +694,8 @@ function renderUnifiedCoordinatorPage(enabled){
      const target=visiblePanel?.id==='inicio'&&shell?shell:visiblePanel||shell;
      if(!target)return;
      const rect=target.getBoundingClientRect();
-     const top=doc.documentElement.getBoundingClientRect().top;
-     const measured=Math.ceil(rect.bottom-top+28);
-     const height=Math.max(280,Math.min(measured,16000));
+     const measured=Math.ceil(rect.bottom+(doc.defaultView?.scrollY||0)+12);
+     const height=Math.max(180,Math.min(measured,16000));
      if(Math.abs(frame.offsetHeight-height)>4)frame.style.height=height+'px';
     };
     fit();
