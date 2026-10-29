@@ -619,6 +619,13 @@ function renderUnifiedCoordinatorPage(enabled){
    showYouthPane('profile');
   });
   bar.append(title,profile);
+  // National admins need the full dashboard, not the clipped embedded preview.
+  const fullDashboard=document.createElement('a');
+  fullDashboard.id='fju-national-full-dashboard';
+  fullDashboard.href='https://fjujapan.github.io/fju-connect-admin/';
+  fullDashboard.textContent='Abrir Painel Nacional completo';
+  fullDashboard.style.cssText='display:none;margin:4px 8px 14px;padding:15px 18px;border-radius:14px;background:#142d59;color:#fff;text-decoration:none;text-align:center;font-weight:700;font-size:15px';
+  section.append(fullDashboard);
   const frame=document.createElement('iframe');
   frame.id='fju-coordinator-unified-frame';frame.title='Painel de Controle FJU';frame.loading='eager';
   frame.style.cssText='display:block;width:100%;height:420px;min-height:0;border:0;border-radius:16px;background:#f4f6f9';
@@ -770,8 +777,16 @@ function renderUnifiedCoordinatorPage(enabled){
   adminTile?.style.setProperty('display','none','important');
   section.style.removeProperty('display');
   section.style.setProperty('display','block','important');
+  const fullDashboard=byId('fju-national-full-dashboard');
+  if(fullDashboard)fullDashboard.style.display=lastRole==='national'?'block':'none';
   const frame=byId('fju-coordinator-unified-frame');
-  if(!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/?embed=1&ui=20261028-no-journey-252';
+  if(lastRole==='national'){
+   frame.style.display='none';
+   frame.removeAttribute('src');
+  }else{
+   frame.style.display='block';
+  }
+  if(lastRole!=='national'&&!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/?embed=1&ui=20261028-no-journey-252';
   const l=lang();
   byId('fju-coordinator-unified-title').textContent=l==='ja'?'管理パネル':l==='en'?'Control Panel':'Painel de Controle';
   const profileLabel=section.querySelector('button');
