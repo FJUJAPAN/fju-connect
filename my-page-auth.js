@@ -721,6 +721,17 @@ function renderUnifiedCoordinatorPage(enabled){
      const height=Math.max(180,Math.min(measured,16000));
      if(Math.abs(frame.offsetHeight-height)>4)frame.style.height=height+'px';
     };
+    // On iPhone, keep the full National dashboard scrollable instead of
+    // shrinking the iframe to the first visible row of cards.
+    if(lastRole==='national'){
+     doc.documentElement.style.setProperty('overflow-y','auto','important');
+     doc.body.style.setProperty('overflow-y','auto','important');
+     frame.style.height='min(72dvh, 760px)';
+     frame.style.minHeight='420px';
+     frame.style.overflow='auto';
+     frame.setAttribute('scrolling','yes');
+     return;
+    }
     fit();
     // Observe structural changes only. Watching style changes causes a resize loop
     // because fit() itself writes the iframe height.
