@@ -22,6 +22,8 @@ BEGIN
   RAISE EXCEPTION 'Inscrição inexistente ou já analisada'; END IF;
  SELECT * INTO v_ficha FROM public.fju_jovens WHERE id=p_jovem_id FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'Ficha não encontrada'; END IF;
+ IF v_ficha.excluido_em IS NOT NULL THEN
+  RAISE EXCEPTION 'Ficha excluída não pode ser vinculada'; END IF;
  IF v_ficha.polo_id IS DISTINCT FROM v_inscricao.polo_id THEN
   RAISE EXCEPTION 'Ficha e inscrição pertencem a igrejas diferentes'; END IF;
  IF v_papel='coordenador' AND (v_polo IS NULL OR v_polo IS DISTINCT FROM v_inscricao.polo_id) THEN
