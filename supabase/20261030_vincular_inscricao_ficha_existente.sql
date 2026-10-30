@@ -28,6 +28,9 @@ BEGIN
   RAISE EXCEPTION 'Ficha e inscrição pertencem a igrejas diferentes'; END IF;
  IF v_papel='coordenador' AND (v_polo IS NULL OR v_polo IS DISTINCT FROM v_inscricao.polo_id) THEN
   RAISE EXCEPTION 'Inscrição de outra igreja'; END IF;
+ -- Serializa aprovações concorrentes da mesma conta e ficha.
+ PERFORM pg_advisory_xact_lock(hashtextextended(v_inscricao.usuario_id::text, 0));
+ PERFORM pg_advisory_xact_lock(hashtextextended(p_jovem_id::text, 1));
  IF EXISTS(SELECT 1 FROM public.fju_vinculos_conta_jovem
            WHERE usuario_id=v_inscricao.usuario_id OR jovem_id=p_jovem_id) THEN
   RAISE EXCEPTION 'Conta ou ficha já possui vínculo; solicite análise'; END IF;
