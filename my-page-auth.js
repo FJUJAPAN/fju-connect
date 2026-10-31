@@ -643,12 +643,19 @@ function renderUnifiedCoordinatorPage(enabled){
   const bar=document.createElement('div');
   bar.style.cssText='display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 8px';
   const title=document.createElement('strong');title.id='fju-coordinator-unified-title';title.textContent='Painel de Controle';
-  const profile=document.createElement('button');profile.type='button';profile.textContent='Meu perfil';profile.style.cssText='padding:9px 14px;border-radius:12px;border:1px solid #d6dce8;background:#fff;color:#15213d';
+  bar.append(title);
+  // One app-style entry opens the complete profile (photo, identity, language and password).
+  const profile=document.createElement('button');
+  profile.type='button';profile.id='fju-coordinator-profile-tile';
+  profile.setAttribute('aria-label','Abrir Meu Perfil');
+  profile.style.cssText='display:flex;align-items:center;gap:14px;width:100%;padding:16px;margin:8px 0 16px;border:1px solid #dce3ef;border-radius:18px;background:#fff;color:#15213d;text-align:left;font-size:16px;font-weight:700;box-shadow:0 6px 18px #1a31540d';
+  profile.innerHTML='<span aria-hidden="true" style="display:grid;place-items:center;width:54px;height:54px;border-radius:15px;background:linear-gradient(145deg,#60b6ff,#1767e4);color:white;font-size:27px">♙</span><span>Meu Perfil<small style="display:block;font-size:12px;font-weight:400;color:#65748d;margin-top:3px">Foto, dados, idioma e senha</small></span><span aria-hidden="true" style="margin-left:auto;color:#8798b2;font-size:26px">›</span>';
+  profile.querySelector('span').textContent='👤';
   profile.addEventListener('click',()=>{
    section.style.setProperty('display','none','important');
    showYouthPane('profile');
   });
-  bar.append(title,profile);
+  section.append(profile);
   // National admins need the full dashboard, not the clipped embedded preview.
   const fullDashboard=document.createElement('a');
   fullDashboard.id='fju-national-full-dashboard';
