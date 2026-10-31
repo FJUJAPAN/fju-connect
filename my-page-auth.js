@@ -924,7 +924,7 @@ async function loadAccount({keepAccountVisible=false}={}){
       if(!linkedYouthError&&linkedYouthId){
         const {data:registeredFiles,error:filesError}=await client.storage.from('fju-fotos').list(linkedYouthId,{limit:30});
         if(!filesError){
-          const registeredFile=(registeredFiles||[]).find(file=>/^perfil\\.(jpg|jpeg|png|webp)$/i.test(file.name));
+          const registeredFile=(registeredFiles||[]).find(file=>/^perfil\.(jpg|jpeg|png|webp)$/i.test(file.name));
           if(registeredFile){
             const {data:existingPhoto}=await client.storage.from('fju-fotos').download(linkedYouthId+'/'+registeredFile.name);
             registeredPhoto=existingPhoto||null;
