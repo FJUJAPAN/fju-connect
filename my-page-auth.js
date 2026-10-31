@@ -963,7 +963,15 @@ async function loadAccount({keepAccountVisible=false}={}){
     preferredLanguageUI();
     syncYouthHero(verifiedAdmin,churchGroup);
     showYouthPane();
-    renderUnifiedCoordinatorPage(verifiedAdmin);
+    // Administrative roles use the standalone dashboard; never embed an iframe in MY PAGE.
+    renderUnifiedCoordinatorPage(false);
+    if(verifiedAdmin && !passwordRecovery){
+      const dashboardUrl='https://fjujapan.github.io/fju-connect-admin/';
+      if(window.location.pathname.indexOf('/fju-connect-admin/')===-1){
+        window.location.assign(dashboardUrl);
+        return;
+      }
+    }
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     authenticated=false;lastRole='';preferredLanguageUser=null;
