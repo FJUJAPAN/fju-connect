@@ -54,6 +54,7 @@ const youthPaneLabels={
 };
 let activeYouthPane='';
 function showYouthPane(target=''){
+ setupMyPagePhotoUpload();
  const valid=['profile','interactions','saved'];
  activeYouthPane=valid.includes(target)?target:'';
  const home=byId('fju-youth-dashboard'),head=byId('fju-youth-subpage-head');
@@ -604,6 +605,35 @@ async function renderYouthSignup(user,isAdmin,current){
 // Coordinator My Page: the verified leadership dashboard lives inside My Page.
 // Both GitHub Pages paths share one origin and the same Supabase Auth storage key.
 // The admin application still checks fju_perfis and Supabase RLS independently.
+function setupMyPagePhotoUpload(){
+ const pane=byId('fju-youth-profile-pane');if(!pane||byId('fju-my-page-photo-upload'))return;
+ const area=document.createElement('div');area.id='fju-my-page-photo-upload';
+ area.style.cssText='display:grid;gap:10px;padding:16px;margin:14px 0;border:1px solid #dce3ef;border-radius:16px;background:#fff';
+ const heading=document.createElement('strong');heading.textContent='Minha foto de perfil';
+ const input=document.createElement('input');input.type='file';input.accept='image/*';input.setAttribute('aria-label','Selecionar foto de perfil');
+ const save=document.createElement('button');save.type='button';save.textContent='Salvar foto';save.style.cssText='padding:12px;border:0;border-radius:12px;background:#284987;color:white;font-weight:700';
+ const message=document.createElement('p');message.setAttribute('role','status');message.style.cssText='margin:0;font-size:13px';
+ area.append(heading,input,save,message);pane.prepend(area);
+ save.addEventListener('click',async()=>{
+  if(!input.files?.length){message.textContent='Selecione uma foto primeiro.';return;}
+  save.disabled=true;message.textContent='Enviando foto…';
+  try{
+   const {data:{user},error:authError}=await client.auth.getUser();
+   if(authError||!user)throw new Error('Entre novamente na sua conta.');
+   const photo=await prepareSignupPhoto(input.files[0]);
+   const {error}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
+   if(error)throw error;
+   clearHeaderAvatarObjectUrl();headerAvatarObjectUrl=URL.createObjectURL(photo);
+   const avatar=byId('fju-account-avatar-photo');if(avatar){avatar.src=headerAvatarObjectUrl;avatar.hidden=false;}
+   for(const id of ['fju-member-card-photo','fju-youth-hero-photo']){
+    const img=byId(id);if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
+   }
+   const fallback=byId('fju-youth-hero-fallback');if(fallback)fallback.hidden=true;
+   message.textContent='Foto salva com sucesso.';input.value='';
+  }catch(error){message.textContent='Não foi possível salvar: '+(error?.message||'Tente novamente.');}
+  finally{save.disabled=false;}
+ });
+}
 function renderUnifiedCoordinatorPage(enabled){
  let section=byId('fju-coordinator-unified');
  if(!section){
