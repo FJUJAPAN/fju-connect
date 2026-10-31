@@ -732,6 +732,18 @@ function renderUnifiedCoordinatorPage(enabled){
      }
     };
     cleanLegacyShortcuts();
+    // The coordinator's embedded dashboard must never identify itself as National.
+    const syncCoordinatorHeading=()=>{
+     if(lastRole==='national')return;
+     const hero=doc.querySelector('.fju-national-hero');
+     if(!hero)return;
+     hero.setAttribute('aria-label','Painel do Coordenador');
+     const heading=hero.querySelector('h2');
+     const subtitle=hero.querySelector('p');
+     if(heading)heading.textContent='Painel do Coordenador';
+     if(subtitle)subtitle.textContent='Gestão da FJU da sua igreja.';
+    };
+    syncCoordinatorHeading();
     // Expand the frame to its document, so the iPhone has only one scrolling area.
     const fit=()=>{
      if(!frame.isConnected||section.dataset.enabled!=='1')return;
