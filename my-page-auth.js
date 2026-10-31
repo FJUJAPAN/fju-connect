@@ -917,7 +917,22 @@ async function loadAccount({keepAccountVisible=false}={}){
         byId('fju-member-card-project').textContent=(card.projetos||[]).join(' · ')||'FJU JAPAN';
         byId('fju-member-card-rank').textContent=card.patente|| (card.categoria==='firme'?'Firme':'Inconstante');
       }
-      const {data:photo}=await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
+      // Prefer the photo already saved in the approved youth record.
+      // The RPC only exposes the signed-in user's own linked youth ID.
+      let registeredPhoto=null;
+      const {data:linkedYouthId,error:linkedYouthError}=await client.rpc('fju_meu_jovem_foto_id');
+      if(!linkedYouthError&&linkedYouthId){
+        const {data:registeredFiles,error:filesError}=await client.storage.from('fju-fotos').list(linkedYouthId,{limit:30});
+        if(!filesError){
+          const registeredFile=(registeredFiles||[]).find(file=>/^perfil\\.(jpg|jpeg|png|webp)$/i.test(file.name));
+          if(registeredFile){
+            const {data:existingPhoto}=await client.storage.from('fju-fotos').download(linkedYouthId+'/'+registeredFile.name);
+            registeredPhoto=existingPhoto||null;
+          }
+        }
+      }
+      const {data:signupPhoto}=registeredPhoto?{data:null}:await client.storage.from('fju-inscricoes-fotos').download(user.id+'/perfil.jpg');
+      const photo=registeredPhoto||signupPhoto;
       if(current!==updateSequence||passwordRecovery)return;
       if(photo){
         clearHeaderAvatarObjectUrl();headerAvatarObjectUrl=URL.createObjectURL(photo);
