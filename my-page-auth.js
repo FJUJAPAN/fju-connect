@@ -915,7 +915,7 @@ async function loadAccount({keepAccountVisible=false}={}){
         byId('fju-member-card-name').textContent=card.nome_completo;
         byId('fju-member-card-polo').textContent='FJU '+card.polo_nome;
         byId('fju-member-card-project').textContent=(card.projetos||[]).join(' · ')||'FJU JAPAN';
-        byId('fju-member-card-rank').textContent=card.patente|| (card.categoria==='firme'?'Firme':'Inconstante');
+        byId('fju-member-card-rank').textContent=card.categoria==='inconstante'||String(card.patente||'').toLowerCase()==='inconstante'?'Normal':(card.patente||(card.categoria==='firme'?'Firme':'Normal'));
       }
       // Prefer the photo already saved in the approved youth record.
       // The RPC only exposes the signed-in user's own linked youth ID.
