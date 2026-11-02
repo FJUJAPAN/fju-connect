@@ -1081,7 +1081,11 @@ loginForm.addEventListener('submit',async event=>{
     await loadAccount({navigateAdmin:true});
     setFeedback(t('loggedInStatus'));
   }catch(e){
+    loginForm.reset();
     showView('login');
+    loginForm.hidden=false;
+    signupOpen.hidden=true;
+    loginOpen.hidden=true;
     setFeedback(t('loginError'),true);
   }finally{submit.disabled=false;}
 });
