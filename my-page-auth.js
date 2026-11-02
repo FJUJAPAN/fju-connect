@@ -1031,8 +1031,10 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         loginOpen.hidden=true;
         const signupSection=byId('fju-youth-signup');
         if(signupSection){signupSection.hidden=false;signupSection.style.display='block';signupSection.style.visibility='visible';}
-        // An authenticated user must finish the existing request, never register again.
-        const signup=byId('fju-youth-signup');if(signup)signup.hidden=false;
+        // Keep the completion form visible in My Page for authenticated, unapproved users.
+        const signup=byId('fju-youth-signup');
+        if(signup){signup.hidden=false;signup.style.display='block';signup.style.visibility='visible';}
+        // Do not render the youth dashboard before coordinator approval.
         setFeedback(request?.status==='rejeitado'?'Solicitação rejeitada. Fale com seu coordenador.':request?.status==='pendente'?'Solicitação recebida. Aguarde a aprovação do coordenador.':'Solicite acesso ao coordenador para liberar o My Page.');
         return;
       }
@@ -1103,6 +1105,7 @@ async function openAccount(){
   if(authenticated&&lastRole==='member'&&myPage&&!myPage.hidden){
     showView('account');
     showDialog();
+    // Refresh the request status while preserving the visible completion form.
     void loadAccount({keepAccountVisible:true,navigateAdmin:true});
     return;
   }
