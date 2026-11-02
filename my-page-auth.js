@@ -557,6 +557,44 @@ async function renderYouthSignup(user,isAdmin,current){
   const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
   const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
   container.append(title,status);
+  // Render a usable recovery action immediately, before any network requests.
+  // Safari sessions may survive while one of the subsequent RPCs fails.
+  const retry=document.createElement('button');
+  retry.type='button';
+  retry.textContent='Concluir cadastro / Enviar solicitação';
+  retry.style.cssText='display:block;width:100%;padding:13px;margin:10px 0;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
+  retry.addEventListener('click',async()=>{
+    retry.disabled=true;
+    try{
+      const {data:polos,error:poloError}=await client.rpc('fju_listar_polos_cadastro');
+      if(poloError)throw poloError;
+      const existingForm=container.querySelector('form');
+      if(existingForm){existingForm.scrollIntoView({block:'nearest'});retry.remove();return;}
+      const form=document.createElement('form');form.style.cssText='display:grid;gap:10px;margin-top:12px';
+      const name=document.createElement('input');name.required=true;name.placeholder='Nome completo';name.value=user.user_metadata?.full_name||'';
+      const polo=document.createElement('select');polo.required=true;
+      const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione seu polo';polo.append(placeholder);
+      for(const item of polos||[]){const opt=document.createElement('option');opt.value=item.id;opt.textContent='FJU '+item.nome;polo.append(opt);}
+      const details=createSignupDetails();
+      const projects=document.createElement('fieldset');const legend=document.createElement('legend');legend.textContent='Projetos';projects.append(legend);
+      for(const project of ['Esporte','Cultura','Mídia','Banda']){
+        const label=document.createElement('label');label.style.cssText='display:flex;gap:8px;align-items:center';
+        const check=document.createElement('input');check.type='checkbox';check.value=project;
+        label.append(check,document.createTextNode(project));projects.append(label);
+      }
+      const submit=document.createElement('button');submit.type='submit';submit.textContent='Enviar solicitação';submit.style.cssText='padding:12px;background:#253b75;color:white;border:0;border-radius:10px';
+      form.append(name,details.root,polo,projects,submit);container.append(form);retry.remove();
+      form.addEventListener('submit',async e=>{
+        e.preventDefault();submit.disabled=true;status.textContent='Enviando solicitação…';
+        try{
+          const photo=await prepareSignupPhoto(details.fields.photo.files[0]);
+          await sendDetailedSignup(user,{name:name.value.trim(),polo:polo.value,projects:[...projects.querySelectorAll('input:checked')].map(x=>x.value),...details.values()},photo);
+          form.remove();status.textContent='Solicitação enviada. Aguarde a aprovação do coordenador.';
+        }catch(err){status.textContent='Erro ao enviar: '+err.message;submit.disabled=false;}
+      });
+    }catch(err){status.textContent='Não foi possível carregar o formulário: '+err.message;retry.disabled=false;}
+  });
+  container.append(retry);
   const {data:groups,error:groupError}=await client.rpc('fju_meu_grupo_igreja');
   if(current!==updateSequence||passwordRecovery)return;
   const group=Array.isArray(groups)?groups[0]:groups;
@@ -628,7 +666,7 @@ async function renderYouthSignup(user,isAdmin,current){
   let pending=null;
   try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
   if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
-  if(!existingError&&currentSignup){
+  if(!existingError&&currentSignup){retry.remove();
     status.textContent=currentSignup.status==='aprovado'?'Cadastro aprovado pelo coordenador.':currentSignup.status==='rejeitado'?'Sua inscrição não foi aprovada. Fale com o coordenador do seu polo.':'Sua inscrição foi recebida. Aguarde a análise do coordenador do seu polo.';
     return;
   }
@@ -658,7 +696,7 @@ async function renderYouthSignup(user,isAdmin,current){
   details.fields.phone.value=pending?.phone||'';
   details.fields.nationality.value=pending?.nationality||'';
   for(const check of projects.querySelectorAll('input'))check.checked=(pending?.projects||[]).includes(check.value);
-  form.append(name,details.root,polo,projects,button);container.append(form);
+  form.append(name,details.root,polo,projects,button);container.append(form);retry.remove();
   form.addEventListener('submit',async event=>{
     event.preventDefault();button.disabled=true;status.textContent='Enviando inscrição…';
     const selected=[...projects.querySelectorAll('input:checked')].map(x=>x.value);
