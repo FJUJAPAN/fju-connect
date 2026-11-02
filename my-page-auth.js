@@ -999,6 +999,29 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       .eq('usuario_id',user.id)
       .maybeSingle();
     if(current!==updateSequence||passwordRecovery)return;
+    // Handle pending youth access before optional avatar and card requests.
+    if(!profile?.ativo || !['nacional','coordenador'].includes(profile.papel)){
+      const requestSection=byId('fju-youth-signup');
+      showView('account');
+      if(requestSection){feedback.insertAdjacentElement('afterend',requestSection);requestSection.hidden=false;}
+      const group=await renderYouthSignup(user,false,current);
+      if(current!==updateSequence||passwordRecovery)return;
+      if(!group){
+        const {data:requests,error:requestError}=await client.rpc('fju_consultar_minha_inscricao');
+        const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
+        if(current!==updateSequence||passwordRecovery)return;
+        const request=Array.isArray(requests)?requests[0]:requests;
+        if(requestError||linkError||!links?.length||request?.status!=='aprovado'){
+          byId('fju-youth-dashboard').hidden=true;
+          accountAccess.hidden=true;
+          signupOpen.hidden=true;
+          loginOpen.hidden=true;
+          setFeedback(request?.status==='pendente'?'Solicitação recebida. Aguarde aprovação.':'Complete o cadastro para solicitar acesso.');
+          return;
+        }
+      }
+      if(requestSection&&requestSection.parentElement!==myPage)myPage.append(requestSection);
+    }
     await loadStoredHeaderAvatar(user,current);
     if(current!==updateSequence||passwordRecovery)return;
     const cardPhoto=byId('fju-member-card-photo');
