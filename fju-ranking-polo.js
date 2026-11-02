@@ -7,6 +7,7 @@ const labels={
  ja:{title:'🏆 自分の教会ランキング',subtitle:'所属教会だけのランキング • ポイントはリアルタイム更新',week:'週間',month:'月間',choose:'過去の月間ランキング',current:'今月',loading:'教会のランキングを読み込んでいます…',empty:'この期間はまだポイントを獲得した人がいません。',failed:'教会のランキングを読み込めませんでした。',points:' 点',closed:' • 確定',national:'🌏 日本全国ランキングを見る',period:'対象: '},
  en:{title:'🏆 My church ranking',subtitle:'Your church only • Points update in real time',week:'Weekly',month:'Monthly',choose:'Monthly history',current:'Current month',loading:'Loading your church…',empty:'No participants have earned points for this period.',failed:'Could not load your church ranking.',points:' points',closed:' • closed',national:'🌏 View Japan-wide ranking',period:'Period: '}
 };
+const notify=(status,polo='')=>window.dispatchEvent(new CustomEvent('fju:polo-ranking-state',{detail:{status,polo}}));
 const txt=k=>labels[lang()][k],locale=()=>lang()==='ja'?'ja-JP':lang()==='en'?'en-US':'pt-BR';
 const styles=document.createElement('style');styles.textContent=`
 #fju-local-rank[hidden]{display:none!important}
@@ -55,14 +56,14 @@ function init(){
   busy=true;const serial=++request;
   try{
    const {data:{user},error:authErr}=await db.auth.getUser();
-   if(authErr||!user){authorized=false;box.hidden=true;return;}
+   if(authErr||!user){authorized=false;box.hidden=true;notify('login');return;}
    const params={p_periodo:period,p_periodo_inicio:period==='mensal'&&months.value?months.value:null};
    const {data,error}=await db.rpc('fju_ranking_meu_polo_com_foto',params);
-   if(error){if(error.code==='42501'||/ranking_polo_acesso_negado/.test(error.message||'')){authorized=false;box.hidden=true;return}throw error}
+   if(error){if(error.code==='42501'||/ranking_polo_acesso_negado/.test(error.message||'')){authorized=false;box.hidden=true;notify('denied');return}throw error}
    if(serial!==request)return;
-   if(!data?.length){authorized=false;box.hidden=true;return}
+   if(!data?.length){authorized=false;box.hidden=true;notify('empty');return}
    authorized=true;box.hidden=false;setLabels();list.replaceChildren();
-   const first=data[0];title.textContent=txt('title')+' — '+first.polo_nome;
+   const first=data[0];title.textContent=txt('title')+' — '+first.polo_nome;notify('ready',first.polo_nome||'');
    meta.textContent=txt('period')+String(first.periodo_inicio||'')+(first.fechado?txt('closed'):'');
    const rows=data.filter(x=>x.nome!==null&&x.colocacao!==null);
    if(!rows.length){const li=document.createElement('li');li.textContent=txt('empty');list.append(li);return;}
@@ -73,7 +74,7 @@ function init(){
     score.className='fju-rank-score';score.textContent=Number(r.pontos||0).toLocaleString(locale())+txt('points');
     li.append(place,criarAvatarRanking(db,r.usuario_id,{jovemId:r.jovem_id,privado:true}),name,score);list.append(li);
    }
-  }catch(e){if(authorized){box.hidden=false;meta.textContent=txt('failed')}else box.hidden=true;console.warn('Ranking do polo indisponível',e)}
+  }catch(e){if(authorized){box.hidden=false;meta.textContent=txt('failed')}else box.hidden=true;notify('error');console.warn('Ranking do polo indisponível',e)}
   finally{busy=false;}
  }
  weekly.addEventListener('click',()=>{period='semanal';weekly.setAttribute('aria-pressed','true');monthly.setAttribute('aria-pressed','false');history.hidden=true;void load()});
