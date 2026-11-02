@@ -545,6 +545,7 @@ function showDialog(){
 
 async function renderYouthSignup(user,isAdmin,current){
   let container=byId('fju-youth-signup');
+  if(container&&container.parentElement!==myPage)byId('fju-account-member-note')?.insertAdjacentElement('afterend',container);
   if(!container){
     container=document.createElement('section');
     container.id='fju-youth-signup';
@@ -1068,7 +1069,12 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         signupOpen.hidden=true;
         loginOpen.hidden=true;
         const signupSection=byId('fju-youth-signup');
-        if(signupSection){signupSection.hidden=false;signupSection.style.display='block';signupSection.style.visibility='visible';}
+        if(signupSection){
+          feedback.insertAdjacentElement('afterend',signupSection);
+          signupSection.hidden=false;
+          signupSection.style.setProperty('display','block','important');
+          signupSection.style.setProperty('visibility','visible','important');
+        }
         // Keep the completion form visible in My Page for authenticated, unapproved users.
         const signup=byId('fju-youth-signup');
         if(signup){signup.hidden=false;signup.style.display='block';signup.style.visibility='visible';}
