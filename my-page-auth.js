@@ -329,8 +329,10 @@ async function sendCoordinatorSignup(user,details,photo){
  sessionStorage.removeItem('fju-coordinator-pending-signup');
 }
 async function sendDetailedSignup(user,details,photo){
- const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
- if(photoError)throw photoError;
+ if(photo){
+  const {error:photoError}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
+  if(photoError)throw photoError;
+ }
  const {error}=await client.rpc('fju_enviar_inscricao_jovem_detalhada',{
   p_polo_id:details.polo,p_nome:details.name,p_projetos:details.projects,
   p_nascimento:details.birth,p_telefone:details.phone,p_nacionalidade_iso2:details.nationality
@@ -974,6 +976,21 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       renderHeaderAccount(null);
       showView('login');
       return;
+    }
+    // Complete the original signup automatically after email confirmation.
+    // Only submit data previously entered by this same email; approval stays with the coordinator.
+    let pendingYouth=null;
+    try{pendingYouth=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+    if(pendingYouth?.email?.toLowerCase()===user.email?.toLowerCase()&&user.email_confirmed_at){
+      const {data:existingSignup,error:existingSignupError}=await client.rpc('fju_consultar_minha_inscricao');
+      if(current!==updateSequence||passwordRecovery)return;
+      const existingRecord=Array.isArray(existingSignup)?existingSignup[0]:existingSignup;
+      if(!existingSignupError&&!existingRecord){
+        try{await sendDetailedSignup(user,pendingYouth,null);}
+        catch(error){setFeedback('Não foi possível enviar automaticamente a solicitação: '+error.message,true);}
+      }else if(!existingSignupError&&existingRecord){
+        sessionStorage.removeItem('fju-youth-pending-signup');
+      }
     }
     authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
     renderHeaderAccount(user);
