@@ -32,6 +32,16 @@
  .rank-heading .kicker{margin:18px 0 7px;color:#efa3c3;font-size:12px;font-weight:900;letter-spacing:.2em}
  .rank-heading h1{margin:0;font-size:clamp(30px,5vw,48px);line-height:1.16}
  .rank-heading .lead{color:#c9c6da;max-width:620px;margin:11px auto 0;padding:0 12px}
+
+ .rank-picker{padding:30px 0 18px;max-width:680px}
+ .rank-picker h2{font-size:22px;margin:0 0 15px;text-align:center}
+ .rank-options{display:grid;gap:14px}
+ .rank-options button{width:100%;border:1px solid #705576;border-radius:17px;background:#221f34;color:#fff;min-height:78px;padding:17px 22px;font:800 clamp(16px,3.5vw,21px) system-ui,-apple-system,"Noto Sans JP",sans-serif;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+ .rank-options button:hover,.rank-options button:focus-visible{background:#3b2847;border-color:#f89cbd}
+ .rank-options button[aria-expanded="true"]{background:#a72454;border-color:#ffb9d1}
+ .rank-options button span{margin-right:10px;font-size:24px;vertical-align:middle}
+ .rank-access{border:1px solid #ffffff38;border-radius:12px;background:#ffffff0e;padding:13px 16px;color:#e5ddea;margin:16px 0}
+ #fju-ranking-mount[hidden],#fju-ranking-polo-slot[hidden],#ranking-access-message[hidden]{display:none!important}
  #fju-ranking-polo-slot:empty{display:none}
  #fju-ranking-polo-slot{padding-top:12px}
  #fju-ranking{padding-top:40px;padding-bottom:64px}
@@ -65,26 +75,75 @@
     <span class="trophy" aria-hidden="true">🏆</span>
     <p class="kicker">FJU CONNECT JAPAN</p>
     <h1 id="ranking-heading">Ranking de participação</h1>
-    <p class="lead" id="ranking-intro">Confira a pontuação de todo o Japão e, ao entrar na sua conta, o ranking da sua igreja.</p>
+    <p class="lead" id="ranking-intro">Escolha uma opção para abrir a classificação. Os rankings não aparecem automaticamente.</p>
    </div>
   </section>
-  <div class="wrap" id="fju-ranking-polo-slot"></div>
-  <div id="fju-ranking-mount"></div>
+
+  <section class="wrap rank-picker" aria-labelledby="rank-choose-title">
+   <h2 id="rank-choose-title">Qual ranking deseja consultar?</h2>
+   <div class="rank-options">
+    <button id="rank-national-button" type="button" aria-controls="fju-ranking-mount" aria-expanded="false"><span aria-hidden="true">🌏</span>Ranking Nacional</button>
+    <button id="rank-local-button" type="button" aria-controls="fju-ranking-polo-slot" aria-expanded="false"><span aria-hidden="true">🏆</span>Ranking do seu polo</button>
+   </div>
+   <p class="rank-access" id="ranking-access-message" role="status" hidden></p>
+  </section>
+  <div class="wrap" id="fju-ranking-polo-slot" hidden></div>
+  <div id="fju-ranking-mount" hidden></div>
  </main>
  <footer class="site-footer">FJU CONNECT JAPAN · Ranking semanal e mensal</footer>
+
  <script>
  (()=>{
    const sel=document.getElementById('language');
    const saved=(localStorage.getItem('fju_lang')||localStorage.getItem('fju_language')||'pt').toLowerCase();
    sel.value=saved.startsWith('ja')?'ja':saved.startsWith('en')?'en':'pt';
    const heading=document.getElementById('ranking-heading'),intro=document.getElementById('ranking-intro');
-   const translations={
-    pt:['Ranking de participação','Confira a pontuação de todo o Japão e, ao entrar na sua conta, o ranking da sua igreja.'],
-    ja:['参加ポイントランキング','日本全国のランキングと、ログイン後に自分の教会のランキングをご覧いただけます。'],
-    en:['Participation ranking','View the Japan-wide ranking and, after signing in, your church ranking.']
+   const choose=document.getElementById('rank-choose-title');
+   const nationalButton=document.getElementById('rank-national-button');
+   const localButton=document.getElementById('rank-local-button');
+   const nationalMount=document.getElementById('fju-ranking-mount');
+   const localMount=document.getElementById('fju-ranking-polo-slot');
+   const message=document.getElementById('ranking-access-message');
+   const words={
+    pt:{heading:'Ranking de participação',intro:'Escolha uma opção para abrir a classificação. Os rankings não aparecem automaticamente.',choose:'Qual ranking deseja consultar?',national:'Ranking Nacional',local:'Ranking do seu polo',named:'Ranking ',loading:'Carregando ranking do polo…',login:'Entre na sua conta pela My Page para visualizar o ranking do seu polo.',denied:'Sua conta não tem acesso a um ranking de polo.',empty:'Não há ranking do polo disponível para esta conta.',error:'Não foi possível carregar o ranking do seu polo.'},
+    ja:{heading:'参加ポイントランキング',intro:'ランキングを選んで表示します。最初は順位表を開きません。',choose:'どのランキングを表示しますか？',national:'全国ランキング',local:'自分の教会ランキング',named:'ランキング ',loading:'教会ランキングを読み込み中…',login:'教会ランキングを見るにはマイページからログインしてください。',denied:'このアカウントでは教会ランキングを閲覧できません。',empty:'このアカウントの教会ランキングは現在利用できません。',error:'教会ランキングを読み込めませんでした。'},
+    en:{heading:'Participation ranking',intro:'Choose a ranking to view it. Rankings are closed until selected.',choose:'Which ranking would you like to see?',national:'National Ranking',local:'Your church ranking',named:'Ranking ',loading:'Loading your church ranking…',login:'Sign in through My Page to view your church ranking.',denied:'This account cannot access a church ranking.',empty:'No church ranking is available for this account.',error:'Could not load your church ranking.'}
    };
-   function refresh(){let v=sel.value;document.documentElement.lang=v==='ja'?'ja':v==='en'?'en':'pt-BR';heading.textContent=translations[v][0];intro.textContent=translations[v][1];localStorage.setItem('fju_lang',v);}
-   sel.addEventListener('change',refresh);refresh();
+   let selected='',polo='',poloState='loading';
+   const currentWords=()=>words[sel.value]||words.pt;
+   function updateMessage(){
+    if(selected!=='local'){message.hidden=true;return;}
+    const panel=document.getElementById('fju-local-rank');
+    if(poloState==='ready'&&panel&&!panel.hidden){message.hidden=true;return;}
+    message.textContent=currentWords()[poloState]||currentWords().loading;message.hidden=false;
+   }
+   function refresh(){
+    const w=currentWords(),v=sel.value;
+    document.documentElement.lang=v==='ja'?'ja':v==='en'?'en':'pt-BR';
+    heading.textContent=w.heading;intro.textContent=w.intro;choose.textContent=w.choose;
+    nationalButton.querySelector('span').nextSibling.textContent=w.national;
+    localButton.querySelector('span').nextSibling.textContent=polo?(w.named+polo):w.local;
+    localButton.setAttribute('aria-label',polo?(w.named+polo):w.local);
+    localStorage.setItem('fju_lang',v);updateMessage();
+   }
+   function chooseRanking(type){
+    selected=selected===type?'':type;
+    nationalMount.hidden=selected!=='national';
+    localMount.hidden=selected!=='local';
+    nationalButton.setAttribute('aria-expanded',String(selected==='national'));
+    localButton.setAttribute('aria-expanded',String(selected==='local'));
+    updateMessage();
+   }
+   nationalButton.addEventListener('click',()=>chooseRanking('national'));
+   localButton.addEventListener('click',()=>chooseRanking('local'));
+   window.addEventListener('fju:polo-ranking-state',e=>{
+    const state=e.detail||{};
+    poloState=state.status||'loading';
+    polo=poloState==='ready'?String(state.polo||'').trim():'';
+    refresh();
+   });
+   sel.addEventListener('change',refresh);
+   refresh();
  })();
  </script>
  <script type="module" src="../unified-mobile-header.js?v=20261102-rank-page-1"></script>
