@@ -92,27 +92,31 @@ function myPoints(){
  const home=document.getElementById('fju-youth-dashboard'),page=document.getElementById('fju-account-my-page'),dialog=document.getElementById('fju-account-dialog');
  if(!home||!page||!dialog)return;
  const box=document.createElement('aside');box.id='fju-my-points';box.hidden=true;
- box.innerHTML='<div><span>⭐ Meus pontos</span><strong id="myp-total">—</strong><span>Total acumulado</span></div><div style="text-align:right"><span>Semana: <b id="myp-week">—</b></span><br><span>Mês: <b id="myp-month">—</b></span></div>';
+ box.innerHTML='<div><span data-points-label="mine">⭐ Meus pontos</span><strong id="myp-total">—</strong><span data-points-label="total">Total acumulado</span></div><div style="text-align:right"><span><span data-points-label="weekLabel">Semana: </span><b id="myp-week">—</b></span><br><span><span data-points-label="monthLabel">Mês: </span><b id="myp-month">—</b></span></div>';
  home.prepend(box);
+ // O cartão compartilha o idioma da My Page. Atualizamos os rótulos tanto
+ // na troca do seletor quanto ao abrir a conta, mesmo sem novo evento change.
  const labels=()=>{
-  const x=box.querySelectorAll('span');
-  if(x.length>=4){x[0].textContent=t('mine');x[1].textContent=t('total');x[2].childNodes[0].textContent=t('weekLabel');x[3].childNodes[0].textContent=t('monthLabel');}
+  for(const node of box.querySelectorAll('[data-points-label]')){
+   node.textContent=t(node.dataset.pointsLabel);
+  }
  };
  labels();document.getElementById('language')?.addEventListener('change',labels);
  let busy=false,last=0;
- async function refresh(){if(!dialog.open||page.hidden||busy||Date.now()-last<950)return;busy=true;last=Date.now();
+ async function refresh(){labels();if(!dialog.open||page.hidden||busy||Date.now()-last<950)return;busy=true;last=Date.now();
   try{const {data:{user}}=await db.auth.getUser();if(!user){box.hidden=true;return;}
    const {data,error}=await db.rpc('fju_meus_pontos');if(error)throw error;const s=Array.isArray(data)?data[0]:data;
    if(s){document.getElementById('myp-total').textContent=fmt(s.total);document.getElementById('myp-week').textContent=fmt(s.semanal);document.getElementById('myp-month').textContent=fmt(s.mensal);box.hidden=false;}
   }catch(e){box.hidden=true;}finally{busy=false;}
  }
- new MutationObserver(()=>{if(!page.hidden)void refresh()}).observe(page,{attributes:true,attributeFilter:['hidden']});
- new MutationObserver(()=>{if(dialog.open&&!page.hidden)void refresh()}).observe(dialog,{attributes:true,attributeFilter:['open']});
+ new MutationObserver(()=>{labels();if(!page.hidden)void refresh()}).observe(page,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(()=>{labels();if(dialog.open&&!page.hidden)void refresh()}).observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('click',()=>{if(!page.hidden)void refresh()});
- db.auth.onAuthStateChange(()=>{last=0;setTimeout(refresh,200)});
+ db.auth.onAuthStateChange(()=>{labels();last=0;setTimeout(refresh,200)});
  db.channel('fju-pontos-my-page-live').on('postgres_changes',{event:'*',schema:'public',table:'fju_ranking_ciclos'},()=>{last=0;void refresh()}).subscribe();
- document.addEventListener('visibilitychange',()=>{if(!document.hidden){last=0;void refresh()}});
- window.addEventListener('focus',()=>{last=0;void refresh()});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){labels();last=0;void refresh()}});
+ window.addEventListener('pageshow',()=>{labels();last=0;void refresh()});
+ window.addEventListener('focus',()=>{labels();last=0;void refresh()});
  setInterval(()=>{if(!document.hidden)void refresh()},12000);
 }
 const boot=()=>{rank();myPoints()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
