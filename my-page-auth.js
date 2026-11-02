@@ -866,7 +866,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       showView('login');
       return;
     }
-    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect&&localeSelect.value!==savedLanguage){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change'));}}
+    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     const memberCard=byId('fju-member-collectible');
