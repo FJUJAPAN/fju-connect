@@ -854,7 +854,7 @@ function renderUnifiedCoordinatorPage(enabled){
  }
 }
 
-async function loadAccount({keepAccountVisible=false}={}){
+async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   const current=++updateSequence;
   // Validate in the background; never switch the UI to a verification splash.
   try{
@@ -965,7 +965,7 @@ async function loadAccount({keepAccountVisible=false}={}){
     showYouthPane();
     // Administrative roles use the standalone dashboard; never embed an iframe in MY PAGE.
     renderUnifiedCoordinatorPage(false);
-    if(verifiedAdmin && !passwordRecovery){
+    if(verifiedAdmin && navigateAdmin && !passwordRecovery){
       const dashboardUrl='https://fjujapan.github.io/fju-connect-admin/';
       if(window.location.pathname.indexOf('/fju-connect-admin/')===-1){
         window.location.assign(dashboardUrl);
@@ -985,15 +985,16 @@ async function openAccount(){
   if(passwordRecovery){showDialog();showView('reset');return;}
   // Do not expose the verification screen while the account modal opens.
   // The auth session and role are still validated before privileged content.
-  if(authenticated&&lastRole&&myPage&&!myPage.hidden){
+  if(authenticated&&lastRole==='member'&&myPage&&!myPage.hidden){
     showView('account');
     showDialog();
-    void loadAccount({keepAccountVisible:true});
+    void loadAccount({keepAccountVisible:true,navigateAdmin:true});
     return;
   }
-  // On a cold load, finish validation before displaying the modal.
-  await loadAccount();
-  // The modal only becomes visible after authentication and role checks finish.
+  // Only a deliberate My Page click may open the leadership dashboard.
+  // Background session checks must keep the FJU homepage visible.
+  await loadAccount({navigateAdmin:true});
+  if(lastRole==='national'||lastRole==='coordinator')return;
   showDialog();
 }
 
@@ -1026,7 +1027,7 @@ loginForm.addEventListener('submit',async event=>{
     });
     if(error)throw error;
     loginForm.reset();
-    await loadAccount();
+    await loadAccount({navigateAdmin:true});
     setFeedback(t('loggedInStatus'));
   }catch(e){
     showView('login');
