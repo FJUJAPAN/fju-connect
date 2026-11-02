@@ -62,7 +62,7 @@ test('idioma preferido da conta também sincroniza o formulário de pontos',()=>
  assert.match(requests,/let renderedLanguage='';/);
  assert.match(requests,/new MutationObserver\(syncLanguage\)/);
  assert.match(requests,/window\.addEventListener\('pageshow',syncLanguage\)/);
- assert.match(html,/fju-pontos-ranking\.js\?v=20261102-idioma-pontos-1/);
+ assert.match(html,/fju-pontos-ranking\.js\?v=20261102-card-idioma-2/);
 });
 
 test('cartão Meus pontos traduz quatro rótulos sem sobrescrever saldos',()=>{
