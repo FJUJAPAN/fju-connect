@@ -80,10 +80,31 @@ function start(){
   }catch(e){list.replaceChildren();const li=document.createElement('li');li.textContent=tr('failed');list.append(li)}finally{loading=false}
  }
  form.addEventListener('submit',async e=>{e.preventDefault();button.disabled=true;button.textContent=tr('sending');msg.textContent='';
-  try{const isVisit=select.value.startsWith('alma_'),first=approvedFirst();if(isVisit&&select.value!=='alma_primeira'&&!first){msg.textContent=tr('firstNeeded');return}if(select.value==='alma_terceira_mes'&&(!first?.segunda_data||first.segunda_data>date.value)){msg.textContent=tr('secondNeeded');return}
-   const {error}=await db.rpc('fju_pontos_solicitar',{p_atividade:select.value,p_data_atividade:date.value,p_detalhe:details.value.trim(),p_referencia_pessoa:isVisit?person.value.trim():null});
-   if(error)throw error;msg.textContent=tr('sent');details.value='';await load();
-  }catch(e){msg.textContent=e.message?.includes('solicitacao_duplicada')?tr('duplicate'):tr('error')}finally{button.disabled=false;button.textContent=tr('send')}
+  let sent=0,requested=1;
+  try{
+   const isVisit=select.value.startsWith('alma_'),firstVisit=select.value==='alma_primeira',first=approvedFirst();
+   if(isVisit&&!firstVisit&&!first){msg.textContent=tr('firstNeeded');return}
+   if(select.value==='alma_terceira_mes'&&(!first?.segunda_data||first.segunda_data>date.value)){msg.textContent=tr('secondNeeded');return}
+   const codes=!isVisit?[null]:firstVisit?[person.value.trim(),...Array.from(extraPersons.querySelectorAll('input'),input=>input.value.trim())]:[person.value.trim()];
+   requested=codes.length;
+   if(firstVisit){
+    const quantity=Number(countInput.value);
+    if(!Number.isInteger(quantity)||quantity<1||quantity>50||quantity!==requested){msg.textContent=tr('quantityInvalid');return}
+    const normalized=codes.map(code=>code.toLocaleLowerCase());
+    if(codes.some(code=>code.length<2||code.length>50)||new Set(normalized).size!==codes.length){msg.textContent=tr('codesDistinct');return}
+   }
+   for(const code of codes){
+    const {error}=await db.rpc('fju_pontos_solicitar',{p_atividade:select.value,p_data_atividade:date.value,p_detalhe:details.value.trim(),p_referencia_pessoa:code});
+    if(error)throw error;
+    sent++;
+   }
+   msg.textContent=requested>1?tr('multiSent')+sent+' / '+requested+'. '+tr('sent'):tr('sent');
+   details.value='';person.value='';countInput.value='1';extraPersons.replaceChildren();await load();updatePerson();
+  }catch(e){
+   const reason=e.message?.includes('solicitacao_duplicada')?tr('duplicate'):tr('error');
+   msg.textContent=sent?tr('multiSent')+sent+' / '+requested+'. '+tr('partialSent'):reason;
+   if(sent)await load();
+  }finally{button.disabled=false;button.textContent=tr('send')}
  });
  document.getElementById('language')?.addEventListener('change',()=>{labels();void load()});
  db.auth.onAuthStateChange(()=>setTimeout(()=>void load(),250));
