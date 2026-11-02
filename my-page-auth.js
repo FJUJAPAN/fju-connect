@@ -961,6 +961,25 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     }
     const churchGroup=await renderYouthSignup(user,verifiedAdmin,current);
     if(current!==updateSequence||passwordRecovery)return;
+    // Creating a login is only an access request, not permission to use My Page.
+    if(!verifiedAdmin&&!churchGroup){
+      const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
+      const {data:requests,error:requestError}=await client.rpc('fju_consultar_minha_inscricao');
+      if(current!==updateSequence||passwordRecovery)return;
+      const request=Array.isArray(requests)?requests[0]:requests;
+      const allowed=!linkError&&!requestError&&Boolean(links?.length)&&request?.status==='aprovado';
+      if(!allowed){
+        const dashboard=byId('fju-youth-dashboard');if(dashboard)dashboard.hidden=true;
+        const head=byId('fju-youth-subpage-head');if(head)head.hidden=true;
+        for(const pane of ['profile','interactions','saved']){const node=byId('fju-youth-'+pane+'-pane');if(node)node.hidden=true;}
+        const note=byId('fju-account-member-note');if(note)note.hidden=true;
+        accountAccess.hidden=true;
+        showView('account');
+        const signup=byId('fju-youth-signup');if(signup)signup.hidden=false;
+        setFeedback(request?.status==='rejeitado'?'Solicitação rejeitada. Fale com seu coordenador.':request?.status==='pendente'?'Solicitação recebida. Aguarde a aprovação do coordenador.':'Solicite acesso ao coordenador para liberar o My Page.');
+        return;
+      }
+    }
     // Coordenadores autenticados recebem o acesso administrativo somente após validação de papel e polo.
     // Show administrative entry only after verified fju_perfis roles.
     const adminTile=byId('fju-youth-admin-tile');
