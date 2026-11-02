@@ -480,7 +480,8 @@ function showView(view){
     ['loading',loading]
   ];
   for(const [id,node] of forms)node.hidden=view!==id;
-  signupOpen.hidden=view!=='login';
+  signupOpen.hidden=view!=='login'&&view!=='account';
+  signupOpen.textContent=view==='account'?'Criar conta / Solicitar acesso':'Criar conta / Solicitar acesso';
   byId('fju-account-title').textContent=
     view==='forgot'?t('forgotTitle'):view==='reset'?t('resetTitle'):t('title');
   byId('fju-account-subtitle').textContent=
@@ -975,6 +976,8 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         const note=byId('fju-account-member-note');if(note)note.hidden=true;
         accountAccess.hidden=true;
         showView('account');
+        signupOpen.hidden=false;
+        signupOpen.textContent='Criar conta / Solicitar acesso';
         const signup=byId('fju-youth-signup');if(signup)signup.hidden=false;
         setFeedback(request?.status==='rejeitado'?'Solicitação rejeitada. Fale com seu coordenador.':request?.status==='pendente'?'Solicitação recebida. Aguarde a aprovação do coordenador.':'Solicite acesso ao coordenador para liberar o My Page.');
         return;
