@@ -1,3 +1,4 @@
+import './fju-ranking-polo.js?v=20261102-1';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const style=document.createElement('style');style.textContent=`
@@ -58,7 +59,7 @@ function rank(){
    if(period==='mensal'&&!select.options.length)await months();
    const key=period==='semanal'?weekStart():(select.value||monthStart());
    const [score,cycle]=await Promise.all([
-    db.from('fju_ranking_snapshots').select('posicao,apelido,polo,pontos').eq('periodo',period).eq('periodo_inicio',key).order('posicao').order('apelido').limit(30),
+    db.from('fju_ranking_snapshots').select('posicao,apelido,polo,pontos').eq('periodo',period).eq('periodo_inicio',key).order('posicao').order('apelido').limit(1000),
     db.from('fju_ranking_ciclos').select('atualizado_em,fechado').eq('periodo',period).eq('periodo_inicio',key).maybeSingle()
    ]);
    if(stamp!==request)return;if(score.error)throw score.error;if(cycle.error)throw cycle.error;
