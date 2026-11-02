@@ -1068,7 +1068,28 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     }
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
-    authenticated=false;lastRole='';preferredLanguageUser=null;
+    // A post-login profile/RPC failure must not be mistaken for invalid credentials.
+    // Keep the authenticated session and offer an explicit retry without a new signup.
+    if(authenticated){
+      showView('account');
+      signupOpen.hidden=true;
+      loginOpen.hidden=true;
+      accountAccess.hidden=true;
+      const section=byId('fju-youth-signup');
+      if(section){
+        section.hidden=false;
+        section.replaceChildren();
+        const message=document.createElement('p');
+        message.textContent='Não foi possível carregar sua solicitação. Sua conta já existe; não crie outra.';
+        const retry=document.createElement('button');
+        retry.type='button';retry.textContent='Tentar carregar solicitação novamente';
+        retry.addEventListener('click',()=>void loadAccount());
+        section.append(message,retry);
+      }
+      setFeedback('Erro ao carregar cadastro: '+(e?.message||'Tente novamente.'),true);
+      return;
+    }
+    lastRole='';preferredLanguageUser=null;
     renderHeaderAccount(null);
     showView('login');
     setFeedback(t('sessionError'),true);
@@ -1122,7 +1143,7 @@ loginForm.addEventListener('submit',async event=>{
     if(error)throw error;
     loginForm.reset();
     await loadAccount({navigateAdmin:true});
-    setFeedback(t('loggedInStatus'));
+    // loadAccount reports authorization or recovery state; do not overwrite it with success.
   }catch(e){
     loginForm.reset();
     showView('login');
