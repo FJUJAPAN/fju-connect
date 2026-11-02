@@ -1032,7 +1032,7 @@ body{padding-top:78px}
  .site-header .header-inner{width:calc(100% - 28px)!important;margin:0 14px!important;gap:2px!important}
  .header-actions{gap:1px!important}
 }
-</style><link rel="manifest" href="./manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="FJU Connect">
+</style><style id="fju-ranking-header-style">.desktop-nav{gap:clamp(9px,1.6vw,20px)}.desktop-nav .fju-rank-header-link{white-space:nowrap;color:#ffcae1;font-weight:900}.desktop-nav .fju-rank-header-link:hover{color:#fff}@media(min-width:741px) and (max-width:1090px){.desktop-nav{gap:9px}.desktop-nav a{font-size:10px;letter-spacing:.2px}}</style><link rel="manifest" href="./manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="FJU Connect">
 <style id="fju-youth-profile-refresh-20261031">
 /* Youth profile: clean mobile-first member card, preserving all data bindings. */
 #fju-youth-profile-pane{width:100%;max-width:680px;margin:0 auto;padding:8px 0 28px;box-sizing:border-box}
@@ -1061,7 +1061,7 @@ body{padding-top:78px}
         <a href="#acao" data-i18n="navAction">FJU EM AÇÃO</a><a href="#live" data-i18n="navLive">LIVE</a>
         <a href="#musica" data-i18n="navMusic">MUSIC</a>
         <a href="#projetos" data-i18n="navProjects">PROJECTS</a>
-        <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a>
+        <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a><a href="ranking/" class="fju-rank-header-link" aria-label="Ranking de participação">🏆 RANKING</a>
       </nav>
       <div class="fju-mobile-tools" aria-label="Ferramentas do site">
 <button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
@@ -1103,6 +1103,7 @@ body{padding-top:78px}
         <a href="#inicio">Início</a>
         <a href="eventos/">Eventos</a>
         <a href="encontre-a-fju/">Polos</a>
+        <a href="ranking/">🏆 Ranking</a>
         <a href="#projetos">Projetos</a>
         <button type="button" data-fju-account-open>My Page</button>
       </nav>
@@ -1399,7 +1400,7 @@ body{padding-top:78px}
 </nav>
 <script id="fju-mobile-site-search">
 (()=>{const toggle=document.getElementById('fju-search-toggle'),panel=document.getElementById('fju-search-panel'),input=document.getElementById('fju-search-input'),results=document.getElementById('fju-search-results');if(!toggle||!panel||!input||!results)return;
-const pages=[['Início','#inicio'],['Projetos','#projetos'],['Músicas','#musica'],['Galeria','#galeria'],['Eventos','eventos/'],['Polos FJU','encontre-a-fju/'],['FJU em ação','#acao'],['Live','#live'],['My Page / Login','#my-page']];
+const pages=[['Início','#inicio'],['Projetos','#projetos'],['Músicas','#musica'],['Galeria','#galeria'],['Eventos','eventos/'],['Ranking','ranking/'],['Polos FJU','encontre-a-fju/'],['FJU em ação','#acao'],['Live','#live'],['My Page / Login','#my-page']];
 function render(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();if(!q)return;const matches=pages.filter(([name])=>name.toLocaleLowerCase().includes(q));if(!matches.length){const p=document.createElement('p');p.textContent='Nenhum resultado encontrado.';results.append(p);return}matches.forEach(([name,href])=>{const a=document.createElement('a');a.href=href;a.textContent=name;results.append(a)})}
 toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.focus()});input.addEventListener('input',render);results.addEventListener('click',e=>{if(e.target.closest('a')){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}})
 })();
@@ -1523,6 +1524,6 @@ function advance(n){index=(index+n+articles.length)%articles.length;render();}
 function start(){clearInterval(timer);if(articles.length>1)timer=setInterval(()=>advance(1),7000);}
 el('fju-news-prev').onclick=()=>{advance(-1);start()};el('fju-news-next').onclick=()=>{advance(1);start()};el('fju-news-detail').addEventListener('click',e=>{if(e.target===el('fju-news-detail'))hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('fju-news-detail').hidden)hide()});
 try{const{data,error}=await db.from('fju_materias').select('id,categoria,data_materia,titulo_pt,titulo_ja,titulo_en,texto1_pt,texto1_ja,texto1_en,texto2_pt,texto2_ja,texto2_en,final_pt,final_ja,final_en,foto1,foto2,foto3').eq('status','publicada').neq('secao_publicacao','proximos_eventos').order('criado_em',{ascending:false}).limit(10);if(error)throw error;articles=(data||[]).filter(a=>available(a).length);el('fju-news').hidden=false;if(articles.length){render();start();}else{el('fju-news-card').replaceChildren();add(el('fju-news-card'),'h3','Nenhuma matéria publicada disponível no momento.');el('fju-news-controls').hidden=true;}}catch(err){el('fju-news').hidden=false;el('fju-news-card').replaceChildren();add(el('fju-news-card'),'h3','Não foi possível carregar as matérias.');add(el('fju-news-card'),'p','Erro: '+(err.message||'Falha de conexão'));el('fju-news-controls').hidden=true;console.warn('Matérias FJU indisponíveis:',err.message);}
-</script><script type="module" src="assets/upcoming-events.js?v=20261023"></script><script type="module" src="./unified-mobile-header.js?v=20261025-solid"></script><script type="module" src="./fju-pontos-ranking.js?v=20261102-ranking-avatar-1"></script>
+</script><script type="module" src="assets/upcoming-events.js?v=20261023"></script><script type="module" src="./unified-mobile-header.js?v=20261102-ranking-header-1"></script><script>if(location.hash==="#fju-ranking"){location.replace("./ranking/#fju-ranking")}</script><script type="module" src="./fju-pontos-ranking.js?v=20261102-rank-page-1"></script>
 </body>
 </html>
