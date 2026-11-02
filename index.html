@@ -1294,17 +1294,14 @@ body{padding-top:78px}
     <span id="fju-youth-hero-polo">FJU JAPAN</span>
     <span id="fju-youth-hero-rank" class="fju-youth-rank" hidden></span>
    </div>
-   <button id="fju-youth-hero-edit" class="fju-youth-edit" type="button" aria-label="Meu Perfil" data-fju-youth-panel="profile">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.5 2.5 0 0 0-3.5-3.5l-11 11L4 20Z"/></svg>
+   <button id="fju-youth-hero-edit" class="fju-youth-edit" type="button" aria-label="Configurações da conta" title="Configurações da conta" data-fju-youth-panel="profile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l-1.9 1.9a1.7 1.7 0 0 0-1.87-.34l-.95.4V21h-2.7v-2.17l-.95-.4a1.7 1.7 0 0 0-1.87.34l-1.9-1.9A1.7 1.7 0 0 0 7.94 15l-.4-.95H5.4v-2.7h2.14l.4-.95a1.7 1.7 0 0 0-.34-1.87l1.9-1.9a1.7 1.7 0 0 0 1.87.34l.95-.4V4.4h2.7v2.17l.95.4a1.7 1.7 0 0 0 1.87-.34l1.9 1.9a1.7 1.7 0 0 0-.34 1.87l.4.95H22v2.7h-2.2z" transform="translate(-1 -1) scale(1.08)"/></svg>
    </button>
   </div>
  </div>
  <h3 class="fju-youth-menu-heading" data-fju-auth-i18n="youthMenuHeading">Acesso rápido</h3>
  <nav class="fju-youth-app-grid" aria-label="Menu My Page">
-  <button type="button" data-fju-youth-panel="profile" class="fju-youth-tile">
-   <span class="fju-youth-tile-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg></span>
-   <span data-fju-auth-i18n="youthProfile">Meu Perfil</span>
-  </button>
+
   <a class="fju-youth-tile" href="./check-in/">
    <span class="fju-youth-tile-icon green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5.6-7 11-7 11S5 15.6 5 10a7 7 0 1 1 14 0Z"/><path d="m9.5 10.5 1.8 1.8 3.5-3.7"/></svg></span>
    <span>Check-in</span>
@@ -1330,9 +1327,9 @@ body{padding-top:78px}
 </div>
 <div id="fju-youth-subpage-head" class="fju-youth-subpage-head" hidden>
  <button type="button" id="fju-youth-back" class="fju-youth-back" data-fju-auth-i18n="youthBack">‹ Voltar</button>
- <h3 id="fju-youth-subpage-title">Meu Perfil</h3>
+ <h3 id="fju-youth-subpage-title">Configurações da conta</h3>
 </div>
-<div id="fju-youth-profile-pane" class="fju-youth-content-pane" hidden>
+<div id="fju-youth-profile-pane" class="fju-youth-content-pane" hidden><p style="margin:4px 0 14px;color:#52637d">E-mail, foto e informações do seu perfil</p>
 <div id="fju-member-collectible" class="fju-member-collectible" hidden>
  <div class="fju-member-card-top"><span>FJU CONNECT JAPAN</span><span>MY PAGE</span></div>
  <div class="fju-member-card-photo-frame"><img id="fju-member-card-photo" alt="Foto do perfil" hidden><span class="fju-member-card-monogram">FJU</span></div>
@@ -1405,7 +1402,7 @@ function render(){const q=input.value.trim().toLocaleLowerCase();results.replace
 toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.focus()});input.addEventListener('input',render);results.addEventListener('click',e=>{if(e.target.closest('a')){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}})
 })();
 </script>
-<script type="module" src="./my-page-auth.js?v=20261102-idioma-pontos-1"></script>
+<script type="module" src="./my-page-auth.js?v=20261102-my-page-email-2"></script>
 <script id="fju-direct-signup-fallback">
 /* Abre o cadastro mesmo quando a inicialização assíncrona do login atrasa. */
 if(new URLSearchParams(location.search).get('cadastro')==='1'){
