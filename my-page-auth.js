@@ -342,6 +342,12 @@ const signupOpen=document.createElement('button');
 signupOpen.type='button';signupOpen.id='fju-account-signup-open';
 signupOpen.style.cssText='display:block;margin:14px auto 0;padding:12px 20px;border:1px solid #8394b5;border-radius:10px;background:#eef2fb;color:#19264b;font-weight:700;cursor:pointer';
 loginForm.insertAdjacentElement('afterend',signupOpen);
+const loginOpen=document.createElement('button');
+loginOpen.type='button';loginOpen.id='fju-account-login-open';
+loginOpen.style.cssText='display:block;margin:12px auto;padding:12px 20px;border:1px solid #8394b5;border-radius:10px;background:#173b76;color:white;font-weight:700;cursor:pointer';
+signupOpen.insertAdjacentElement('afterend',loginOpen);
+loginOpen.addEventListener('click',()=>{showView('login');loginForm.hidden=false;loginOpen.hidden=true;signupOpen.hidden=true;byId('fju-account-login-email')?.focus();});
+
 const signupForm=document.createElement('form');signupForm.id='fju-account-signup-form';signupForm.hidden=true;
 signupForm.style.cssText='display:grid;gap:12px;margin:16px 0';
 const signupTitle=document.createElement('h3');
@@ -480,8 +486,13 @@ function showView(view){
     ['loading',loading]
   ];
   for(const [id,node] of forms)node.hidden=view!==id;
+  // Initial screen offers both options, without showing credentials until Login is chosen.
+  if(view==='login')loginForm.hidden=true;
   signupOpen.hidden=view!=='login'&&view!=='account';
-  signupOpen.textContent=view==='account'?'Criar conta / Solicitar acesso':'Criar conta / Solicitar acesso';
+  loginOpen.hidden=view!=='login'&&view!=='account';
+  const labels={pt:['Criar conta / Solicitar acesso','Entrar / Login'],ja:['アカウント作成・アクセス申請','ログイン'],en:['Create account / Request access','Sign in / Login']};
+  const words=labels[lang()]||labels.pt;
+  signupOpen.textContent=words[0];loginOpen.textContent=words[1];
   byId('fju-account-title').textContent=
     view==='forgot'?t('forgotTitle'):view==='reset'?t('resetTitle'):t('title');
   byId('fju-account-subtitle').textContent=
