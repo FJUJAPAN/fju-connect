@@ -30,6 +30,31 @@ function start(){
  const block=document.createElement('section');block.id='fju-requests-young';
  block.innerHTML=`<h3></h3><p class="fju-intro"></p><form><label class="fju-l-activity" for="fju-r-activity"></label><select id="fju-r-activity" required></select><label class="fju-l-date" for="fju-r-date"></label><input id="fju-r-date" type="date" required><div class="fju-person-fields" hidden><div class="fju-person-count" hidden><label class="fju-l-count" for="fju-r-count"></label><select id="fju-r-count" required></select></div><label class="fju-l-person" for="fju-r-person"></label><input id="fju-r-person" type="text" minlength="2" maxlength="50" autocomplete="off"><p class="fju-person-hint"></p><div class="fju-extra-persons"></div></div><label class="fju-l-detail" for="fju-r-detail"></label><textarea id="fju-r-detail" maxlength="220"></textarea><button type="submit"></button><p class="fju-r-message" role="status" aria-live="polite"></p></form><h3 class="fju-hist-title"></h3><ul></ul>`;
  host.prepend(block);
+ block.hidden=true;
+ const requestToggle=document.createElement('button');
+ requestToggle.type='button';
+ requestToggle.id='fju-request-toggle';
+ requestToggle.textContent='＋ Solicitar pontos';
+ requestToggle.setAttribute('aria-expanded','false');
+ requestToggle.setAttribute('aria-controls',block.id);
+ requestToggle.style.cssText='width:100%;margin:12px 0 0;padding:12px;border:1px solid #ffffff99;border-radius:12px;background:#ffffff24;color:white;font-weight:800;cursor:pointer';
+ requestToggle.addEventListener('click',()=>{
+   block.hidden=!block.hidden;
+   requestToggle.setAttribute('aria-expanded',String(!block.hidden));
+   requestToggle.textContent=block.hidden?'＋ Solicitar pontos':'− Fechar solicitação';
+ });
+ const placeToggle=()=>{
+   const points=document.getElementById('fju-my-points');
+   if(!points)return false;
+   points.style.flexWrap='wrap';
+   points.append(requestToggle);
+   points.insertAdjacentElement('afterend',block);
+   return true;
+ };
+ if(!placeToggle()){
+   const observer=new MutationObserver(()=>{if(placeToggle())observer.disconnect()});
+   observer.observe(host,{childList:true});
+ }
  const title=block.querySelector('h3'),intro=block.querySelector('.fju-intro'),form=block.querySelector('form'),select=block.querySelector('select'),date=block.querySelector('input'),details=block.querySelector('textarea'),button=block.querySelector('button'),msg=block.querySelector('.fju-r-message'),historyTitle=block.querySelector('.fju-hist-title'),list=block.querySelector('ul');
  const personFields=block.querySelector('.fju-person-fields'),person=block.querySelector('#fju-r-person'),personHint=block.querySelector('.fju-person-hint'),countBox=block.querySelector('.fju-person-count'),countInput=block.querySelector('#fju-r-count'),extraPersons=block.querySelector('.fju-extra-persons');
  for(let n=1;n<=50;n++){const option=document.createElement('option');option.value=String(n);option.textContent=String(n);countInput.append(option)}
