@@ -1,6 +1,6 @@
 import './fju-ranking-polo.js?v=20261102-choice-polo-1';
 import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261102-1';
-import './fju-solicitacoes-pontos.js?v=20261102-notas-opcionais-1';
+import './fju-solicitacoes-pontos.js?v=20261102-select-1-50';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const style=document.createElement('style');style.textContent=`
