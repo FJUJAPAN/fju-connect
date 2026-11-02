@@ -54,9 +54,10 @@ function start(){
  }
  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  date.max=today();date.value=today();
+ let renderedLanguage='';
  function labels(){
   title.textContent=tr('title');intro.textContent=tr('explain');block.querySelector('.fju-l-activity').textContent=tr('activity');block.querySelector('.fju-l-date').textContent=tr('date');block.querySelector('.fju-l-detail').textContent=tr('detail');details.placeholder=tr('placeholder');button.textContent=tr('send');historyTitle.textContent=tr('history');
-  const previous=select.value;select.replaceChildren();types.forEach(([key,score],idx)=>{const op=document.createElement('option');op.value=key;op.textContent=i18n[lang()].labels[idx]+' — +'+score;select.append(op)});if(previous)select.value=previous;updatePerson();
+  const previous=select.value;select.replaceChildren();types.forEach(([key,score],idx)=>{const op=document.createElement('option');op.value=key;op.textContent=i18n[lang()].labels[idx]+' — +'+score;select.append(op)});if(previous)select.value=previous;updatePerson();renderedLanguage=lang();
  }
  labels();
  select.addEventListener('change',updatePerson);person.addEventListener('input',updatePerson);date.addEventListener('change',updatePerson);countInput.addEventListener('change',()=>{if(countInput.checkValidity()){msg.textContent='';updatePerson()}else msg.textContent=tr('quantityInvalid')});
@@ -103,9 +104,17 @@ function start(){
   }finally{button.disabled=false;button.textContent=tr('send')}
  });
  document.getElementById('language')?.addEventListener('change',()=>{labels();void load()});
+ // A My Page pode abrir depois de o login carregar o idioma preferido.
+ // Sincronizar novamente ao abrir evita títulos antigos em japonês com campos em português.
+ function syncLanguage(){if(renderedLanguage!==lang()){labels();void load();}}
+ const myPage=document.getElementById('fju-account-my-page');
+ const dialog=document.getElementById('fju-account-dialog');
+ if(myPage)new MutationObserver(syncLanguage).observe(myPage,{attributes:true,attributeFilter:['hidden']});
+ if(dialog)new MutationObserver(syncLanguage).observe(dialog,{attributes:true,attributeFilter:['open']});
+ window.addEventListener('pageshow',syncLanguage);
  db.auth.onAuthStateChange(()=>setTimeout(()=>void load(),250));
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)void load()});
- window.addEventListener('focus',()=>void load());
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){syncLanguage();void load()}});
+ window.addEventListener('focus',()=>{syncLanguage();void load()});
  setInterval(()=>{if(!document.hidden)void load()},20000);
  void load();
 }
