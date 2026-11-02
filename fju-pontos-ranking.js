@@ -1,4 +1,4 @@
-import './fju-ranking-polo.js?v=20261102-ranking-page-1';
+import './fju-ranking-polo.js?v=20261102-choice-polo-1';
 import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261102-1';
 import './fju-solicitacoes-pontos.js?v=20261102-first-visit-only-1';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
