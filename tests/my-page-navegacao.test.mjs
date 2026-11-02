@@ -6,6 +6,7 @@ const js=readFileSync(new URL('my-page-auth.js',base),'utf8');
 const html=readFileSync(new URL('index.html',base),'utf8');
 const css=readFileSync(new URL('my-page-iphone.css',base),'utf8');
 const requests=readFileSync(new URL('fju-solicitacoes-pontos.js',base),'utf8');
+const points=readFileSync(new URL('fju-pontos-ranking.js',base),'utf8');
 
 test('habilita a aparência iPhone na tela autenticada',()=>{
  assert.match(js,/dialog\.dataset\.fjuView=view;/);
@@ -62,4 +63,16 @@ test('idioma preferido da conta também sincroniza o formulário de pontos',()=>
  assert.match(requests,/new MutationObserver\(syncLanguage\)/);
  assert.match(requests,/window\.addEventListener\('pageshow',syncLanguage\)/);
  assert.match(html,/fju-pontos-ranking\.js\?v=20261102-idioma-pontos-1/);
+});
+
+test('cartão Meus pontos traduz quatro rótulos sem sobrescrever saldos',()=>{
+ for(const key of ['mine','total','weekLabel','monthLabel']){
+  assert.match(points,new RegExp('data-points-label="'+key+'"'));
+ }
+ assert.match(points,/node\.textContent=t\(node\.dataset\.pointsLabel\)/);
+ assert.match(points,/async function refresh\(\)\{labels\(\);/);
+ assert.match(points,/new MutationObserver\(\(\)=>\{labels\(\);/);
+ assert.match(points,/window\.addEventListener\('pageshow',/);
+ assert.doesNotMatch(points,/x\[2\]\.childNodes\[0\]/);
+ assert.match(html,/fju-pontos-ranking\.js\?v=20261102-card-idioma-2/);
 });
