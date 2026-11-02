@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#111B30">
+ <meta name="description" content="Ranking semanal e mensal dos jovens da FJU Connect Japan. Classificação nacional e por igreja.">
+ <title>🏆 Ranking | FJU Connect Japan</title>
+ <link rel="stylesheet" href="../fju-header-shared.css?v=20261024-color">
+ <style>
+ :root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+ *{box-sizing:border-box}
+ html{scroll-behavior:smooth}
+ body{margin:0;background:#111321;color:#fff;font:16px/1.5 system-ui,-apple-system,"Noto Sans JP",sans-serif}
+ a{color:inherit;text-decoration:none}
+ .wrap{width:min(1120px,calc(100% - 32px));margin-inline:auto}
+ .fju-subpage-header{background:#111B30!important}
+ .fju-subpage-header .header-in{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+ .rank-brand{display:flex;align-items:center;gap:10px;min-width:150px;font-weight:900;letter-spacing:.035em}
+ .rank-brand .mark{color:#fa85ac;font-size:23px}
+ .rank-brand small{display:block;color:#b5c5df;font-size:10px;letter-spacing:.15em}
+ .rank-header-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+ .rank-header-nav a,.rank-header-actions a{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:11px;font-size:13px;font-weight:800}
+ .rank-header-nav a:hover,.rank-header-nav a:focus-visible,.rank-header-actions a:hover{background:#ffffff18}
+ .rank-header-nav a[aria-current="page"]{color:#fff;background:#a72454}
+ .rank-header-nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ .rank-header-actions{display:flex;align-items:center;gap:8px}
+ .rank-header-actions select{max-width:125px;background:#243657;color:#fff;border:1px solid #ffffff55;border-radius:10px;min-height:38px;padding:7px;font:700 12px system-ui}
+ .rank-header-actions .fju-subpage-my-page{background:#273c64;white-space:nowrap}
+ .rank-heading{padding:49px 0 23px;text-align:center;background:radial-gradient(circle at 50% 0%,#572551 0%,#241a38 48%,#111321 90%)}
+ .rank-heading .trophy{display:inline-grid;place-items:center;width:68px;height:68px;border-radius:20px;background:#b72356;color:#fff;font-size:34px;box-shadow:0 12px 45px #c81a6655}
+ .rank-heading .kicker{margin:18px 0 7px;color:#efa3c3;font-size:12px;font-weight:900;letter-spacing:.2em}
+ .rank-heading h1{margin:0;font-size:clamp(30px,5vw,48px);line-height:1.16}
+ .rank-heading .lead{color:#c9c6da;max-width:620px;margin:11px auto 0;padding:0 12px}
+ #fju-ranking-polo-slot:empty{display:none}
+ #fju-ranking-polo-slot{padding-top:12px}
+ #fju-ranking{padding-top:40px;padding-bottom:64px}
+ .site-footer{padding:20px;text-align:center;border-top:1px solid #ffffff20;color:#a8b4cc;font-size:12px}
+ :focus-visible{outline:3px solid #ffb0cc;outline-offset:3px}
+ @media(max-width:900px){.rank-header-nav{gap:3px}.rank-header-nav a{font-size:12px;padding:8px}}
+ @media(max-width:740px){.fju-subpage-header{display:none!important}.rank-heading{padding:39px 0 18px}.rank-heading .trophy{width:60px;height:60px;font-size:29px}#fju-ranking{padding-top:24px}#fju-ranking-polo-slot{padding-top:0}}
+ @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+ </style>
+</head>
+<body class="fju-ranking-page">
+ <a href="#main" style="position:absolute;top:-100px;left:10px" onfocus="this.style.top='70px'" onblur="this.style.top='-100px'">Ir para o conteúdo</a>
+ <header class="fju-subpage-header">
+  <div class="wrap header-in">
+   <a href="../" class="rank-brand" aria-label="FJU Connect Japan — Início"><span class="mark">FJU</span><span>CONNECT <small>JAPAN</small></span></a>
+   <nav class="rank-header-nav" aria-label="Navegação principal">
+    <a href="../">Início</a>
+    <a href="../eventos/">Eventos</a>
+    <a href="./" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4H4v4a4 4 0 0 0 4 4M17 4h3v4a4 4 0 0 1-4 4M7 3h10v7a5 5 0 0 1-10 0z"></path></svg>Ranking</a>
+   </nav>
+   <div class="rank-header-actions">
+    <label for="language" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Idioma</label>
+    <select id="language" aria-label="Idioma / 言語 / Language"><option value="pt">Português</option><option value="ja">日本語</option><option value="en">English</option></select>
+    <a class="fju-subpage-my-page" href="../#my-page">My Page</a>
+   </div>
+  </div>
+ </header>
+ <main id="main" class="ranking-main">
+  <section class="rank-heading">
+   <div class="wrap">
+    <span class="trophy" aria-hidden="true">🏆</span>
+    <p class="kicker">FJU CONNECT JAPAN</p>
+    <h1 id="ranking-heading">Ranking de participação</h1>
+    <p class="lead" id="ranking-intro">Confira a pontuação de todo o Japão e, ao entrar na sua conta, o ranking da sua igreja.</p>
+   </div>
+  </section>
+  <div class="wrap" id="fju-ranking-polo-slot"></div>
+  <div id="fju-ranking-mount"></div>
+ </main>
+ <footer class="site-footer">FJU CONNECT JAPAN · Ranking semanal e mensal</footer>
+ <script>
+ (()=>{
+   const sel=document.getElementById('language');
+   const saved=(localStorage.getItem('fju_lang')||localStorage.getItem('fju_language')||'pt').toLowerCase();
+   sel.value=saved.startsWith('ja')?'ja':saved.startsWith('en')?'en':'pt';
+   const heading=document.getElementById('ranking-heading'),intro=document.getElementById('ranking-intro');
+   const translations={
+    pt:['Ranking de participação','Confira a pontuação de todo o Japão e, ao entrar na sua conta, o ranking da sua igreja.'],
+    ja:['参加ポイントランキング','日本全国のランキングと、ログイン後に自分の教会のランキングをご覧いただけます。'],
+    en:['Participation ranking','View the Japan-wide ranking and, after signing in, your church ranking.']
+   };
+   function refresh(){let v=sel.value;document.documentElement.lang=v==='ja'?'ja':v==='en'?'en':'pt-BR';heading.textContent=translations[v][0];intro.textContent=translations[v][1];localStorage.setItem('fju_lang',v);}
+   sel.addEventListener('change',refresh);refresh();
+ })();
+ </script>
+ <script type="module" src="../unified-mobile-header.js?v=20261102-rank-page-1"></script>
+ <script type="module" src="../fju-pontos-ranking.js?v=20261102-rank-page-1"></script>
+</body>
+</html>
