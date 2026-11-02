@@ -14,7 +14,7 @@ const style=document.createElement('style');style.textContent=`
 #fju-ranking li .name{flex:1;font-weight:800;overflow-wrap:anywhere}
 #fju-ranking li small{display:block;font-size:12px;color:#b2c0d2;font-weight:400}
 #fju-ranking li .points{font-weight:900;white-space:nowrap}
-#fju-my-points{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 0 17px;padding:16px;border-radius:16px;background:linear-gradient(120deg,#661741,#ba2450);border:1px solid #efa0bd;color:#fff}
+#fju-my-points[hidden]{display:none!important}#fju-my-points{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 0 17px;padding:16px;border-radius:16px;background:linear-gradient(120deg,#661741,#ba2450);border:1px solid #efa0bd;color:#fff}
 #fju-my-points strong{font-size:30px;display:block}#fju-my-points span{font-size:13px}
 `;document.head.append(style);
 const fmt=n=>Number(n||0).toLocaleString('pt-BR');
