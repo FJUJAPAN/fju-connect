@@ -491,7 +491,7 @@ signupForm.addEventListener('submit',async event=>{
   const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
-   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro',requested_polo_id:isCoordinatorSignup()?details.polo:null},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro',requested_polo_id:isCoordinatorSignup()?details.polo:null,signup_details:isYouthSignup()?{name:details.name,polo:details.polo,projects:details.projects,birth:details.birth,phone:details.phone,nationality:details.nationality}:null},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
@@ -981,6 +981,13 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     // Only submit data previously entered by this same email; approval stays with the coordinator.
     let pendingYouth=null;
     try{pendingYouth=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
+    // Recover the initial application across browsers and after sessionStorage loss.
+    if(!pendingYouth||pendingYouth.email?.toLowerCase()!==user.email?.toLowerCase()){
+      const saved=user.user_metadata?.signup_details;
+      if(saved?.polo&&saved?.name&&saved?.birth&&saved?.phone&&saved?.nationality){
+        pendingYouth={...saved,email:user.email};
+      }
+    }
     if(pendingYouth?.email?.toLowerCase()===user.email?.toLowerCase()&&user.email_confirmed_at){
       const {data:existingSignup,error:existingSignupError}=await client.rpc('fju_consultar_minha_inscricao');
       if(current!==updateSequence||passwordRecovery)return;
