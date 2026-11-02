@@ -1027,8 +1027,11 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         const note=byId('fju-account-member-note');if(note)note.hidden=true;
         accountAccess.hidden=true;
         showView('account');
-        signupOpen.hidden=false;
-        signupOpen.textContent='Criar conta / Solicitar acesso';
+        signupOpen.hidden=true;
+        loginOpen.hidden=true;
+        const signupSection=byId('fju-youth-signup');
+        if(signupSection){signupSection.hidden=false;signupSection.style.display='block';signupSection.style.visibility='visible';}
+        // An authenticated user must finish the existing request, never register again.
         const signup=byId('fju-youth-signup');if(signup)signup.hidden=false;
         setFeedback(request?.status==='rejeitado'?'Solicitação rejeitada. Fale com seu coordenador.':request?.status==='pendente'?'Solicitação recebida. Aguarde a aprovação do coordenador.':'Solicite acesso ao coordenador para liberar o My Page.');
         return;
