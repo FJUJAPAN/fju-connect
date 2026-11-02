@@ -97,6 +97,7 @@ function myPoints(){
   }catch(e){box.hidden=true;}finally{busy=false;}
  }
  new MutationObserver(()=>{if(!page.hidden)void refresh()}).observe(page,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(()=>{if(dialog.open&&!page.hidden)void refresh()}).observe(dialog,{attributes:true,attributeFilter:['open']});
  dialog.addEventListener('click',()=>{if(!page.hidden)void refresh()});
  db.auth.onAuthStateChange(()=>{last=0;setTimeout(refresh,200)});
 }
