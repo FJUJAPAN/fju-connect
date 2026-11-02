@@ -66,7 +66,7 @@ const name=p=>lang==='ja'?(JA_NAMES[p.id]||p.name):p.name;
 let userPosition=null,mode='',searchTerm='',referenceId='';
 function haversine(a,b,c,d){const r=Math.PI/180,h=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;return 12742*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))}
 function distance(p){return userPosition&&p.lat!=null&&p.lng!=null?haversine(userPosition.lat,userPosition.lng,p.lat,p.lng):null}
-function prioritize(){const hamamatsu=polos.find(p=>p.id==='hamamatsu');return !!(hamamatsu&&distance(hamamatsu)!==null&&distance(hamamatsu)<=20)}
+function prioritize(){const hamamatsu=polos.find(p=>p.id==='hamamatsu');return !!(hamamatsu&&(!userPosition||(distance(hamamatsu)!==null&&distance(hamamatsu)<=20)))}
 function ordered(){const q=searchTerm.toLocaleLowerCase(),priority=prioritize();return polos.filter(p=>[p.name,name(p),p.city,p.prefecture,p.address].join(' ').toLocaleLowerCase().includes(q)).map(p=>({...p,distance:distance(p)})).sort((a,b)=>{if(priority){if(a.id==='hamamatsu')return -1;if(b.id==='hamamatsu')return 1}if(userPosition){if(a.distance===null)return 1;if(b.distance===null)return -1;return a.distance-b.distance}return name(a).localeCompare(name(b),lang)})}
 function mapUrl(p){return /^https:\/\/maps\.app\.goo\.gl\/[A-Za-z0-9]+$/.test(p.mapsUrl||'')?p.mapsUrl:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.address||p.city)}
 function whatsapp(p){return 'https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(tr('messageStart')+name(p)+tr('messageEnd'))}
