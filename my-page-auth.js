@@ -413,6 +413,45 @@ function signupFeedback(message='',error=false){
  setFeedback(message,error);
 }
 loginForm.insertAdjacentElement('afterend',signupForm);
+signupForm.noValidate=true;
+const fieldErrors=new Map();
+const validationWords={
+ pt:['Preencha este campo.','Informe um e-mail válido.','A senha deve ter pelo menos 8 caracteres.','As senhas não coincidem.','Informe pelo menos 2 caracteres.'],
+ ja:['この項目を入力してください。','正しいメールアドレスを入力してください。','パスワードは8文字以上必要です。','パスワードが一致しません。','2文字以上入力してください。'],
+ en:['Complete this field.','Enter a valid email address.','Password must have at least 8 characters.','Passwords do not match.','Enter at least 2 characters.']
+};
+function signupRequiredFields(){return [signupName,signupEmail,signupPassword,signupConfirm,signupPolo,...Object.values(signupDetails.fields)];}
+function signupError(field){
+ if(field.disabled||field.hidden||field.closest('[hidden]')||!field.required)return '';
+ const w=validationWords[lang()]||validationWords.pt;
+ if(!field.value.trim())return w[0];
+ if(field===signupEmail&&!validateSignupEmail(field.value))return w[1];
+ if(field===signupPassword&&field.value.length<8)return w[2];
+ if(field===signupConfirm&&(field.value.length<8||field.value!==signupPassword.value))return w[3];
+ if(field===signupName&&field.value.trim().length<2)return w[4];
+ if(!field.validity.valid)return w[0];
+ return '';
+}
+function displaySignupError(field,message){
+ let node=fieldErrors.get(field);
+ if(!node){node=document.createElement('small');node.setAttribute('role','alert');node.style.cssText='display:none;color:#dc2626;font-weight:700;font-size:13px;line-height:1.5;margin-top:4px';field.insertAdjacentElement('afterend',node);fieldErrors.set(field,node);}
+ node.textContent=message;node.style.display=message?'block':'none';
+ field.style.border=message?'2px solid #dc2626':'1px solid #8394b5';
+ field.style.boxShadow=message?'0 0 0 2px #dc262622':'none';
+ field.setAttribute('aria-invalid',message?'true':'false');
+}
+function checkSignupFields(focus=false){
+ let first=null;
+ for(const field of signupRequiredFields()){const error=signupError(field);displaySignupError(field,error);if(error&&!first)first=field;}
+ if(first&&focus){first.scrollIntoView({behavior:'smooth',block:'center'});first.focus({preventScroll:true});}
+ return !first;
+}
+for(const field of signupRequiredFields()){
+ field.addEventListener('input',()=>{if(fieldErrors.has(field))checkSignupFields();});
+ field.addEventListener('change',()=>{if(fieldErrors.has(field))checkSignupFields();});
+ field.addEventListener('blur',()=>displaySignupError(field,signupError(field)));
+}
+
 function localizeSignup(){
  const t=signupText();signupOpen.textContent=t.create;signupTitle.textContent=t.title;
  for(const [input,label] of [[signupName,t.name],[signupEmail,t.email],[signupPassword,t.password],[signupConfirm,t.confirm]]){input.placeholder=label;input.setAttribute('aria-label',label);}
@@ -432,11 +471,12 @@ function validateSignupEmail(value){
 }
 signupEmail.addEventListener('blur',()=>{
  signupEmail.setCustomValidity(validateSignupEmail(signupEmail.value)?'':'Confira o domínio do e-mail (ex.: .com, não .con).');
- signupEmail.reportValidity();
+ displaySignupError(signupEmail,signupError(signupEmail));
 });
 signupEmail.addEventListener('input',()=>signupEmail.setCustomValidity(''));
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
+ if(!checkSignupFields(true))return;
  if(!validateSignupEmail(signupEmail.value)){
   signupFeedback('Confira o endereço de e-mail. O domínio parece incorreto (ex.: .con em vez de .com).',true);
   signupEmail.focus();return;
