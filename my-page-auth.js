@@ -547,12 +547,13 @@ function showDialog(){
 
 async function renderYouthSignup(user,isAdmin,current){
   let container=byId('fju-youth-signup');
-  if(container&&container.parentElement!==myPage)byId('fju-account-member-note')?.insertAdjacentElement('afterend',container);
+  // Keep requests outside the profile pane, which is hidden on the account home.
+  if(container&&container.parentElement!==myPage)myPage.append(container);
   if(!container){
     container=document.createElement('section');
     container.id='fju-youth-signup';
     container.style.cssText='margin:16px 0;padding:16px;border:1px solid #dce2ed;border-radius:14px;background:#f8faff;color:#172033';
-    byId('fju-account-member-note')?.insertAdjacentElement('afterend',container);
+    myPage.append(container);
   }
   container.replaceChildren();
   container.hidden=isAdmin;
@@ -1027,7 +1028,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     if(!profile?.ativo || !['nacional','coordenador'].includes(profile.papel)){
       const requestSection=byId('fju-youth-signup');
       showView('account');
-      if(requestSection){feedback.insertAdjacentElement('afterend',requestSection);requestSection.hidden=false;}
+      if(requestSection){myPage.append(requestSection);requestSection.hidden=false;}
       const group=await renderYouthSignup(user,false,current);
       if(current!==updateSequence||passwordRecovery)return;
       if(!group){
@@ -1117,7 +1118,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         loginOpen.hidden=true;
         const signupSection=byId('fju-youth-signup');
         if(signupSection){
-          feedback.insertAdjacentElement('afterend',signupSection);
+          myPage.append(signupSection);
           signupSection.hidden=false;
           signupSection.style.setProperty('display','block','important');
           signupSection.style.setProperty('visibility','visible','important');
