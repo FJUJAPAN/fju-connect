@@ -34,7 +34,26 @@ function start(){
  let approvedVisits=[];
  const oneMonthLater=(dateText)=>{const [y,m,d]=dateText.split('-').map(Number);const last=new Date(y,m+1,0).getDate();const next=new Date(y,m,Math.min(d,last));return [next.getFullYear(),String(next.getMonth()+1).padStart(2,'0'),String(next.getDate()).padStart(2,'0')].join('-')};
  const approvedFirst=()=>{const key=person.value.trim().toLocaleLowerCase();return key?approvedVisits.find(v=>String(v.referencia_pessoa||'').trim().toLocaleLowerCase()===key&&v.primeira_data<=date.value&&date.value<oneMonthLater(v.primeira_data)):null};
- function updatePerson(){const choice=select.value,visitor=choice.startsWith('alma_');personFields.hidden=!visitor;person.required=visitor;personFields.querySelector('.fju-l-person').textContent=tr('personLabel');person.placeholder=tr('personPlaceholder');personHint.textContent=tr('personIntro');const first=approvedFirst();const second=select.querySelector('option[value="alma_segunda_mes"]'),third=select.querySelector('option[value="alma_terceira_mes"]');if(second)second.disabled=!first;if(third)third.disabled=!(first&&first.segunda_data&&first.segunda_data<=date.value)}
+ function syncExtraPersons(){
+  const desired=Math.max(0,Math.min(49,(Number(countInput.value)||1)-1));
+  while(extraPersons.children.length>desired)extraPersons.lastElementChild.remove();
+  while(extraPersons.children.length<desired){
+   const n=extraPersons.children.length+2,wrap=document.createElement('div'),label=document.createElement('label'),input=document.createElement('input');
+   input.type='text';input.id='fju-r-person-'+n;input.minLength=2;input.maxLength=50;input.autocomplete='off';input.required=true;input.placeholder=tr('personPlaceholder');label.htmlFor=input.id;
+   wrap.append(label,input);extraPersons.append(wrap);
+  }
+  [...extraPersons.children].forEach((wrap,index)=>{wrap.querySelector('label').textContent=tr('personNth')+' '+(index+2);wrap.querySelector('input').placeholder=tr('personPlaceholder')});
+ }
+ function updatePerson(){
+  const choice=select.value,visitor=choice.startsWith('alma_'),firstVisit=choice==='alma_primeira';
+  personFields.hidden=!visitor;person.required=visitor;countBox.hidden=!firstVisit;countInput.disabled=!firstVisit;
+  personFields.querySelector('.fju-l-person').textContent=firstVisit?tr('personNth')+' 1':tr('personLabel');
+  countBox.querySelector('label').textContent=tr('quantity');
+  person.placeholder=tr('personPlaceholder');personHint.textContent=tr('personIntro');
+  if(firstVisit)syncExtraPersons();else extraPersons.replaceChildren();
+  const first=approvedFirst(),second=select.querySelector('option[value="alma_segunda_mes"]'),third=select.querySelector('option[value="alma_terceira_mes"]');
+  if(second)second.disabled=!first;if(third)third.disabled=!(first&&first.segunda_data&&first.segunda_data<=date.value);
+ }
  const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  date.max=today();date.value=today();
  function labels(){
@@ -42,7 +61,7 @@ function start(){
   const previous=select.value;select.replaceChildren();types.forEach(([key,score],idx)=>{const op=document.createElement('option');op.value=key;op.textContent=i18n[lang()].labels[idx]+' — +'+score;select.append(op)});if(previous)select.value=previous;updatePerson();
  }
  labels();
- select.addEventListener('change',updatePerson);person.addEventListener('input',updatePerson);date.addEventListener('change',updatePerson);
+ select.addEventListener('change',updatePerson);person.addEventListener('input',updatePerson);date.addEventListener('change',updatePerson);countInput.addEventListener('change',()=>{if(countInput.checkValidity()){msg.textContent='';updatePerson()}else msg.textContent=tr('quantityInvalid')});
  const desc=(type)=>i18n[lang()].labels[Math.max(0,types.findIndex(x=>x[0]===type))]||type;
  function row(s){
   const li=document.createElement('li'),top=document.createElement('div'),activity=document.createElement('span'),state=document.createElement('span'),meta=document.createElement('div'),detailsLine=document.createElement('div');
