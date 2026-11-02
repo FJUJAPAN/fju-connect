@@ -1,4 +1,5 @@
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261102-1';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const lang=()=>{const raw=(document.getElementById('language')?.value||localStorage.getItem('fju_lang')||localStorage.getItem('fju_language')||document.documentElement.lang||'pt').toLowerCase();return raw.startsWith('ja')?'ja':raw.startsWith('en')?'en':'pt'};
 const labels={
@@ -56,7 +57,7 @@ function init(){
    const {data:{user},error:authErr}=await db.auth.getUser();
    if(authErr||!user){authorized=false;box.hidden=true;return;}
    const params={p_periodo:period,p_periodo_inicio:period==='mensal'&&months.value?months.value:null};
-   const {data,error}=await db.rpc('fju_ranking_meu_polo',params);
+   const {data,error}=await db.rpc('fju_ranking_meu_polo_com_foto',params);
    if(error){if(error.code==='42501'||/ranking_polo_acesso_negado/.test(error.message||'')){authorized=false;box.hidden=true;return}throw error}
    if(serial!==request)return;
    if(!data?.length){authorized=false;box.hidden=true;return}
@@ -70,7 +71,7 @@ function init(){
     place.className='fju-rank-position';place.textContent=Number(r.colocacao)+'º';
     name.className='fju-rank-name';name.textContent=r.nome;
     score.className='fju-rank-score';score.textContent=Number(r.pontos||0).toLocaleString(locale())+txt('points');
-    li.append(place,name,score);list.append(li);
+    li.append(place,criarAvatarRanking(db,r.usuario_id,{jovemId:r.jovem_id,privado:true}),name,score);list.append(li);
    }
   }catch(e){if(authorized){box.hidden=false;meta.textContent=txt('failed')}else box.hidden=true;console.warn('Ranking do polo indisponível',e)}
   finally{busy=false;}
