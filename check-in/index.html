@@ -153,22 +153,23 @@ function withTimeout(p,ms=10000){return Promise.race([p,new Promise((_,reject)=>
 async function init(){
  try{
  const {data:{session},error:sessionError}=await withTimeout(db.auth.getSession());if(sessionError||!session){showLogin();return;}
- const {data:{user:u},error:e}=await withTimeout(db.auth.getUser());if(e||!u){showLogin();return;}user=u;const preferred=u.user_metadata?.preferred_language;if(['pt','ja','en'].includes(preferred)){localStorage.setItem('fju_lang',preferred);localStorage.setItem('fju_language',preferred);applyLanguage();}await loadProfile().catch(()=>{});
+ const {data:{user:u},error:e}=await withTimeout(db.auth.getUser());if(e||!u){showLogin();return;}user=u;const preferred=u.user_metadata?.preferred_language;if(['pt','ja','en'].includes(preferred)){localStorage.setItem('fju_lang',preferred);localStorage.setItem('fju_language',preferred);applyLanguage();}const profileReady=loadProfile().catch(()=>{});
  const {data,error}=await withTimeout(db.from('fju_checkin_locais').select('slug,nome,latitude,longitude').order('nome'));
  if(error)throw error;locations=data||[];el('polo').replaceChildren();
  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione uma igreja';el('polo').append(placeholder);
  locations.forEach(p=>{const opt=document.createElement('option');opt.value=p.slug;opt.textContent=p.nome;el('polo').append(opt)});
  if(!locations.length){status('Nenhuma igreja liberada ainda. As coordenadas precisam ser verificadas pela administração.');return;}
- await setupNationalPreview();el('check').disabled=true;status('Conta conectada. Identificando automaticamente a igreja mais próxima…');detectChurch();
+ await setupNationalPreview(profileReady);el('check').disabled=true;status('Conta conectada. Identificando automaticamente a igreja mais próxima…');detectChurch();
  }catch(e){if(/auth session missing|session missing|jwt|refresh token/i.test(String(e.message||e))){showLogin();return;}el('church-detected').classList.remove('has-photo');el('church-detected').querySelector('.church-title').textContent='Não foi possível carregar as igrejas.';status('Falha ao carregar: '+(e?.message||'conexão indisponível')+'. Tente atualizar a página.');}
 }
 function showChurchPhoto(slug){const photo=el('church-photo');photo.style.display='none';if(!slug)return;photo.onerror=()=>{photo.style.display='none'};photo.onload=()=>{photo.style.display='block'};photo.src=slug==='gunma'?'https://jp.universaljp.org/wp-content/uploads/2026/10/GUNMA-FACHADA-2026-scaled.jpg':'./'+encodeURIComponent(slug)+'.jpg';}
-async function setupNationalPreview(){
+async function setupNationalPreview(profileReady){
  const panel=el('admin-preview'),testPanel=el('admin-test-card'),image=el('admin-test-image');
  panel.style.display='none';testPanel.style.display='none';
  try{
   const {data:role,error}=await db.from('fju_perfis').select('papel,ativo').eq('usuario_id',user.id).maybeSingle();
   if(error||role?.papel!=='nacional'||role?.ativo!==true)return;
+  await profileReady;
   const sel=el('preview-church'),photo=el('preview-photo'),info=el('preview-info');
   const prev=el('preview-prev'),next=el('preview-next'),refresh=el('preview-card');
   const modal=el('checkin-test-modal'),modalImage=el('test-modal-image'),modalTitle=el('test-modal-title');
