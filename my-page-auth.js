@@ -65,7 +65,7 @@ function showYouthPane(target=''){
   if(node)node.hidden=activeYouthPane!==pane;
  }
  if(activeYouthPane){
-  byId('fju-youth-subpage-title').textContent=youthPaneLabels[lang()][activeYouthPane];
+  byId('fju-youth-subpage-title').textContent=activeYouthPane==='profile'?(lang()==='ja'?'アカウント設定':lang()==='en'?'Account settings':'Configurações da conta'):youthPaneLabels[lang()][activeYouthPane];
  }
  if(dialog?.open)dialog.scrollTop=0;
 }
@@ -260,7 +260,7 @@ function localize(){
   byId('fju-account-role-value').textContent=t(lastRole||'member');
   localizeSignup();
   if(activeYouthPane)byId('fju-youth-subpage-title').textContent=youthPaneLabels[lang()][activeYouthPane];
-  byId('fju-youth-hero-edit')?.setAttribute('aria-label',t('youthProfile'));
+  byId('fju-youth-hero-edit')?.setAttribute('aria-label',lang()==='ja'?'アカウント設定':lang()==='en'?'Account settings':'Configurações da conta');
 }
 const signupLabels={
  pt:{create:'Criar minha conta',title:'Criar conta de jovem',name:'Nome completo',email:'E-mail',password:'Senha (mínimo 8 caracteres)',confirm:'Confirmar senha',submit:'Criar conta',back:'Voltar ao login',pending:'Conta criada! Confira seu e-mail para confirmar o cadastro. Depois entre na My Page e escolha seu polo e projetos.',active:'Conta criada! Vamos abrir sua My Page.',duplicate:'Este e-mail já está cadastrado. Entre com sua conta ou utilize outro e-mail.',error:'Não foi possível criar a conta: '},
@@ -415,8 +415,26 @@ function localizeSignup(){
 }
 signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
+function validateSignupEmail(value){
+ const email=String(value||'').trim().toLowerCase();
+ const parts=email.split('@');
+ if(parts.length!==2||!parts[0]||!parts[1]||/\s/.test(email))return false;
+ const domain=parts[1],labels=domain.split('.');
+ if(labels.length<2||labels.some(x=>!x||x.startsWith('-')||x.endsWith('-')||!/^[a-z0-9-]+$/.test(x)))return false;
+ const tld=labels[labels.length-1];
+ return /^[a-z]{2,24}$/.test(tld)&&!['con','cmo','comm','vom','cpm'].includes(tld);
+}
+signupEmail.addEventListener('blur',()=>{
+ signupEmail.setCustomValidity(validateSignupEmail(signupEmail.value)?'':'Confira o domínio do e-mail (ex.: .com, não .con).');
+ signupEmail.reportValidity();
+});
+signupEmail.addEventListener('input',()=>signupEmail.setCustomValidity(''));
 signupForm.addEventListener('submit',async event=>{
  event.preventDefault();
+ if(!validateSignupEmail(signupEmail.value)){
+  signupFeedback('Confira o endereço de e-mail. O domínio parece incorreto (ex.: .con em vez de .com).',true);
+  signupEmail.focus();return;
+ }
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
  const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:isCoordinatorSignup()?'FJU':signupGroup.value,requested_role:isCoordinatorSignup()?'coordenador':null,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
