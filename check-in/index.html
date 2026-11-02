@@ -4,14 +4,77 @@
 :root{font-family:system-ui,-apple-system,sans-serif;color:#f7f8ff;background:#0d1426}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,#24334e 0%,#131b2d 42%,#0b1220 90%)}a{color:#ff8599}header{display:flex;align-items:center;justify-content:space-between;padding:20px max(20px,calc((100vw - 760px)/2));border-bottom:1px solid #ffffff22}header strong{letter-spacing:.12em}main{max-width:760px;margin:auto;padding:38px 20px 185px}.eyebrow{color:#ff8599;font-weight:800;letter-spacing:.16em;font-size:12px}h1{font-size:clamp(34px,7vw,56px);margin:12px 0}p{line-height:1.6;color:#cbd3e6}.panel{background:#ffffff10;border:1px solid #ffffff28;border-radius:22px;padding:25px;margin-top:26px;box-shadow:0 20px 50px #0003}label{display:block;margin:20px 0 8px;font-weight:700}select,button{width:100%;min-height:52px;border-radius:12px;font-size:16px}select{background:#182641;color:white;border:1px solid #8490ac;padding:12px}button{border:0;background:linear-gradient(110deg,#e51d43,#b90f32);font-weight:850;color:#fff;margin-top:18px;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.status{min-height:50px;padding:12px 0;color:#e2e8f0}.small{font-size:13px}.card{margin-top:24px;border:1px solid #ffffff40;background:linear-gradient(145deg,#3c2472,#151b42 55%,#0a2037);padding:30px 22px;border-radius:24px;text-align:center;display:none}.card h2{font-size:32px}.card .mark{letter-spacing:.2em;color:#e8c5ff;font-weight:900}.card .check{font-size:44px;color:#e7a5f8}.card .name{font-size:24px;font-weight:850}.card .detail{color:#f0d8ff}.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#10192bf2;z-index:10;border-top:1px solid #ffffff35;padding:12px 8px calc(14px + env(safe-area-inset-bottom,0px));gap:8px}.bottom a{flex:1;text-align:center;font-size:12px;text-decoration:none;color:#d9d2ed}.bottom .active{color:#ff5a78;font-weight:900}
 #church-detected{min-height:26px;font-size:15px}#church-detected .church-title{display:block}#church-photo{display:none;width:100%;max-height:210px;object-fit:cover;border-radius:14px;margin:12px 0}
 @media(max-width:600px){main{padding-top:24px;padding-bottom:190px}#card-preview-wrap{margin-top:18px!important;padding:0 18px}#card-preview{max-width:390px!important}#share{max-width:390px;margin:18px auto 0}.bottom{z-index:10}}\nheader{background:#0b1220e8;min-height:66px}header a{text-decoration:none;font-size:14px;font-weight:700}h1{letter-spacing:-.035em}.panel{background:#141f31;border-color:#ffffff1b;box-shadow:0 14px 35px #0002}.bottom{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}#share{display:none;max-width:440px;margin:18px auto 0}#card-preview{box-shadow:0 12px 30px #0005}@media(max-width:600px){header{padding:14px 20px}main{padding-top:20px}h1{margin:8px 0;font-size:36px}.panel{padding:20px;margin-top:20px;border-radius:18px}.bottom a{font-size:11px;white-space:nowrap}#share{max-width:390px}}\nheader{gap:12px;flex-wrap:wrap}.checkin-langs{display:flex;gap:4px;margin-left:auto}.checkin-langs button{width:auto;min-height:32px;margin:0;padding:5px 9px;border:1px solid #ffffff33;border-radius:7px;background:#19283c;color:#dce3ed;font-size:12px}.checkin-langs button[aria-pressed="true"]{background:#e51d43;border-color:#e51d43;color:#fff}@media(max-width:600px){header{gap:8px}header strong{font-size:13px}.checkin-langs{order:3;width:100%;justify-content:center}}\n
-#admin-preview{display:none;margin-top:18px;padding:18px;border:1px solid #e51d4360;border-radius:16px;background:#14233a}#admin-preview select{margin-top:10px}#admin-preview img{display:none;width:100%;height:190px;object-fit:cover;border-radius:12px;margin-top:12px}#admin-preview .test-tag{font-size:12px;letter-spacing:.09em;color:#ffd08a;font-weight:850}
+#admin-preview{display:none;margin-top:18px;padding:22px;border:1px solid #e51d4360;border-radius:18px;background:#14233a}
+#admin-preview h2{font-size:clamp(21px,4vw,27px);margin:12px 0 6px}
+#admin-preview .test-tag{font-size:12px;letter-spacing:.09em;color:#ffd08a;font-weight:850}
+#admin-preview .preview-controls{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin:16px 0 10px}
+#admin-preview .preview-controls select{min-width:0;margin:0}
+#admin-preview .preview-controls button{width:auto;min-height:52px;margin:0;padding:9px 13px;background:#263c61;border:1px solid #ffffff44;font-size:14px}
+#admin-preview .preview-controls button:disabled,#checkin-test-modal button:disabled{opacity:.4}
+#admin-preview #preview-photo{display:none;width:100%;height:180px;object-fit:cover;border-radius:12px;margin:12px 0}
+#admin-preview #preview-info{min-height:23px;color:#dbe7ff}
+#admin-preview #preview-card{margin:12px 0 0}
+#admin-preview #admin-test-card{margin-top:18px;border-top:1px solid #ffffff30;padding-top:12px}
+#admin-preview #admin-test-card .test-card-hint{margin:0 0 8px;font-size:14px;color:#f1d3dc}
+#admin-preview #admin-test-image{display:block;width:100%;max-width:560px;height:auto;object-fit:contain;margin:0 auto;border-radius:14px;box-shadow:0 12px 38px #0008;cursor:zoom-in}
+#admin-preview .preview-test-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+#admin-preview .preview-test-actions button{flex:1 1 170px;width:auto;margin:0;min-height:48px;padding:10px 13px;font-size:14px}
+#admin-preview #preview-download{background:#263c61;border:1px solid #ffffff44}
+#checkin-test-modal{box-sizing:border-box;width:min(96vw,1120px);max-width:none;max-height:94dvh;padding:0;background:#0c1729;color:#fff;border:1px solid #ffffff5a;border-radius:18px;overflow:auto;box-shadow:0 25px 80px #000b}
+#checkin-test-modal::backdrop{background:#000d;backdrop-filter:blur(6px)}
+#checkin-test-modal .test-modal-header{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:13px 16px;background:#112139f7;border-bottom:1px solid #ffffff35}
+#checkin-test-modal .test-modal-header strong{font-size:16px;max-width:420px}
+#checkin-test-modal .test-modal-actions{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+#checkin-test-modal button{width:auto;min-height:42px;margin:0;padding:8px 12px;background:#283f61;border:1px solid #ffffff38;border-radius:9px;font-size:13px}
+#checkin-test-modal #test-modal-close{background:#c51d42;border:0}
+#checkin-test-modal .test-modal-body{text-align:center;padding:20px 16px 30px}
+#checkin-test-modal .test-modal-body p{margin:0 0 14px;color:#f7c9d6;font-size:13px}
+#checkin-test-modal #test-modal-image{display:block;width:100%;max-width:840px;height:auto;margin:auto;border-radius:12px;box-shadow:0 12px 30px #0007}
+#checkin-test-modal #test-modal-image.full-size{width:1080px;max-width:none}
+#checkin-test-modal .test-modal-image-scroll{width:100%;overflow:auto}
+@media(max-width:600px){#admin-preview{padding:15px}#admin-preview .preview-controls{grid-template-columns:1fr 1fr}#admin-preview .preview-controls select{grid-column:1/-1;grid-row:1}#admin-preview .preview-controls button{grid-row:2;width:100%;font-size:13px}#checkin-test-modal .test-modal-header{gap:9px}#checkin-test-modal .test-modal-header strong{width:100%}#checkin-test-modal .test-modal-actions{width:100%;justify-content:space-between}#checkin-test-modal button{font-size:12px;padding:8px}#checkin-test-modal .test-modal-body{padding:10px 9px 22px}}
 </style></head><body>
 <header><strong>FJU JAPAN</strong><a href="../">← Início</a><div class="checkin-langs" role="group" aria-label="Language"><button type="button" data-checkin-lang="pt">PT</button><button type="button" data-checkin-lang="ja">日本語</button><button type="button" data-checkin-lang="en">EN</button></div></header>
 <main><span class="eyebrow">FJU CONNECT • JAPAN</span><h1>Check-in <span aria-hidden="true">📍</span></h1><p>Registre sua presença quando estiver a até <strong>100 metros</strong> de uma igreja FJU com localização verificada.</p>
 <section class="panel"><strong>Presença na igreja</strong><p class="small">Entre na sua conta FJU Connect e permita o acesso à localização. O GPS precisa ter precisão de até 50 metros.</p>
 <img id="church-photo" alt="Fachada da igreja identificada" /><div id="church-detected" role="status" style="margin-top:16px;font-weight:700;color:#ff8599"><span class="church-title">Identificando sua igreja pelo GPS…</span></div><select id="polo" hidden aria-hidden="true"><option value="">Aguardando localização</option></select><button id="locate" type="button" style="display:none">Tentar localização novamente</button>
 <button id="check" disabled>Confirmar localização e fazer check-in</button><div id="status" class="status" role="status" aria-live="polite">Verificando sua conta…</div></section>
-<section id="admin-preview" aria-label="Modo teste Nacional"><div class="test-tag">MODO TESTE • NACIONAL — sem registrar presença</div><p>Escolha uma das 23 igrejas para conferir a fachada e o cartão sem GPS.</p><select id="preview-church" aria-label="Escolher igreja"><option value="">Selecione uma igreja</option></select><img id="preview-photo" alt="Foto da fachada da igreja"/><div id="preview-info" class="small" role="status"></div><button type="button" id="preview-card">Visualizar cartão de teste</button><div id="admin-test-card" style="display:none;margin-top:15px"><img id="admin-test-image" style="display:block;width:100%;border-radius:15px" alt="Cartão de teste, não é presença real"/></div></section>
+<section id="admin-preview" aria-label="Modo teste Nacional">
+ <div class="test-tag">MODO TESTE • NACIONAL — sem registrar presença</div>
+ <h2>Prévia dos cards de check-in</h2>
+ <p>Confira o cartão inteiro de cada igreja, amplie e passe para a próxima. Nenhum teste registra presença.</p>
+ <div class="preview-controls">
+  <button type="button" id="preview-prev" aria-label="Igreja anterior">← Anterior</button>
+  <select id="preview-church" aria-label="Escolher igreja"><option value="">Selecione uma igreja</option></select>
+  <button type="button" id="preview-next" aria-label="Próxima igreja">Próxima →</button>
+ </div>
+ <img id="preview-photo" alt="Foto da fachada da igreja selecionada"/>
+ <div id="preview-info" class="small" role="status" aria-live="polite"></div>
+ <button type="button" id="preview-card" disabled>Atualizar prévia do card</button>
+ <div id="admin-test-card" style="display:none">
+  <p class="test-card-hint">Card completo • Toque na imagem para ampliar</p>
+  <img id="admin-test-image" alt="Prévia completa do cartão de teste, sem registrar presença" tabindex="0" role="button" aria-label="Ampliar o card de teste"/>
+  <div class="preview-test-actions">
+   <button type="button" id="preview-expand">⛶ Ampliar card</button>
+   <button type="button" id="preview-download">↓ Salvar imagem de teste</button>
+  </div>
+ </div>
+</section>
+<dialog id="checkin-test-modal" aria-label="Card de check-in ampliado">
+ <div class="test-modal-header">
+  <strong id="test-modal-title">Card de teste</strong>
+  <div class="test-modal-actions">
+   <button type="button" id="test-modal-prev">← Anterior</button>
+   <button type="button" id="test-modal-next">Próxima →</button>
+   <button type="button" id="test-modal-zoom" aria-pressed="false">Tamanho real</button>
+   <button type="button" id="test-modal-close" aria-label="Fechar prévia ampliada">✕ Fechar</button>
+  </div>
+ </div>
+ <div class="test-modal-body">
+  <p>MODO TESTE • NÃO REGISTRA PRESENÇA</p>
+  <div class="test-modal-image-scroll"><img id="test-modal-image" alt="Card de teste ampliado"/></div>
+ </div>
+</dialog>
 <div id="card-preview-wrap" style="display:none;margin-top:22px"><img id="card-preview" alt="Prévia do card de check-in" style="display:block;width:100%;max-width:440px;margin:auto;border-radius:16px" /></div><button id="share" style="display:none">Compartilhar card</button><p class="small">A localização é solicitada automaticamente ao abrir o Check-in, mediante sua permissão. O GPS de celulares pode ser impreciso ou manipulado; o check-in não é uma prova absoluta de presença.</p>
 </main><nav class="bottom" aria-label="Navegação inferior"><a href="../">Início</a><a class="active" aria-current="page" href="./">Check-in</a><a href="../#my-page">My Page</a><a href="../encontre-a-fju/">Polos</a><a href="../#projetos">Projetos</a></nav>
 <script type="module">
@@ -90,7 +153,7 @@ function withTimeout(p,ms=10000){return Promise.race([p,new Promise((_,reject)=>
 async function init(){
  try{
  const {data:{session},error:sessionError}=await withTimeout(db.auth.getSession());if(sessionError||!session){showLogin();return;}
- const {data:{user:u},error:e}=await withTimeout(db.auth.getUser());if(e||!u){showLogin();return;}user=u;const preferred=u.user_metadata?.preferred_language;if(['pt','ja','en'].includes(preferred)){localStorage.setItem('fju_lang',preferred);localStorage.setItem('fju_language',preferred);applyLanguage();}loadProfile().catch(()=>{});
+ const {data:{user:u},error:e}=await withTimeout(db.auth.getUser());if(e||!u){showLogin();return;}user=u;const preferred=u.user_metadata?.preferred_language;if(['pt','ja','en'].includes(preferred)){localStorage.setItem('fju_lang',preferred);localStorage.setItem('fju_language',preferred);applyLanguage();}await loadProfile().catch(()=>{});
  const {data,error}=await withTimeout(db.from('fju_checkin_locais').select('slug,nome,latitude,longitude').order('nome'));
  if(error)throw error;locations=data||[];el('polo').replaceChildren();
  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Selecione uma igreja';el('polo').append(placeholder);
@@ -101,17 +164,95 @@ async function init(){
 }
 function showChurchPhoto(slug){const photo=el('church-photo');photo.style.display='none';if(!slug)return;photo.onerror=()=>{photo.style.display='none'};photo.onload=()=>{photo.style.display='block'};photo.src=slug==='gunma'?'https://jp.universaljp.org/wp-content/uploads/2026/10/GUNMA-FACHADA-2026-scaled.jpg':'./'+encodeURIComponent(slug)+'.jpg';}
 async function setupNationalPreview(){
- const panel=el('admin-preview');
- panel.style.display='none';
- el('admin-test-card').style.display='none';
+ const panel=el('admin-preview'),testPanel=el('admin-test-card'),image=el('admin-test-image');
+ panel.style.display='none';testPanel.style.display='none';
  try{
- const {data:role,error}=await db.from('fju_perfis').select('papel,ativo').eq('usuario_id',user.id).maybeSingle();
- if(error||role?.papel!=='nacional'||role?.ativo!==true)return;
- const sel=el('preview-church'),photo=el('preview-photo'),info=el('preview-info');
- panel.style.display='block';locations.forEach(p=>{const o=document.createElement('option');o.value=p.slug;o.textContent=p.nome;sel.append(o)});
- sel.onchange=()=>{const p=locations.find(x=>x.slug===sel.value);el('admin-test-card').style.display='none';photo.style.display='none';if(!p){info.textContent='';return;}info.textContent=p.nome+' — procurando foto aprovada…';photo.onload=()=>{photo.style.display='block';info.textContent=p.nome+' — foto disponível.'};photo.onerror=()=>{photo.style.display='none';info.textContent=p.nome+' — foto ainda não carregada no site.'};photo.src='./'+encodeURIComponent(p.slug)+'.jpg';};
- el('preview-card').onclick=async()=>{const p=locations.find(x=>x.slug===sel.value);if(!p)return;const stamp=new Date().toISOString(),lng=language();const old=last;last={name:profile.name||user.user_metadata?.name||'Jovem FJU',church:p.nome,date:new Date(stamp).toLocaleString('pt-BR',{timeZone:'Asia/Tokyo'}),timestamp:stamp,slug:p.slug,verse:verseForDay(stamp,p.slug),lng,avatar:profile.avatar||'',test:true};try{const c=await buildCard();el('admin-test-image').src=c.toDataURL('image/png');el('admin-test-card').style.display='block'}catch(e){info.textContent='Erro ao preparar cartão de teste.'}finally{last=old;}};
- }catch(e){console.warn('Prévia nacional indisponível',e)}
+  const {data:role,error}=await db.from('fju_perfis').select('papel,ativo').eq('usuario_id',user.id).maybeSingle();
+  if(error||role?.papel!=='nacional'||role?.ativo!==true)return;
+  const sel=el('preview-church'),photo=el('preview-photo'),info=el('preview-info');
+  const prev=el('preview-prev'),next=el('preview-next'),refresh=el('preview-card');
+  const modal=el('checkin-test-modal'),modalImage=el('test-modal-image'),modalTitle=el('test-modal-title');
+  let generation=0;
+  panel.style.display='block';
+  for(const p of locations){const option=document.createElement('option');option.value=p.slug;option.textContent=p.nome;sel.append(option);}
+  function updateNavigation(){
+   const i=locations.findIndex(p=>p.slug===sel.value);
+   prev.disabled=el('test-modal-prev').disabled=i<=0;
+   next.disabled=el('test-modal-next').disabled=i<0||i===locations.length-1;
+   refresh.disabled=i<0;
+  }
+  async function generate(){
+   const p=locations.find(x=>x.slug===sel.value),token=++generation;
+   testPanel.style.display='none';if(!p)return;
+   refresh.disabled=true;
+   info.textContent=p.nome+' — preparando card de teste…';
+   const stamp=new Date().toISOString(),lng=language();
+   const cardData={
+    name:(profile.name||user.user_metadata?.full_name||user.user_metadata?.name||'Jovem FJU').slice(0,80),
+    church:p.nome,
+    date:new Date(stamp).toLocaleString(lng==='ja'?'ja-JP':lng==='en'?'en-US':'pt-BR',{timeZone:'Asia/Tokyo',dateStyle:'long',timeStyle:'short'}),
+    timestamp:stamp,slug:p.slug,verse:verseForDay(stamp,p.slug),lng,
+    avatar:profile.avatar||'',test:true
+   };
+   try{
+    const canvas=await buildCard(cardData);
+    if(token!==generation)return;
+    const url=canvas.toDataURL('image/png');
+    image.src=url;
+    testPanel.style.display='block';
+    if(modal.open){modalImage.src=url;modalTitle.textContent='FJU '+p.nome+' • Modo teste';}
+    info.textContent=p.nome+' — card pronto para ampliar.';
+   }catch(e){
+    if(token!==generation)return;
+    info.textContent='Não foi possível gerar o card de '+p.nome+'.';
+    console.warn('Erro ao gerar card de teste',e);
+   }finally{if(token===generation)refresh.disabled=false;}
+  }
+  function move(step){
+   const i=locations.findIndex(x=>x.slug===sel.value);
+   const nextIndex=Math.max(0,Math.min(locations.length-1,i+step));
+   if(nextIndex!==i){sel.value=locations[nextIndex].slug;sel.dispatchEvent(new Event('change'));}
+  }
+  function openLarge(){
+   if(testPanel.style.display==='none'||!image.src)return;
+   modalTitle.textContent='FJU '+(locations.find(x=>x.slug===sel.value)?.nome||'')+' • Modo teste';
+   modalImage.src=image.src;
+   if(!modal.open)modal.showModal();
+  }
+  sel.onchange=()=>{
+   const p=locations.find(x=>x.slug===sel.value);
+   updateNavigation();photo.style.display='none';photo.removeAttribute('src');
+   if(!p){++generation;testPanel.style.display='none';info.textContent='';return;}
+   photo.onload=()=>{if(sel.value===p.slug)photo.style.display='block';};
+   photo.onerror=()=>{if(sel.value===p.slug){photo.style.display='none';info.textContent=p.nome+' — fachada não encontrada; card em modo teste disponível.';}};
+   photo.src='./'+encodeURIComponent(p.slug)+'.jpg';
+   void generate();
+  };
+  prev.onclick=()=>move(-1);next.onclick=()=>move(1);
+  el('test-modal-prev').onclick=()=>move(-1);
+  el('test-modal-next').onclick=()=>move(1);
+  refresh.onclick=()=>{void generate();};
+  el('preview-expand').onclick=openLarge;
+  image.onclick=openLarge;
+  image.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openLarge();}};
+  el('test-modal-close').onclick=()=>modal.close();
+  el('test-modal-zoom').onclick=()=>{
+   const zoomed=modalImage.classList.toggle('full-size');
+   el('test-modal-zoom').setAttribute('aria-pressed',String(zoomed));
+   el('test-modal-zoom').textContent=zoomed?'Ajustar à tela':'Tamanho real';
+  };
+  el('preview-download').onclick=()=>{
+   if(testPanel.style.display==='none'||!image.src)return;
+   const link=document.createElement('a');
+   link.href=image.src;link.download='fju-checkin-teste-'+sel.value+'.png';document.body.append(link);link.click();link.remove();
+  };
+  modal.addEventListener('keydown',event=>{
+   if(event.key==='ArrowLeft'){event.preventDefault();move(-1);}
+   if(event.key==='ArrowRight'){event.preventDefault();move(1);}
+  });
+  updateNavigation();
+  if(locations.length){sel.value=locations[0].slug;sel.dispatchEvent(new Event('change'));}
+ }catch(e){console.warn('Prévia nacional indisponível',e);}
 }
 function detectChurch(){
  if(!user||!locations.length)return;
@@ -153,7 +294,7 @@ el('check').addEventListener('click',()=>{
  finally{el('check').disabled=false;}
  },err=>{status('Não foi possível acessar o GPS: '+err.message);el('check').disabled=false;},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 });
-async function buildCard(){if(!last)return null;
+async function buildCard(cardData=last){if(!cardData)return null;const last=cardData;
  const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d'),red='#ed1740',navy='#071327';
  const bg=x.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#123a68');bg.addColorStop(.55,navy);bg.addColorStop(1,'#050a14');x.fillStyle=bg;x.fillRect(0,0,1080,1350);
  const churchPhoto=await imageLoad('./'+encodeURIComponent(last.slug)+'.jpg');
