@@ -59,7 +59,7 @@ function rank(){
    if(period==='mensal'&&!select.options.length)await months();
    const key=period==='semanal'?weekStart():(select.value||monthStart());
    const [score,cycle]=await Promise.all([
-    db.from('fju_ranking_snapshots').select('posicao,apelido,polo,pontos').eq('periodo',period).eq('periodo_inicio',key).order('posicao').order('apelido').limit(30),
+    db.from('fju_ranking_snapshots').select('posicao,apelido,polo,pontos').eq('periodo',period).eq('periodo_inicio',key).order('posicao').order('apelido').limit(1000),
     db.from('fju_ranking_ciclos').select('atualizado_em,fechado').eq('periodo',period).eq('periodo_inicio',key).maybeSingle()
    ]);
    if(stamp!==request)return;if(score.error)throw score.error;if(cycle.error)throw cycle.error;
