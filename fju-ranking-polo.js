@@ -27,7 +27,7 @@ const styles=document.createElement('style');styles.textContent=`
 #fju-local-rank .fju-local-national{display:inline-flex;margin-top:13px;color:#254c9c;font-weight:800;text-decoration:underline}
 `;document.head.append(styles);
 function init(){
- const host=document.getElementById('fju-youth-dashboard');
+ const host=document.getElementById('fju-ranking-polo-slot');
  if(!host||document.getElementById('fju-local-rank'))return;
  const box=document.createElement('section');box.id='fju-local-rank';box.hidden=true;box.setAttribute('aria-label','Ranking do meu polo');
  const title=document.createElement('h3'),subtitle=document.createElement('p');subtitle.className='fju-local-sub';
@@ -38,7 +38,7 @@ function init(){
  const historyLabel=document.createElement('label'),months=document.createElement('select');months.id='fju-local-month-select';historyLabel.htmlFor=months.id;history.append(historyLabel,months);
  const meta=document.createElement('p');meta.className='fju-local-meta';meta.setAttribute('role','status');
  const list=document.createElement('ol');
- const national=document.createElement('a');national.className='fju-local-national';national.href='https://fjujapan.github.io/fju-connect/#fju-ranking';
+ const national=document.createElement('a');national.className='fju-local-national';national.href='#fju-ranking';
  box.append(title,subtitle,tabs,history,meta,list,national);host.prepend(box);
  let period='semanal',busy=false,request=0,authorized=false;
  const setLabels=()=>{title.textContent=txt('title');subtitle.textContent=txt('subtitle');weekly.textContent=txt('week');monthly.textContent=txt('month');historyLabel.textContent=txt('choose');national.textContent=txt('national')};

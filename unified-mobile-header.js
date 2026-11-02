@@ -14,11 +14,12 @@ body>header:not(#fju-unified-top){display:none!important}
 #fju-unified-top::before,#fju-unified-top::after{content:none!important;display:none!important}
 #fju-unified-top *{box-sizing:border-box}
 #fju-unified-top .fju-logo{width:82px;height:43px;max-height:43px;object-fit:contain;object-position:left center;display:block}
-#fju-unified-top .fju-tools{display:flex;align-items:center;gap:5px;margin-left:auto}
+#fju-unified-top .fju-tools{display:flex;align-items:center;gap:3px;margin-left:auto}
 #fju-unified-top button{background:transparent;color:white;border:0;padding:3px;display:grid;place-items:center;cursor:pointer}
 #fju-unified-top svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #fju-unified-top .fju-avatar{width:30px;height:30px;object-fit:cover;border-radius:50%;border:1.5px solid #fff}
 #fju-unified-top .fju-lang{font-size:18px;min-width:30px;border:0;background:transparent;box-shadow:none}
+#fju-unified-top .fju-tools>a{width:30px;min-width:30px;height:34px;display:grid;place-items:center;color:white;text-decoration:none}
 #fju-unified-top .fju-panel{position:absolute;top:60px;right:10px;background:#0b2342;border:1px solid #ffffff40;border-radius:12px;padding:10px;box-shadow:0 12px 24px #0005;display:flex;flex-direction:column;gap:5px;min-width:190px}
 #fju-unified-top .fju-panel[hidden]{display:none}
 #fju-unified-top .fju-panel a,#fju-unified-top .fju-panel button{color:white;text-align:left;text-decoration:none;font:700 14px system-ui;padding:10px;display:block}
@@ -35,6 +36,7 @@ body>header:not(#fju-unified-top){display:none!important}
  <button type="button" data-action="search" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></button>
  <button type="button" class="fju-lang" data-action="language" aria-label="Idioma">🇧🇷</button>
  <button type="button" data-action="notifications" aria-label="Notificações"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button>
+ <a data-action="ranking" href="${new URL('ranking/',base)}" aria-label="Ranking" title="Ranking"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4H4v4a4 4 0 0 0 4 4M17 4h3v4a4 4 0 0 1-4 4M7 3h10v7a5 5 0 0 1-10 0z"/></svg></a>
  <a data-action="profile" href="${base.href}#my-page" aria-label="My Page"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></svg></a>
  <button type="button" data-action="menu" aria-label="Abrir menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
  </div><div class="fju-panel" hidden></div><form class="fju-search-box" hidden><input type="search" placeholder="Buscar no FJU Connect..." aria-label="Buscar"></form>`;
@@ -52,7 +54,7 @@ body>header:not(#fju-unified-top){display:none!important}
   if(action==='search'){if(isHome&&document.querySelector('#fju-search-toggle')){document.querySelector('#fju-search-toggle').click();panel.hidden=true;search.hidden=true;}else{panel.hidden=true;search.hidden=!search.hidden;if(!search.hidden)search.querySelector('input').focus();}}
   if(action==='language')show(Object.entries(langs).map(([code,flag])=>`<button type="button" data-lang="${code}">${flag} ${code.toUpperCase()}</button>`).join(''));
   if(action==='notifications'){const native=original.querySelector('#fju-notification-toggle');if(isHome&&native&&!native.hidden)native.click();else show('<p style="margin:8px;font:13px system-ui">As atualizações da sua conta aparecerão aqui.</p>');}
-  if(action==='menu')show(`<a href="${base.href}">Início</a><a href="${new URL('eventos/',base)}">Eventos</a><a href="${new URL('encontre-a-fju/',base)}">Polos</a><a href="${base.href}#projetos">Projetos</a><a href="${base.href}#my-page">My Page</a>`);
+  if(action==='menu')show(`<a href="${base.href}">Início</a><a href="${new URL('eventos/',base)}">Eventos</a><a href="${new URL('encontre-a-fju/',base)}">Polos</a><a href="${new URL('ranking/',base)}">🏆 Ranking</a><a href="${base.href}#projetos">Projetos</a><a href="${base.href}#my-page">My Page</a>`);
  });
  panel.addEventListener('click',e=>{const code=e.target.closest('[data-lang]')?.dataset.lang;if(code&&nativeSelect){nativeSelect.value=code;nativeSelect.dispatchEvent(new Event('change',{bubbles:true}));syncLang();panel.hidden=true;}});
  search.addEventListener('submit',e=>{e.preventDefault();const term=search.querySelector('input').value.trim();if(term)location.href=base.href+'?q='+encodeURIComponent(term);});

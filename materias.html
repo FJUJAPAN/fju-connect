@@ -32,4 +32,4 @@ try{const r=await db.rpc('fju_polos_materias_publicadas');if(!r.error)for(const 
 [...new Set(articles.map(a=>a.polo_id).filter(Boolean))].sort((a,b)=>(poloNames[a]||a).localeCompare(poloNames[b]||b)).forEach(id=>option(el('polo'),id,poloNames[id]||'Polo não identificado'));
 restoreFilters();render();
 }catch(e){el('grid').replaceChildren();el('grid').setAttribute('aria-busy','false');el('status').textContent=t().error+(e&&e.message?e.message:'');el('empty').hidden=true;el('more').hidden=true;}
-</script><script type="module" src="./unified-mobile-header.js?v=20261025-articles"></script></body></html>
+</script><script type="module" src="./unified-mobile-header.js?v=20261102-ranking-header-1"></script></body></html>

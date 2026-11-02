@@ -1,4 +1,4 @@
-import './fju-ranking-polo.js?v=20261102-3';
+import './fju-ranking-polo.js?v=20261102-ranking-page-1';
 import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261102-1';
 import './fju-solicitacoes-pontos.js?v=20261102-first-visit-only-1';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
@@ -34,7 +34,7 @@ const tokyoDate=()=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tok
 const monthStart=()=>{const today=tokyoDate();const date=new Date(today+'T12:00:00+09:00');date.setUTCDate(date.getUTCDate()+1);const next=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);const part=k=>next.find(x=>x.type===k).value;const nextMonth=part('year')+'-'+part('month');const hour=Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',hour:'2-digit',hourCycle:'h23'}).format(new Date()));return hour>=22&&nextMonth!==today.slice(0,7)?nextMonth+'-01':today.slice(0,7)+'-01'};
 function weekStart(){const date=new Date(tokyoDate()+'T12:00:00+09:00');date.setUTCDate(date.getUTCDate()-(date.getUTCDay()+6)%7);const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);const part=k=>p.find(x=>x.type===k).value;return part('year')+'-'+part('month')+'-'+part('day')}
 function rank(){
- const main=document.querySelector('main');if(!main)return;
+ const main=document.getElementById('fju-ranking-mount');if(!main)return;
  const section=document.createElement('section');section.id='fju-ranking';
  section.innerHTML='<div class="inner"><span style="color:#ec79a1;font-weight:900">🏆 FJU CONNECT JAPAN</span><h2>Ranking de participação</h2><p class="muted">Check-in, comentários, matérias publicadas e compartilhamentos declarados no Facebook.</p><div class="tabs"><button type="button" data-period="semanal" aria-pressed="true">Semanal</button><button type="button" data-period="mensal" aria-pressed="false">Mensal e histórico</button></div><label for="fju-rank-month" id="fju-month-label" hidden>Escolha o mês: </label><select id="fju-rank-month" hidden></select><p id="fju-rank-meta" class="muted" aria-live="polite">Carregando ranking…</p><ol id="fju-rank-list"></ol><p class="muted">Atualização <b>em tempo real</b>. Fechamento mensal às <b>22:00 do último dia (Japão)</b>, com histórico preservado. Os nomes são abreviados.</p></div>';
  main.append(section);
