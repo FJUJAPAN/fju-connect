@@ -38,7 +38,7 @@ function init(){
  const historyLabel=document.createElement('label'),months=document.createElement('select');months.id='fju-local-month-select';historyLabel.htmlFor=months.id;history.append(historyLabel,months);
  const meta=document.createElement('p');meta.className='fju-local-meta';meta.setAttribute('role','status');
  const list=document.createElement('ol');
- const national=document.createElement('a');national.className='fju-local-national';national.href=new URL('ranking/',import.meta.url).href;
+ const national=document.createElement('a');national.className='fju-local-national';national.href='#fju-ranking';
  box.append(title,subtitle,tabs,history,meta,list,national);host.prepend(box);
  let period='semanal',busy=false,request=0,authorized=false;
  const setLabels=()=>{title.textContent=txt('title');subtitle.textContent=txt('subtitle');weekly.textContent=txt('week');monthly.textContent=txt('month');historyLabel.textContent=txt('choose');national.textContent=txt('national')};
