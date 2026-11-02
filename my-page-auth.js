@@ -455,7 +455,7 @@ signupForm.addEventListener('submit',async event=>{
    else await finishChurchGroupSignup(data.user,details,photo);
    signupForm.reset();syncSignupGroup();await loadAccount();setFeedback(isYouthSignup()?'Conta e inscrição enviadas ao coordenador!':'Conta da igreja criada!');
   }else{
-   signupForm.reset();syncSignupGroup();showView('login');setFeedback('Conta criada! Confirme seu e-mail e entre na My Page para concluir o cadastro.');
+   signupForm.reset();syncSignupGroup();showView('login');setFeedback('Cadastro recebido! Enviamos um link de confirmação para '+details.email+'. Abra o e-mail (verifique também Spam/Lixo eletrônico), clique no link e só então entre na My Page. Sem confirmação, o acesso não será liberado.');
   }
  }catch(error){
   if(created){
