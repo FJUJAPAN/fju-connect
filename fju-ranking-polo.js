@@ -26,7 +26,7 @@ const styles=document.createElement('style');styles.textContent=`
 #fju-local-rank .fju-local-national{display:inline-flex;margin-top:13px;color:#254c9c;font-weight:800;text-decoration:underline}
 `;document.head.append(styles);
 function init(){
- const host=document.getElementById('inicio')||document.getElementById('fju-youth-dashboard');
+ const host=document.getElementById('fju-youth-dashboard');
  if(!host||document.getElementById('fju-local-rank'))return;
  const box=document.createElement('section');box.id='fju-local-rank';box.hidden=true;box.setAttribute('aria-label','Ranking do meu polo');
  const title=document.createElement('h3'),subtitle=document.createElement('p');subtitle.className='fju-local-sub';
