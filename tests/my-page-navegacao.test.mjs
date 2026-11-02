@@ -5,6 +5,7 @@ const base=new URL('../',import.meta.url);
 const js=readFileSync(new URL('my-page-auth.js',base),'utf8');
 const html=readFileSync(new URL('index.html',base),'utf8');
 const css=readFileSync(new URL('my-page-iphone.css',base),'utf8');
+const requests=readFileSync(new URL('fju-solicitacoes-pontos.js',base),'utf8');
 
 test('habilita a aparência iPhone na tela autenticada',()=>{
  assert.match(js,/dialog\.dataset\.fjuView=view;/);
@@ -53,4 +54,12 @@ test('alteração de senha na My Page tem confirmação e tradução',()=>{
  for(const translation of ["profileSecurityTitle:'Segurança da conta'","profileSecurityTitle:'アカウントのセキュリティ'","profileSecurityTitle:'Account security'"]){
   assert.ok(js.includes(translation));
  }
+});
+
+test('idioma preferido da conta também sincroniza o formulário de pontos',()=>{
+ assert.match(js,/if\(localeSelect\)\{localeSelect\.value=savedLanguage;localeSelect\.dispatchEvent\(new Event\('change',\{bubbles:true\}\)\);\}/);
+ assert.match(requests,/let renderedLanguage='';/);
+ assert.match(requests,/new MutationObserver\(syncLanguage\)/);
+ assert.match(requests,/window\.addEventListener\('pageshow',syncLanguage\)/);
+ assert.match(html,/fju-pontos-ranking\.js\?v=20261102-idioma-pontos-1/);
 });
