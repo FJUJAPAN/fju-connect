@@ -1,5 +1,5 @@
 import './fju-ranking-polo.js?v=20261102-2';
-import './fju-solicitacoes-pontos.js?v=20261102-1';
+import './fju-solicitacoes-pontos.js?v=20261102-visitor-cycle-1';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const style=document.createElement('style');style.textContent=`
