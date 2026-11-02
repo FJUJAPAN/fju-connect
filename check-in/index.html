@@ -99,7 +99,7 @@ async function init(){
  await setupNationalPreview();el('check').disabled=true;status('Conta conectada. Identificando automaticamente a igreja mais próxima…');detectChurch();
  }catch(e){if(/auth session missing|session missing|jwt|refresh token/i.test(String(e.message||e))){showLogin();return;}el('church-detected').classList.remove('has-photo');el('church-detected').querySelector('.church-title').textContent='Não foi possível carregar as igrejas.';status('Falha ao carregar: '+(e?.message||'conexão indisponível')+'. Tente atualizar a página.');}
 }
-function showChurchPhoto(slug){const photo=el('church-photo');photo.style.display='none';if(!slug)return;photo.onerror=()=>{photo.style.display='none'};photo.onload=()=>{photo.style.display='block'};photo.src='./'+encodeURIComponent(slug)+'.jpg';}
+function showChurchPhoto(slug){const photo=el('church-photo');photo.style.display='none';if(!slug)return;photo.onerror=()=>{photo.style.display='none'};photo.onload=()=>{photo.style.display='block'};photo.src=slug==='gunma'?'https://jp.universaljp.org/wp-content/uploads/2026/10/GUNMA-FACHADA-2026-scaled.jpg':'./'+encodeURIComponent(slug)+'.jpg';}
 async function setupNationalPreview(){
  const panel=el('admin-preview');
  panel.style.display='none';
