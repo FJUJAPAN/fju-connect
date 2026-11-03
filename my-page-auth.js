@@ -1136,7 +1136,11 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     const adminTile=byId('fju-youth-admin-tile');
     if(adminTile){
       adminTile.hidden=!verifiedAdmin;
-      if(verifiedAdmin)adminTile.href=adminButton?.href||'https://fjujapan.github.io/fju-connect-admin/';
+      if(verifiedAdmin){
+        adminTile.href='https://fjujapan.github.io/fju-connect-admin/';
+        const label=adminTile.querySelector('[data-fju-auth-i18n="youthAdmin"]');
+        if(label){label.removeAttribute('data-fju-auth-i18n');label.textContent=profile.papel==='coordenador'?(lang()==='ja'?'コーディネーター管理画面':lang()==='en'?'Coordinator Panel':'Painel de Coordenador'):(lang()==='ja'?'全国管理画面':lang()==='en'?'National Panel':'Painel Nacional');}
+      }
     }
     // Do not advertise unimplemented saved articles.
     const savedTile=dialog.querySelector('[data-fju-youth-panel="saved"]');
@@ -1153,13 +1157,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     showYouthPane();
     // Administrative roles use the standalone dashboard; never embed an iframe in MY PAGE.
     renderUnifiedCoordinatorPage(false);
-    if(false && verifiedAdmin && navigateAdmin && !passwordRecovery){
-      const dashboardUrl='https://fjujapan.github.io/fju-connect-admin/';
-      if(window.location.pathname.indexOf('/fju-connect-admin/')===-1){
-        window.location.assign(dashboardUrl);
-        return;
-      }
-    }
+
   }catch(e){
     if(current!==updateSequence||passwordRecovery)return;
     // A post-login profile/RPC failure must not be mistaken for invalid credentials.
