@@ -1153,7 +1153,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     showYouthPane();
     // Administrative roles use the standalone dashboard; never embed an iframe in MY PAGE.
     renderUnifiedCoordinatorPage(false);
-    if(verifiedAdmin && navigateAdmin && !passwordRecovery){
+    if(false && verifiedAdmin && navigateAdmin && !passwordRecovery){
       const dashboardUrl='https://fjujapan.github.io/fju-connect-admin/';
       if(window.location.pathname.indexOf('/fju-connect-admin/')===-1){
         window.location.assign(dashboardUrl);
@@ -1198,12 +1198,12 @@ async function openAccount(){
     showView('account');
     showDialog();
     // Refresh the request status while preserving the visible completion form.
-    void loadAccount({keepAccountVisible:true,navigateAdmin:true});
+    void loadAccount({keepAccountVisible:true});
     return;
   }
   // Only a deliberate My Page click may open the leadership dashboard.
   // Background session checks must keep the FJU homepage visible.
-  await loadAccount({navigateAdmin:true});
+  await loadAccount();
   if(lastRole==='national'||lastRole==='coordinator')return;
   showDialog();
 }
@@ -1237,7 +1237,7 @@ loginForm.addEventListener('submit',async event=>{
     });
     if(error)throw error;
     loginForm.reset();
-    await loadAccount({navigateAdmin:true});
+    await loadAccount();
     // loadAccount reports authorization or recovery state; do not overwrite it with success.
   }catch(e){
     loginForm.reset();
