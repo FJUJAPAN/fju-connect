@@ -530,8 +530,8 @@ function showView(view){
   for(const [id,node] of forms)node.hidden=view!==id;
   // Initial screen offers both options, without showing credentials until Login is chosen.
   if(view==='login')loginForm.hidden=true;
-  signupOpen.hidden=view!=='login'&&view!=='account';
-  loginOpen.hidden=view!=='login'&&view!=='account';
+  signupOpen.hidden=view!=='login';
+  loginOpen.hidden=view!=='login';
   const labels={pt:['Criar conta / Solicitar acesso','Entrar / Login'],ja:['アカウント作成・アクセス申請','ログイン'],en:['Create account / Request access','Sign in / Login']};
   const words=labels[lang()]||labels.pt;
   signupOpen.textContent=words[0];loginOpen.textContent=words[1];
