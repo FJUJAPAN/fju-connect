@@ -68,11 +68,23 @@ function rank(){
    const last=cycle.data?.atualizado_em?new Date(cycle.data.atualizado_em).toLocaleString(locale(),{timeZone:'Asia/Tokyo'}):'—';
    meta.textContent=(period==='semanal'?t('week'):t('month'))+key.slice(8)+'/'+key.slice(5,7)+'/'+key.slice(0,4)+(cycle.data?.fechado?t('closedMeta'):'')+t('updated')+last+' JST';
    if(!score.data?.length){const item=document.createElement('li');item.textContent=t('empty');list.append(item);return;}
+   let rankPhotos={};
+   try{
+    const photoResponse=await fetch('https://hmacroktklgwkofxsygv.supabase.co/functions/v1/fju-ranking-fotos',{
+     method:'POST',headers:{'Content-Type':'application/json','apikey':'sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ'},
+     body:JSON.stringify({periodo:period,inicio:key})
+    });
+    if(photoResponse.ok)rankPhotos=(await photoResponse.json()).photos||{};
+   }catch(_){}
+   if(stamp!==request)return;
    for(const item of score.data){
     const li=document.createElement('li'),place=document.createElement('span'),name=document.createElement('span'),points=document.createElement('span');
     place.className='place';place.textContent=item.posicao+'º';name.className='name';name.textContent=item.apelido;
     if(item.polo){const small=document.createElement('small');small.textContent='FJU '+item.polo;name.append(small);}
-    points.className='points';points.textContent=fmt(item.pontos)+t('points');li.append(place,criarAvatarRanking(db,item.usuario_id),name,points);list.append(li);
+    points.className='points';points.textContent=fmt(item.pontos)+t('points');const avatar=criarAvatarRanking(db,item.usuario_id);
+    const photoUrl=rankPhotos[item.usuario_id];
+    if(photoUrl){const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='lazy';img.src=photoUrl;img.onerror=()=>{img.remove()};avatar.append(img);}
+    li.append(place,avatar,name,points);list.append(li);
    }
   }catch(e){if(stamp===request)meta.textContent=t('failed');}
  }
