@@ -26,7 +26,7 @@ function verificaImagem(url,wrap){
   img.src=url;
  });
 }
-export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false}={}){
+export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false,fotoUrl=''}={}){
  const wrap=document.createElement('span');
  wrap.className='fju-rank-avatar';
  wrap.setAttribute('aria-hidden','true');
@@ -34,6 +34,7 @@ export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false}={})
  fallback.className='fju-rank-avatar-fallback';
  fallback.textContent='👤';
  wrap.append(fallback);
+ if(fotoUrl){void verificaImagem(fotoUrl,wrap);return wrap;}
  if(!idPattern.test(String(usuarioId||'')))return wrap;
  let started=false;
  const carrega=async()=>{
