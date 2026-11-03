@@ -81,9 +81,7 @@ function rank(){
     const li=document.createElement('li'),place=document.createElement('span'),name=document.createElement('span'),points=document.createElement('span');
     place.className='place';place.textContent=item.posicao+'º';name.className='name';name.textContent=item.apelido;
     if(item.polo){const small=document.createElement('small');small.textContent='FJU '+item.polo;name.append(small);}
-    points.className='points';points.textContent=fmt(item.pontos)+t('points');const avatar=criarAvatarRanking(db,item.usuario_id);
-    const photoUrl=rankPhotos[item.usuario_id];
-    if(photoUrl){const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='lazy';img.src=photoUrl;img.onerror=()=>{img.remove()};avatar.append(img);}
+    points.className='points';points.textContent=fmt(item.pontos)+t('points');const avatar=criarAvatarRanking(db,item.usuario_id,{fotoUrl:rankPhotos[item.usuario_id]||''});
     li.append(place,avatar,name,points);list.append(li);
    }
   }catch(e){if(stamp===request)meta.textContent=t('failed');}
