@@ -246,6 +246,27 @@ function renderHeaderAccount(user=null){
 let updateSequence=0;
 function lang(){return ['ja','en','pt'].includes(localeSelect?.value)?localeSelect.value:'pt';}
 function t(key){return translations[lang()][key]||translations.pt[key]||key;}
+// Visual confirmation card after signup: email verification is required before coordinator approval.
+const signupEmailCard=document.createElement('section');
+signupEmailCard.id='fju-signup-email-confirmation';
+signupEmailCard.hidden=true;
+signupEmailCard.setAttribute('role','status');
+signupEmailCard.style.cssText='margin:16px 0;padding:22px 18px;border:1px solid #8dc8ef;border-radius:22px;background:linear-gradient(145deg,#eaf7ff,#fff);color:#17385e;text-align:center;box-shadow:0 12px 30px rgba(18,67,117,.12)';
+signupEmailCard.innerHTML='<div aria-hidden="true" style="position:relative;display:grid;place-items:center;width:92px;height:92px;margin:0 auto 14px;border-radius:25px;background:linear-gradient(135deg,#1677d2,#5bb8ef);box-shadow:0 9px 18px #1677d244"><svg width="58" height="58" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="7" y="16" width="50" height="34" rx="7" fill="white"/><path d="M9 21L32 37L55 21" stroke="#1978ce" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="49" cy="46" r="12" fill="#16a66a" stroke="white" stroke-width="3"/><path d="M44 46l4 4 7-8" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 data-email-card-title style="font-size:22px;margin:0 0 8px"></h3><p data-email-card-description style="font-size:15px;line-height:1.55;margin:0 0 10px"></p><p data-email-card-address style="font-weight:700;overflow-wrap:anywhere;margin:0 0 12px"></p><p data-email-card-tip style="font-size:13px;line-height:1.5;margin:0;color:#526b87"></p>';
+feedback.parentElement.insertBefore(signupEmailCard,feedback);
+function showSignupEmailCard(email){
+ const l=(typeof localeSelect!=='undefined'&&localeSelect?.value)||localStorage.getItem('fju_lang')||'pt';
+ const copy={
+ pt:['Confira seu e-mail!','Enviamos um link de confirmação. Abra sua caixa de entrada e toque no link para continuar.','Não encontrou? Confira Spam ou Lixo eletrônico. Depois da confirmação, entre na My Page para enviar sua solicitação ao coordenador.'],
+ ja:['メールを確認してください！','確認用リンクをメールで送りました。受信箱を開き、リンクを押して続行してください。','届かない場合は迷惑メールも確認してください。確認後、My Pageにログインして担当者への申請を完了してください。'],
+ en:['Check your email!','We sent a confirmation link. Open your inbox and tap the link to continue.','Cannot find it? Check Spam or Junk. After confirmation, sign in to My Page to complete your coordinator access request.']
+ }[l]||['Confira seu e-mail!','Enviamos um link de confirmação.','Confira também o Spam.'];
+ signupEmailCard.querySelector('[data-email-card-title]').textContent=copy[0];
+ signupEmailCard.querySelector('[data-email-card-description]').textContent=copy[1];
+ signupEmailCard.querySelector('[data-email-card-address]').textContent=email;
+ signupEmailCard.querySelector('[data-email-card-tip]').textContent=copy[2];
+ signupEmailCard.hidden=false;
+}
 function setFeedback(message='',error=false){
   feedback.textContent=message;
   feedback.classList.toggle('error',error);
@@ -504,7 +525,7 @@ signupForm.addEventListener('submit',async event=>{
    else await finishChurchGroupSignup(data.user,details,photo);
    signupForm.reset();syncSignupGroup();await loadAccount();setFeedback(isYouthSignup()?'Conta e inscrição enviadas ao coordenador!':'Conta da igreja criada!');
   }else{
-   signupForm.reset();syncSignupGroup();showView('login');setFeedback('Cadastro recebido! Enviamos um link de confirmação para '+details.email+'. Abra o e-mail (verifique também Spam/Lixo eletrônico), clique no link e só então entre na My Page. Sem confirmação, o acesso não será liberado.');
+   signupForm.reset();syncSignupGroup();showView('login');setFeedback('');showSignupEmailCard(details.email);
   }
  }catch(error){
   if(created){
@@ -517,6 +538,7 @@ signupForm.addEventListener('submit',async event=>{
 });
 
 function showView(view){
+  if(view!=='login')signupEmailCard.hidden=true;
   // The loading view must never be presented to the user.
   if(view==='loading')return;
   dialog.dataset.fjuView=view;
