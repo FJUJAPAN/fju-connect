@@ -54,6 +54,7 @@ const youthPaneLabels={
 };
 let activeYouthPane='';
 function showYouthPane(target=''){
+ if(target==='profile')void setupYouthProfileEdit();
  setupMyPagePhotoUpload();
  const valid=['profile','interactions','saved'];
  activeYouthPane=valid.includes(target)?target:'';
@@ -1402,4 +1403,47 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
   })();
 }else{
   void loadAccount();
+}
+
+
+/* Self-service youth profile changes: requests only, never direct updates. */
+async function setupYouthProfileEdit(){
+ const pane=byId('fju-youth-profile-pane');
+ if(!pane)return;
+ let root=byId('fju-youth-profile-edit');
+ if(!root){
+  root=document.createElement('section');root.id='fju-youth-profile-edit';
+  root.style.cssText='background:#fff;color:#18294b;padding:18px;border-radius:16px;margin:18px 0;border:1px solid #dce3ef';
+  root.innerHTML='<h3>Solicitar alteração da minha ficha</h3><p>As alterações só aparecem na ficha após aprovação do coordenador do seu polo.</p><form id="fju-youth-edit-form" style="display:grid;gap:10px"><label>Data de nascimento<input name="nascimento" type="date"></label><label>Batismo nas águas<input name="batismo_aguas" type="date"></label><label>Batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label><label>Projetos (até 5, separados por vírgula)<input name="projetos" type="text" placeholder="Esporte, Cultura, HELP"></label><label>Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000"></textarea></label><button type="submit" style="padding:13px;background:#173b76;color:white;border:0;border-radius:10px">Enviar para aprovação</button></form><p id="fju-youth-edit-status" role="status"></p>';
+  pane.append(root);
+  root.querySelector('form').addEventListener('submit',async event=>{
+   event.preventDefault();
+   const form=event.currentTarget,button=form.querySelector('button'),status=byId('fju-youth-edit-status');
+   const data=Object.fromEntries(new FormData(form));
+   const projects=data.projetos.split(',').map(x=>x.trim()).filter(Boolean);
+   if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
+   const payload={nascimento:data.nascimento||null,batismo_aguas:data.batismo_aguas||null,batismo_espirito_santo:data.batismo_espirito_santo||null,projetos:projects,testemunho:data.testemunho||''};
+   button.disabled=true;status.textContent='Enviando...';
+   try{
+    const {error}=await client.rpc('fju_solicitar_edicao_meu_perfil',{p_dados:payload});
+    if(error)throw error;
+    status.textContent='Solicitação enviada ao coordenador. Sua ficha permanece inalterada até a aprovação.';
+   }catch(e){status.textContent='Não foi possível enviar: '+e.message;}
+   finally{button.disabled=false;}
+  });
+ }
+ const {data:{user}}=await client.auth.getUser();
+ if(!user){root.hidden=true;return;}
+ const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
+ if(linkError||!links?.length){root.hidden=true;return;}
+ root.hidden=false;
+ const {data:records,error}=await client.from('fju_jovens').select('nascimento,batismo_aguas,batismo_espirito_santo,projetos,testemunho').eq('id',links[0].jovem_id).maybeSingle();
+ if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
+ const form=root.querySelector('form');
+ for(const key of ['nascimento','batismo_aguas','batismo_espirito_santo','testemunho'])form.elements[key].value=records[key]||'';
+ form.elements.projetos.value=(records.projetos||[]).join(', ');
+ const {data:pending}=await client.from('fju_edicoes_perfil_jovem').select('id').eq('jovem_id',links[0].jovem_id).eq('status','pendente').limit(1);
+ const blocked=Boolean(pending?.length);
+ form.querySelector('button').disabled=blocked;
+ byId('fju-youth-edit-status').textContent=blocked?'Você já tem uma solicitação aguardando aprovação.':'';
 }
