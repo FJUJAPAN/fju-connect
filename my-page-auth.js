@@ -1142,6 +1142,23 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         if(label){label.removeAttribute('data-fju-auth-i18n');label.textContent=profile.papel==='coordenador'?(lang()==='ja'?'コーディネーター管理画面':lang()==='en'?'Coordinator Panel':'Painel de Coordenador'):(lang()==='ja'?'全国管理画面':lang()==='en'?'National Panel':'Painel Nacional');}
       }
     }
+    // Always expose the coordinator dashboard from the visible MY PAGE home.
+    // This independent shortcut survives older/cached dashboard layouts on mobile.
+    const hero=byId('fju-youth-dashboard');
+    if(hero){
+      let shortcut=byId('fju-my-page-admin-shortcut');
+      if(!shortcut){
+        shortcut=document.createElement('a');
+        shortcut.id='fju-my-page-admin-shortcut';
+        shortcut.href='https://fjujapan.github.io/fju-connect-admin/';
+        shortcut.style.cssText='display:block!important;box-sizing:border-box;width:100%;margin:16px 0;padding:17px 18px;border-radius:15px;background:#173b76;color:#fff;text-align:center;font-size:16px;font-weight:800;text-decoration:none';
+        shortcut.textContent='Painel do Coordenador →';
+        hero.prepend(shortcut);
+      }
+      shortcut.hidden=!verifiedAdmin;
+      shortcut.style.display=verifiedAdmin?'block':'none';
+      shortcut.textContent=lastRole==='national'?'Painel Nacional →':'Painel do Coordenador →';
+    }
     // Do not advertise unimplemented saved articles.
     const savedTile=dialog.querySelector('[data-fju-youth-panel="saved"]');
     if(savedTile)savedTile.hidden=true;
@@ -1154,7 +1171,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     localize();
     preferredLanguageUI();
     syncYouthHero(verifiedAdmin,churchGroup);
-    showYouthPane(verifiedAdmin?'profile':'');
+    showYouthPane('');
     // Personal account settings stay separate from privileged administrative functions.
     const profilePane=byId('fju-youth-profile-pane');
     if(profilePane){
