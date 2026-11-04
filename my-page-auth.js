@@ -257,8 +257,8 @@ feedback.parentElement.insertBefore(signupEmailCard,feedback);
 function showSignupEmailCard(email){
  const l=(typeof localeSelect!=='undefined'&&localeSelect?.value)||localStorage.getItem('fju_lang')||'pt';
  const copy={
- pt:['Confira seu e-mail!','Enviamos um link de confirmação. Abra sua caixa de entrada e toque no link para continuar.','Não encontrou? Confira Spam ou Lixo eletrônico. Depois da confirmação, entre na My Page para enviar sua solicitação ao coordenador.'],
- ja:['メールを確認してください！','確認用リンクをメールで送りました。受信箱を開き、リンクを押して続行してください。','届かない場合は迷惑メールも確認してください。確認後、My Pageにログインして担当者への申請を完了してください。'],
+ pt:['Confira seu e-mail!','Enviamos um link de confirmação. Abra sua caixa de entrada e toque no link para continuar.','Não encontrou? Confira Spam ou Lixo eletrônico. Depois da confirmação, você será direcionado automaticamente à My Page para completar sua ficha.'],
+ ja:['メールを確認してください！','確認用リンクをメールで送りました。受信箱を開き、リンクを押して続行してください。','届かない場合は迷惑メールも確認してください。確認後、自動的にMy Pageが開き、プロフィールを完成できます。'],
  en:['Check your email!','We sent a confirmation link. Open your inbox and tap the link to continue.','Cannot find it? Check Spam or Junk. After confirmation, sign in to My Page to complete your coordinator access request.']
  }[l]||['Confira seu e-mail!','Enviamos um link de confirmação.','Confira também o Spam.'];
  signupEmailCard.querySelector('[data-email-card-title]').textContent=copy[0];
@@ -411,14 +411,15 @@ function syncSignupGroup(){
  const youth=isYouthSignup();
  // A foto é obrigatória tanto para jovens quanto para os demais grupos.
  // Só os dados da ficha (nascimento, telefone e nacionalidade) são exclusivos da FJU.
- signupDetails.root.hidden=false;
+ const coordinator=isCoordinatorSignup();
+ signupDetails.root.hidden=youth&&!coordinator;
  for(const [key,field] of Object.entries(signupDetails.fields)){
-  field.required=key==='photo'||youth;
+  field.required=coordinator||(!youth&&key==='photo');
   if(key!=='photo')field.closest('label').style.display=youth?'grid':'none';
  }
- signupDetails.rank.hidden=!youth;
- signupPolo.hidden=!(youth||isCoordinatorSignup());signupProjects.hidden=!youth||isCoordinatorSignup();
- signupPolo.required=youth||isCoordinatorSignup();
+ signupDetails.rank.hidden=true;
+ signupPolo.hidden=youth&&!coordinator;signupProjects.hidden=true;
+ signupPolo.required=coordinator;
  if(!youth&&!signupInProgress)signupSubmit.disabled=false;
  signupTitle.textContent=isCoordinatorSignup()?({pt:'Cadastro de Coordenador FJU',ja:'FJUコーディネーター登録',en:'FJU Coordinator Registration'}[lang()]):youth?signupText().title:({pt:'Criar conta da igreja',ja:'教会アカウント登録',en:'Create church account'}[lang()]);
 }
@@ -482,7 +483,7 @@ function localizeSignup(){
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
  signupDetails.localize();syncSignupGroup();
 }
-signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
+signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');if(isCoordinatorSignup())void loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 function validateSignupEmail(value){
  const email=String(value||'').trim().toLowerCase();
@@ -506,24 +507,28 @@ signupForm.addEventListener('submit',async event=>{
   signupEmail.focus();return;
  }
  if(signupPassword.value!==signupConfirm.value){signupFeedback(t('passwordMismatch'),true);return;}
- const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:isCoordinatorSignup()?'FJU':signupGroup.value,requested_role:isCoordinatorSignup()?'coordenador':null,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
+ const coordinatorSignup=isCoordinatorSignup();
+ const youthSignup=signupGroup.value==='FJU'&&!coordinatorSignup;
+ const details={email:signupEmail.value.trim().toLowerCase(),name:signupName.value.trim(),group:coordinatorSignup?'FJU':signupGroup.value,requested_role:coordinatorSignup?'coordenador':null,polo:signupPolo.value,projects:[...signupProjects.querySelectorAll('input:checked')].map(x=>x.value),...signupDetails.values()};
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
  let created=false;
  try{
-  const photo=await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
+  const photo=youthSignup?null:await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
-   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro',requested_polo_id:isCoordinatorSignup()?details.polo:null,signup_details:isYouthSignup()?{name:details.name,polo:details.polo,projects:details.projects,birth:details.birth,phone:details.phone,nationality:details.nationality}:null},emailRedirectTo:window.location.origin+window.location.pathname}
+   options:{data:{full_name:details.name,signup_group:details.group,requested_role:details.requested_role||'membro',requested_polo_id:coordinatorSignup?details.polo:null,signup_details:null},emailRedirectTo:window.location.origin+window.location.pathname}
   });
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
   created=true;
-  sessionStorage.setItem(isCoordinatorSignup()?'fju-coordinator-pending-signup':isYouthSignup()?'fju-youth-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
+  if(youthSignup)localStorage.setItem('fju-open-my-page-after-email',details.email);
+  if(!youthSignup)sessionStorage.setItem(coordinatorSignup?'fju-coordinator-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
   if(data.session){
-   if(isCoordinatorSignup())await sendCoordinatorSignup(data.user,details,photo);
-   else if(isYouthSignup())await sendDetailedSignup(data.user,details,photo);
-   else await finishChurchGroupSignup(data.user,details,photo);
-   signupForm.reset();syncSignupGroup();await loadAccount();setFeedback(isYouthSignup()?'Conta e inscrição enviadas ao coordenador!':'Conta da igreja criada!');
+   if(coordinatorSignup)await sendCoordinatorSignup(data.user,details,photo);
+   else if(!youthSignup)await finishChurchGroupSignup(data.user,details,photo);
+   signupForm.reset();syncSignupGroup();await loadAccount();
+   if(youthSignup)setFeedback('Conta criada! Confirme seu e-mail para preencher sua ficha na My Page.');
+   else setFeedback('Conta criada!');
   }else{
    signupForm.reset();syncSignupGroup();showView('login');setFeedback('');showSignupEmailCard(details.email);
   }
@@ -531,6 +536,7 @@ signupForm.addEventListener('submit',async event=>{
   if(created){
    await loadAccount();setFeedback('Conta criada. Conclua sua inscrição na My Page: '+error.message,true);
   }else{
+   if(youthSignup)localStorage.removeItem('fju-open-my-page-after-email');
    const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
    signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
   }
@@ -566,6 +572,14 @@ function showView(view){
 }
 function showDialog(){
   if(!dialog.open)dialog.showModal();
+}
+
+function renderYouthWelcomeCard(container){
+ const old=container.querySelector('#fju-youth-welcome-card');if(old)old.remove();
+ const card=document.createElement('section');card.id='fju-youth-welcome-card';
+ card.style.cssText='margin-top:16px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#101f46,#284987);color:#fff;box-shadow:0 12px 28px #132b5630';
+ card.innerHTML='<div style="font-size:34px;line-height:1">🎉 🏆</div><h3 style="margin:10px 0 6px;color:#fff">Bem-vindo ao FJU CONNECT!</h3><p style="margin:0 0 14px;color:#e5edff;line-height:1.55">Sua jornada começa agora. Faça check-in quando estiver na igreja, participe das atividades e acumule pontos!</p><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0"><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">📍</div><strong style="font-size:12px">Check-in</strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">⭐</div><strong style="font-size:12px">Ganhe pontos</strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">🏆</div><strong style="font-size:12px">Ranking</strong></div></div><a href="regras-pontuacao.html" style="display:block;text-align:center;padding:13px;border-radius:10px;background:#fff;color:#17376e;font-weight:800;text-decoration:none">SAIBA MAIS — regras e pontuações →</a><p style="margin:12px 0 0;text-align:center;color:#dbe6ff;font-size:12px">Entre no FJU CONNECT e participe de tudo!</p>';
+ container.append(card);
 }
 
 async function renderYouthSignup(user,isAdmin,current){
@@ -609,7 +623,7 @@ async function renderYouthSignup(user,isAdmin,current){
         const check=document.createElement('input');check.type='checkbox';check.value=project;
         label.append(check,document.createTextNode(project));projects.append(label);
       }
-      const submit=document.createElement('button');submit.type='submit';submit.textContent='Enviar solicitação';submit.style.cssText='padding:12px;background:#253b75;color:white;border:0;border-radius:10px';
+      const submit=document.createElement('button');submit.type='submit';submit.textContent='Salvar ficha';submit.style.cssText='padding:12px;background:#253b75;color:white;border:0;border-radius:10px';
       form.append(name,details.root,polo,projects,submit);container.append(form);retry.remove();
       form.addEventListener('submit',async e=>{
         e.preventDefault();submit.disabled=true;status.textContent='Enviando solicitação…';
@@ -695,6 +709,7 @@ async function renderYouthSignup(user,isAdmin,current){
   if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){retry.remove();
     status.textContent=currentSignup.status==='aprovado'?'Cadastro aprovado pelo coordenador.':currentSignup.status==='rejeitado'?'Sua inscrição não foi aprovada. Fale com o coordenador do seu polo.':'Sua inscrição foi recebida. Aguarde a análise do coordenador do seu polo.';
+    renderYouthWelcomeCard(container);
     return;
   }
   if(existingError){status.textContent='Não foi possível verificar seu cadastro: '+existingError.message;return;}
@@ -715,7 +730,7 @@ async function renderYouthSignup(user,isAdmin,current){
     check.addEventListener('change',()=>{const selected=projects.querySelectorAll('input:checked');if(selected.length>4){check.checked=false;status.textContent='Você pode solicitar no máximo quatro projetos.';}});
     label.append(check,document.createTextNode(project));projects.append(label);
   }
-  const button=document.createElement('button');button.type='submit';button.textContent='Enviar solicitação';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
+  const button=document.createElement('button');button.type='submit';button.textContent='Salvar ficha';button.style.cssText='padding:12px;border:0;border-radius:10px;background:#253b75;color:white;font-weight:700';
   const details=createSignupDetails();
   name.value=pending?.name||user.user_metadata?.full_name||'';
   polo.value=pending?.polo||'';
@@ -730,7 +745,8 @@ async function renderYouthSignup(user,isAdmin,current){
     try{
      const photo=await prepareSignupPhoto(details.fields.photo.files[0]);
      await sendDetailedSignup(user,{name:name.value.trim(),polo:polo.value,projects:selected,...details.values()},photo);
-     form.remove();status.textContent='Inscrição enviada! Aguarde a aprovação do coordenador do seu polo.';
+     form.remove();status.textContent='Ficha salva! Sua inscrição foi enviada ao coordenador. Aguarde a aprovação.';
+     renderYouthWelcomeCard(container);
     }catch(error){status.textContent='Não foi possível enviar: '+error.message;button.disabled=false;}
 
   });
@@ -1001,28 +1017,12 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       showView('login');
       return;
     }
-    // Complete the original signup automatically after email confirmation.
-    // Only submit data previously entered by this same email; approval stays with the coordinator.
-    let pendingYouth=null;
-    try{pendingYouth=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
-    // Recover the initial application across browsers and after sessionStorage loss.
-    if(!pendingYouth||pendingYouth.email?.toLowerCase()!==user.email?.toLowerCase()){
-      const saved=user.user_metadata?.signup_details;
-      if(saved?.polo&&saved?.name&&saved?.birth&&saved?.phone&&saved?.nationality){
-        pendingYouth={...saved,email:user.email};
-      }
+    const pendingEmail=localStorage.getItem('fju-open-my-page-after-email');
+    if(user.email_confirmed_at&&pendingEmail===String(user.email||'').toLowerCase()){
+      localStorage.removeItem('fju-open-my-page-after-email');
+      showDialog();
     }
-    if(pendingYouth?.email?.toLowerCase()===user.email?.toLowerCase()&&user.email_confirmed_at){
-      const {data:existingSignup,error:existingSignupError}=await client.rpc('fju_consultar_minha_inscricao');
-      if(current!==updateSequence||passwordRecovery)return;
-      const existingRecord=Array.isArray(existingSignup)?existingSignup[0]:existingSignup;
-      if(!existingSignupError&&!existingRecord){
-        try{await sendDetailedSignup(user,pendingYouth,null);}
-        catch(error){setFeedback('Não foi possível enviar automaticamente a solicitação: '+error.message,true);}
-      }else if(!existingSignupError&&existingRecord){
-        sessionStorage.removeItem('fju-youth-pending-signup');
-      }
-    }
+    // A inscrição de jovem é criada somente depois da confirmação do e-mail, quando a pessoa salva a ficha na My Page.
     authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
