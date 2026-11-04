@@ -1154,7 +1154,22 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     localize();
     preferredLanguageUI();
     syncYouthHero(verifiedAdmin,churchGroup);
-    showYouthPane();
+    showYouthPane(verifiedAdmin?'profile':'');
+    // Personal account settings stay separate from privileged administrative functions.
+    const profilePane=byId('fju-youth-profile-pane');
+    if(profilePane){
+      let panelLink=byId('fju-profile-admin-panel-link');
+      if(!panelLink){
+        panelLink=document.createElement('a');
+        panelLink.id='fju-profile-admin-panel-link';
+        panelLink.href='https://fjujapan.github.io/fju-connect-admin/';
+        panelLink.style.cssText='display:block;padding:15px 18px;margin:16px 0;border-radius:14px;background:#173b76;color:#fff;text-align:center;text-decoration:none;font-weight:700';
+        profilePane.append(panelLink);
+      }
+      panelLink.hidden=!verifiedAdmin;
+      panelLink.style.display=verifiedAdmin?'block':'none';
+      panelLink.textContent=lastRole==='national'?'Painel Nacional':'Painel do Coordenador';
+    }
     // Administrative roles use the standalone dashboard; never embed an iframe in MY PAGE.
     renderUnifiedCoordinatorPage(false);
 
@@ -1202,7 +1217,6 @@ async function openAccount(){
   // Only a deliberate My Page click may open the leadership dashboard.
   // Background session checks must keep the FJU homepage visible.
   await loadAccount();
-  if(lastRole==='national'||lastRole==='coordinator')return;
   showDialog();
 }
 
