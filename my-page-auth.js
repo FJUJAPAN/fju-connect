@@ -257,8 +257,8 @@ feedback.parentElement.insertBefore(signupEmailCard,feedback);
 function showSignupEmailCard(email){
  const l=(typeof localeSelect!=='undefined'&&localeSelect?.value)||localStorage.getItem('fju_lang')||'pt';
  const copy={
- pt:['Confira seu e-mail!','Enviamos um link de confirmação. Abra sua caixa de entrada e toque no link para continuar.','Não encontrou? Confira Spam ou Lixo eletrônico. Depois da confirmação, entre na My Page para enviar sua solicitação ao coordenador.'],
- ja:['メールを確認してください！','確認用リンクをメールで送りました。受信箱を開き、リンクを押して続行してください。','届かない場合は迷惑メールも確認してください。確認後、My Pageにログインして担当者への申請を完了してください。'],
+ pt:['Confira seu e-mail!','Enviamos um link de confirmação. Abra sua caixa de entrada e toque no link para continuar.','Não encontrou? Confira Spam ou Lixo eletrônico. Depois da confirmação, você será direcionado automaticamente à My Page para completar sua ficha.'],
+ ja:['メールを確認してください！','確認用リンクをメールで送りました。受信箱を開き、リンクを押して続行してください。','届かない場合は迷惑メールも確認してください。確認後、自動的にMy Pageが開き、プロフィールを完成できます。'],
  en:['Check your email!','We sent a confirmation link. Open your inbox and tap the link to continue.','Cannot find it? Check Spam or Junk. After confirmation, sign in to My Page to complete your coordinator access request.']
  }[l]||['Confira seu e-mail!','Enviamos um link de confirmação.','Confira também o Spam.'];
  signupEmailCard.querySelector('[data-email-card-title]').textContent=copy[0];
@@ -483,7 +483,7 @@ function localizeSignup(){
  signupSubmit.textContent=t.submit;signupBack.textContent=t.back;
  signupDetails.localize();syncSignupGroup();
 }
-signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');loadSignupPolos();});
+signupOpen.addEventListener('click',()=>{signupFeedback();showView('signup');if(isCoordinatorSignup())void loadSignupPolos();});
 signupBack.addEventListener('click',()=>{setFeedback();showView('login');});
 function validateSignupEmail(value){
  const email=String(value||'').trim().toLowerCase();
@@ -513,6 +513,7 @@ signupForm.addEventListener('submit',async event=>{
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
  let created=false;
  try{
+  if(youthSignup)localStorage.setItem('fju-open-my-page-after-email',details.email);
   const photo=youthSignup?null:await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
@@ -535,6 +536,7 @@ signupForm.addEventListener('submit',async event=>{
   if(created){
    await loadAccount();setFeedback('Conta criada. Conclua sua inscrição na My Page: '+error.message,true);
   }else{
+   if(youthSignup)localStorage.removeItem('fju-open-my-page-after-email');
    const duplicate=error.code==='user_already_exists'||error.code==='email_exists'||/already registered|already exists|already been registered/i.test(error.message||'');
    signupFeedback(duplicate?signupText().duplicate:signupText().error+error.message,true);
   }
@@ -1014,6 +1016,11 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       renderHeaderAccount(null);
       showView('login');
       return;
+    }
+    const pendingEmail=localStorage.getItem('fju-open-my-page-after-email');
+    if(user.email_confirmed_at&&pendingEmail===String(user.email||'').toLowerCase()){
+      localStorage.removeItem('fju-open-my-page-after-email');
+      showDialog();
     }
     // A inscrição de jovem é criada somente depois da confirmação do e-mail, quando a pessoa salva a ficha na My Page.
     authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
