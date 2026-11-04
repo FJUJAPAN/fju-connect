@@ -1136,8 +1136,8 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     const adminTile=byId('fju-youth-admin-tile');
     if(adminTile){
       adminTile.hidden=!verifiedAdmin;
+      if(verifiedAdmin)adminTile.href='https://fjujapan.github.io/fju-connect-admin/';
       if(verifiedAdmin){
-        adminTile.href='https://fjujapan.github.io/fju-connect-admin/';
         const label=adminTile.querySelector('[data-fju-auth-i18n="youthAdmin"]');
         if(label){label.removeAttribute('data-fju-auth-i18n');label.textContent=profile.papel==='coordenador'?(lang()==='ja'?'コーディネーター管理画面':lang()==='en'?'Coordinator Panel':'Painel de Coordenador'):(lang()==='ja'?'全国管理画面':lang()==='en'?'National Panel':'Painel Nacional');}
       }
