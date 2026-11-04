@@ -415,7 +415,7 @@ function syncSignupGroup(){
  signupDetails.root.hidden=youth&&!coordinator;
  for(const [key,field] of Object.entries(signupDetails.fields)){
   field.required=coordinator||(!youth&&key==='photo');
-  if(key!=='photo')field.closest('label').style.display=youth&&!coordinator?'none':'grid';
+  if(key!=='photo')field.closest('label').style.display=youth?'grid':'none';
  }
  signupDetails.rank.hidden=true;
  signupPolo.hidden=youth&&!coordinator;signupProjects.hidden=true;
@@ -513,7 +513,6 @@ signupForm.addEventListener('submit',async event=>{
  signupSubmit.disabled=true;signupInProgress=true;signupFeedback('');
  let created=false;
  try{
-  if(youthSignup)localStorage.setItem('fju-open-my-page-after-email',details.email);
   const photo=youthSignup?null:await prepareSignupPhoto(signupDetails.fields.photo.files[0]);
   const {data,error}=await client.auth.signUp({
    email:details.email,password:signupPassword.value,
@@ -522,6 +521,7 @@ signupForm.addEventListener('submit',async event=>{
   if(error)throw error;
   if(data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){signupFeedback(signupText().duplicate,true);return;}
   created=true;
+  if(youthSignup)localStorage.setItem('fju-open-my-page-after-email',details.email);
   if(!youthSignup)sessionStorage.setItem(coordinatorSignup?'fju-coordinator-pending-signup':'fju-church-pending-signup',JSON.stringify(details));
   if(data.session){
    if(coordinatorSignup)await sendCoordinatorSignup(data.user,details,photo);
