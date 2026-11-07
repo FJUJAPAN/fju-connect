@@ -1,6 +1,12 @@
 name: Atualizar previas Facebook
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/article-previews.yml'
+      - 'scripts/generate_article_previews.py'
   schedule:
     - cron: '*/30 * * * *'
 permissions:
@@ -18,7 +24,7 @@ jobs:
           python-version: '3.12'
       - name: Gerar paginas das materias
         env:
-          SUPABASE_ANON_KEY: sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtYWNyb2t0a2xnd2tvZnhzeWd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwOTk2OTIsImV4cCI6MjEwNzY3NTY5Mn0.amrHGNnYQ2Zk3uv4yhWxyKhusLCOmfhxloOPxuDti4w
         run: python scripts/generate_article_previews.py
       - name: Abrir pull request com as previas
         uses: peter-evans/create-pull-request@v7
@@ -31,4 +37,3 @@ jobs:
           title: "Atualizar previas Facebook das materias"
           body: "Atualizacao automatica das paginas e fotos de compartilhamento de materias publicadas. Revisar e aprovar para publicar no GitHub Pages."
           add-paths: share/
-
