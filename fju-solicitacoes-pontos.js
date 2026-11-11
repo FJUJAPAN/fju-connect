@@ -45,7 +45,7 @@ function start(){
  });
  const placeToggle=()=>{
    const points=document.getElementById('fju-my-points');
-   if(!points)return false;
+   if(!points){host.prepend(requestToggle);return true;}
    points.style.flexWrap='wrap';
    points.append(requestToggle);
    points.insertAdjacentElement('afterend',block);
