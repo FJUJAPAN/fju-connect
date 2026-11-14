@@ -1043,8 +1043,14 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   const staleYouthAdmin=byId('fju-youth-admin-tile');if(staleYouthAdmin){staleYouthAdmin.hidden=true;staleYouthAdmin.style.setProperty('display','none','important');}
   const staleShortcut=byId('fju-my-page-admin-shortcut');if(staleShortcut){staleShortcut.hidden=true;staleShortcut.style.setProperty('display','none','important');}
   const staleProfileLink=byId('fju-profile-admin-panel-link');if(staleProfileLink){staleProfileLink.hidden=true;staleProfileLink.style.setProperty('display','none','important');}
+  // Keep every privileged surface closed until this exact session's profile is verified.
+  if(accountAccess)accountAccess.hidden=true;
+  if(adminButton){adminButton.hidden=true;adminButton.style.setProperty('display','none','important');}
+  const youthAdmin=byId('fju-youth-admin-tile');if(youthAdmin){youthAdmin.hidden=true;youthAdmin.style.setProperty('display','none','important');}
+  const adminShortcut=byId('fju-my-page-admin-shortcut');if(adminShortcut){adminShortcut.hidden=true;adminShortcut.style.setProperty('display','none','important');}
+  const profileAdminLink=byId('fju-profile-admin-panel-link');if(profileAdminLink){profileAdminLink.hidden=true;profileAdminLink.style.setProperty('display','none','important');}
   renderUnifiedCoordinatorPage(false);
-  // Validate in the background; never switch the UI to a verification splash.
+  // Validate the session and its database role before exposing any account dashboard.
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
@@ -1283,19 +1289,12 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
 async function openAccount(){
   setFeedback();
   if(passwordRecovery){showDialog();showView('reset');return;}
-  // Do not expose the verification screen while the account modal opens.
-  // The auth session and role are still validated before privileged content.
-  if(authenticated&&lastRole==='member'&&myPage&&!myPage.hidden){
-    showView('account');
-    showDialog();
-    // Refresh the request status while preserving the visible completion form.
-    void loadAccount({keepAccountVisible:true});
-    return;
-  }
-  // Only a deliberate My Page click may open the leadership dashboard.
-  // Background session checks must keep the FJU homepage visible.
-  await loadAccount();
+  // loadAccount performs its synchronous identity/UI reset before its first await.
+  // Only after that reset is in place may the modal become visible. This prevents
+  // a persisted session from briefly exposing the previous user's National panel.
+  const refresh=loadAccount({keepAccountVisible:Boolean(dialog?.open)});
   showDialog();
+  await refresh;
 }
 
 for(const trigger of document.querySelectorAll('[data-fju-account-open]')){
