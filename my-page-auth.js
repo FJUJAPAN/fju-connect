@@ -188,6 +188,8 @@ const translations={
 let authenticated=false;
 let userEmail='';
 let lastRole='';
+let activeUserId='';
+let youthProfileLoadSequence=0;
 let passwordRecovery=false;
 const headerAvatar=byId('fju-header-avatar');
 const headerGuest=document.querySelector('.fju-profile-guest');
@@ -1017,6 +1019,7 @@ function renderUnifiedCoordinatorPage(enabled){
   home?.style.removeProperty('display');
   access?.style.removeProperty('display');
   adminTile?.style.removeProperty('display');
+  const fullDashboard=byId('fju-national-full-dashboard');if(fullDashboard)fullDashboard.style.display='none';
   section.style.removeProperty('display');
   dialog.style.removeProperty('width');
   dialog.style.removeProperty('max-width');
@@ -1032,7 +1035,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
     if(error||!user){
-      authenticated=false;userEmail='';lastRole='';preferredLanguageUser=null;
+      authenticated=false;userEmail='';lastRole='';activeUserId='';preferredLanguageUser=null;
       renderHeaderAccount(null);
       showView('login');
       return;
@@ -1043,7 +1046,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       showDialog();
     }
     // A inscrição de jovem é criada somente depois da confirmação do e-mail, quando a pessoa salva a ficha na My Page.
-    authenticated=true;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
+    authenticated=true;activeUserId=user.id;userEmail=user.email||'';preferredLanguageUser=user;const savedLanguage=user.user_metadata?.preferred_language;if(['pt','ja','en'].includes(savedLanguage)){localStorage.setItem('fju_lang',savedLanguage);localStorage.setItem('fju_language',savedLanguage);localStorage.setItem('fju-connect-lang',savedLanguage);if(localeSelect){localeSelect.value=savedLanguage;localeSelect.dispatchEvent(new Event('change',{bubbles:true}));}}
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     const memberCard=byId('fju-member-collectible');
@@ -1067,6 +1070,9 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       .eq('usuario_id',user.id)
       .maybeSingle();
     if(current!==updateSequence||passwordRecovery)return;
+    // Clear leadership UI before any youth/member early return.
+    const currentIsAdmin=Boolean(profile?.ativo&&['nacional','coordenador'].includes(profile.papel)&&(profile.papel!=='coordenador'||profile.polo_id));
+    if(!currentIsAdmin){lastRole='member';renderUnifiedCoordinatorPage(false);const nationalDashboard=byId('fju-national-full-dashboard');if(nationalDashboard)nationalDashboard.style.display='none';}
     // Handle pending youth access before optional avatar and card requests.
     if(!profile?.ativo || !['nacional','coordenador'].includes(profile.papel)){
       const requestSection=byId('fju-youth-signup');
@@ -1356,7 +1362,7 @@ resetForm.addEventListener('submit',async event=>{
     passwordRecovery=false;
     resetForm.reset();
     await client.auth.signOut();
-    authenticated=false;userEmail='';lastRole='';
+    authenticated=false;userEmail='';lastRole='';activeUserId='';
     renderHeaderAccount(null);
     showView('login');
     setFeedback(t('passwordUpdated'));
@@ -1402,13 +1408,26 @@ byId('fju-account-logout').addEventListener('click',async()=>{
   resetProfilePassword();
   try{
     await client.auth.signOut();
-    authenticated=false;userEmail='';lastRole='';
+    authenticated=false;userEmail='';lastRole='';activeUserId='';preferredLanguageUser=null;
     renderHeaderAccount(null);
+    renderUnifiedCoordinatorPage(false);
     showView('login');
     setFeedback(t('signedOut'));
   }catch(e){setFeedback(t('sessionError'),true);}
 });
-client.auth.onAuthStateChange(event=>{
+client.auth.onAuthStateChange((event,session)=>{
+  if(event==='SIGNED_IN'&&session?.user?.id&&session.user.id!==activeUserId){
+    updateSequence++;authenticated=false;userEmail='';lastRole='';preferredLanguageUser=null;
+    clearHeaderAvatarObjectUrl();renderHeaderAccount(null);
+    const cardPhoto=byId('fju-member-card-photo');if(cardPhoto){cardPhoto.hidden=true;cardPhoto.removeAttribute('src');}
+    const heroPhoto=byId('fju-youth-hero-photo');if(heroPhoto){heroPhoto.hidden=true;heroPhoto.removeAttribute('src');}
+    const heroFallback=byId('fju-youth-hero-fallback');if(heroFallback)heroFallback.hidden=false;
+    accountAccess.hidden=true;
+    const nationalDashboard=byId('fju-national-full-dashboard');if(nationalDashboard)nationalDashboard.style.display='none';
+    renderUnifiedCoordinatorPage(false);
+    void loadAccount({keepAccountVisible:dialog?.open});
+    return;
+  }
   if(event==='PASSWORD_RECOVERY'){
     passwordRecovery=true;
     showDialog();
@@ -1424,9 +1443,8 @@ client.auth.onAuthStateChange(event=>{
     showView('login');
     localize();
   }
-  // SIGNED_IN is already handled by initial loadAccount() and the login
-  // submit handler. Reloading here races with those requests and can leave
-  // the modal stuck on "Verificando sua conta..." on iOS.
+  // SIGNED_IN for a different user is handled above; same-user sign-in is
+  // already handled by the login submit handler.
 });
 localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
@@ -1451,6 +1469,7 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
 /* Self-service youth profile editing: all personal and complementary fields, submitted for polo approval. */
 async function setupYouthProfileEdit(){
  const pane=byId('fju-youth-profile-pane');if(!pane)return;
+ const request=++youthProfileLoadSequence;
  let root=byId('fju-youth-profile-edit');
  if(!root){
   root=document.createElement('section');root.id='fju-youth-profile-edit';
@@ -1496,6 +1515,8 @@ async function setupYouthProfileEdit(){
     #fju-youth-edit-form input,#fju-youth-edit-form select,#fju-youth-edit-form textarea{min-height:54px!important;font-size:17px!important}
     #fju-youth-edit-form .fju-edit-actions{flex-direction:column!important}
     #fju-youth-edit-form button{width:100%!important;flex-basis:auto!important}
+    #fju-youth-edit-form .fju-edit-project-options{grid-template-columns:1fr!important;gap:8px!important}
+    #fju-youth-edit-form .fju-edit-project-option{box-sizing:border-box;width:100%!important;min-height:48px!important;padding:8px 12px!important}
    }
   `;document.head.append(style);
   root.innerHTML=`
@@ -1564,16 +1585,23 @@ async function setupYouthProfileEdit(){
    catch(e){status.textContent='Não foi possível salvar: '+e.message;}finally{button.disabled=false;}
   });
  }
- const {data:{user}}=await client.auth.getUser();if(!user){root.hidden=true;return;}
+ const form=root.querySelector('form');
+ for(const control of form.elements)control.disabled=true;
+ byId('fju-youth-edit-status').textContent='Carregando seus dados…';
+ const {data:{user}}=await client.auth.getUser();
+ if(request!==youthProfileLoadSequence)return;
+ if(!user){root.hidden=true;return;}
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
- if(linkError||!links?.length){root.hidden=true;return;}root.hidden=false;
+ if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
+ if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta.';root.hidden=false;return;}root.hidden=false;
  const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
   client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
   client.rpc('fju_ler_meus_complementos')
  ]);
+ if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
  if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar os campos complementares: '+complementError.message;return;}
- const form=root.querySelector('form'),extra=complements||{};
+ const extra=complements||{};
  const values={nome_completo:records.nome_completo,telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
  form.elements.deseja_obra_altar.checked=records.deseja_obra_altar===true;
@@ -1582,6 +1610,7 @@ async function setupYouthProfileEdit(){
  const selectedLanguages=new Set(records.idiomas||[]);
  for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
+ for(const control of form.elements)control.disabled=false;
  form.querySelector('button').disabled=false;
  byId('fju-youth-edit-status').textContent='Confira os dados e toque em “Salvar minha ficha”.';
 }
