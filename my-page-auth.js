@@ -1408,8 +1408,9 @@ byId('fju-account-logout').addEventListener('click',async()=>{
   resetProfilePassword();
   try{
     await client.auth.signOut();
-    authenticated=false;userEmail='';lastRole='';
+    authenticated=false;userEmail='';lastRole='';activeUserId='';preferredLanguageUser=null;
     renderHeaderAccount(null);
+    renderUnifiedCoordinatorPage(false);
     showView('login');
     setFeedback(t('signedOut'));
   }catch(e){setFeedback(t('sessionError'),true);}
@@ -1442,9 +1443,8 @@ client.auth.onAuthStateChange((event,session)=>{
     showView('login');
     localize();
   }
-  // SIGNED_IN is already handled by initial loadAccount() and the login
-  // submit handler. Reloading here races with those requests and can leave
-  // the modal stuck on "Verificando sua conta..." on iOS.
+  // SIGNED_IN for a different user is handled above; same-user sign-in is
+  // already handled by the login submit handler.
 });
 localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser)preferredLanguageUI();});
 renderHeaderAccount(null);
