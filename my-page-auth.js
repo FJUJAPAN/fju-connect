@@ -1448,6 +1448,8 @@ async function setupYouthProfileEdit(){
    #fju-youth-edit-form input:focus,#fju-youth-edit-form select:focus,#fju-youth-edit-form textarea:focus{border-color:#7295d0!important;box-shadow:0 0 0 3px rgba(49,93,155,.12)!important;background:#fff!important}
    #fju-youth-edit-form [data-marriage-wrap][hidden]{display:none!important}
    #fju-youth-edit-form .fju-edit-full{grid-column:1/-1!important}
+   #fju-youth-edit-form .fju-edit-altar{display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px!important;grid-column:1/-1!important;padding:14px 16px!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#f8faff!important;font-size:15px!important;font-weight:700!important}
+   #fju-youth-edit-form .fju-edit-altar input{appearance:auto!important;-webkit-appearance:checkbox!important;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;margin:0!important;padding:0!important;accent-color:#253b75!important}
    #fju-youth-edit-form .fju-edit-projects{grid-column:1/-1!important;min-width:0!important;margin:0!important;padding:14px 16px!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#fff!important}
    #fju-youth-edit-form .fju-edit-projects legend{padding:0 6px!important;color:#233b63!important;font-size:14px!important;font-weight:800!important}
    #fju-youth-edit-form .fju-edit-project-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 14px!important}
@@ -1492,6 +1494,7 @@ async function setupYouthProfileEdit(){
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Projetos e informações adicionais</h4>
      <fieldset class="fju-edit-full fju-edit-projects"><legend>Projetos dos quais participa</legend><div data-project-options></div></fieldset>
+     <label class="fju-edit-full fju-edit-altar"><input name="deseja_obra_altar" type="checkbox"> Tenho interesse em servir ao Altar</label>
      <label class="fju-edit-full">Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000" placeholder="Compartilhe seu testemunho"></textarea></label>
      <label class="fju-edit-full">Observações adicionais<textarea name="observacoes" rows="3" maxlength="3000" placeholder="Informações complementares"></textarea></label>
     </section>
@@ -1511,7 +1514,7 @@ async function setupYouthProfileEdit(){
    const data=Object.fromEntries(new FormData(form)),projects=[...form.querySelectorAll('input[name="projetos"]:checked')].map(x=>x.value);
    if(data.estado_civil==='casado'&&!data.data_casamento){status.textContent='Informe a data do casamento.';return;}
    if(data.estado_civil!=='casado')data.data_casamento='';
-   const payload={nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
+   const payload={deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;status.textContent='Salvando sua ficha...';
    try{const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});if(error)throw error;status.textContent='Sua ficha foi atualizada com sucesso.';}
    catch(e){status.textContent='Não foi possível salvar: '+e.message;}finally{button.disabled=false;}
@@ -1521,7 +1524,7 @@ async function setupYouthProfileEdit(){
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(linkError||!links?.length){root.hidden=true;return;}root.hidden=false;
  const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
-  client.from('fju_jovens').select('nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento').eq('id',links[0].jovem_id).maybeSingle(),
+  client.from('fju_jovens').select('nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
   client.rpc('fju_ler_meus_complementos')
  ]);
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
@@ -1529,6 +1532,7 @@ async function setupYouthProfileEdit(){
  const form=root.querySelector('form'),extra=complements||{};
  const values={nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,projetos:(records.projetos||[]).join(', '),estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
+ form.elements.deseja_obra_altar.checked=records.deseja_obra_altar===true;
  const selectedProjects=new Set(records.projetos||[]);
  for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
