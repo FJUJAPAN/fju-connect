@@ -766,24 +766,23 @@ function setupMyPagePhotoUpload(){
  const area=document.createElement('section');area.id='fju-my-page-photo-upload';area.className='fju-profile-photo-card';
  const heading=document.createElement('h3');heading.textContent=words.title;
  const hint=document.createElement('p');hint.className='fju-profile-photo-hint';hint.textContent=words.hint;
- const previewWrap=document.createElement('div');previewWrap.className='fju-profile-photo-preview';
- const preview=document.createElement('img');preview.alt=words.alt;preview.hidden=true;
- const placeholder=document.createElement('span');placeholder.className='fju-profile-photo-placeholder';placeholder.textContent='F';
- const current=byId('fju-member-card-photo');
- if(current&&!current.hidden&&current.getAttribute('src')){preview.src=current.src;preview.hidden=false;placeholder.hidden=true;}
- previewWrap.append(preview,placeholder);
+ let pendingPhotoPreviewUrl=null;
+ const cardPhoto=byId('fju-member-card-photo');
  const controls=document.createElement('div');controls.className='fju-profile-photo-controls';
  const input=document.createElement('input');input.type='file';input.accept='image/*';input.id='fju-profile-photo-input';input.setAttribute('aria-label',words.choose);
  const choose=document.createElement('label');choose.htmlFor=input.id;choose.className='fju-profile-photo-choose';choose.textContent=words.choose;
  const save=document.createElement('button');save.type='button';save.className='fju-profile-photo-save';save.textContent=words.save;save.disabled=true;
  const message=document.createElement('p');message.className='fju-profile-photo-status';message.setAttribute('role','status');message.setAttribute('aria-live','polite');
  controls.append(choose,input,save);
- area.append(heading,hint,previewWrap,controls,message);
+ area.append(heading,hint,controls,message);
  const card=byId('fju-member-collectible');pane.insertBefore(area,card||pane.firstChild);
  input.addEventListener('change',()=>{
   const file=input.files?.[0];if(!file)return;
   if(!file.type.startsWith('image/')){message.textContent=words.empty;return;}
-  const url=URL.createObjectURL(file);preview.src=url;preview.hidden=false;placeholder.hidden=true;save.disabled=false;message.textContent='';
+  if(pendingPhotoPreviewUrl)URL.revokeObjectURL(pendingPhotoPreviewUrl);
+  pendingPhotoPreviewUrl=URL.createObjectURL(file);
+  if(cardPhoto){cardPhoto.src=pendingPhotoPreviewUrl;cardPhoto.hidden=false;}
+  save.disabled=false;message.textContent='';
  });
  save.addEventListener('click',async()=>{
   if(!input.files?.length){message.textContent=words.empty;return;}
@@ -800,7 +799,7 @@ function setupMyPagePhotoUpload(){
     const img=byId(id);if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
    }
    const fallback=byId('fju-youth-hero-fallback');if(fallback)fallback.hidden=true;
-   preview.src=headerAvatarObjectUrl;preview.hidden=false;placeholder.hidden=true;
+   if(pendingPhotoPreviewUrl){URL.revokeObjectURL(pendingPhotoPreviewUrl);pendingPhotoPreviewUrl=null;}
    message.textContent=words.success;input.value='';
   }catch(error){message.textContent=words.failed+(error?.message||'Tente novamente.');}
   finally{save.disabled=!input.files?.length;choose.removeAttribute('aria-disabled');}
