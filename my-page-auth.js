@@ -1537,7 +1537,11 @@ async function setupYouthProfileEdit(){
    #fju-youth-edit-form .fju-language-dropdown [data-language-options]{padding:12px!important;max-height:260px!important;overflow-y:auto!important;grid-template-columns:1fr!important}
 
    #fju-youth-edit-form .fju-edit-project-option{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border:1px solid #e1e8f2!important;border-radius:10px!important;background:#f8faff!important;font-size:15px!important;font-weight:650!important;cursor:pointer!important}
-   #fju-youth-edit-form .fju-edit-project-option input{flex:0 0 22px!important}
+   #fju-youth-edit-form .fju-edit-project-option input{appearance:auto!important;-webkit-appearance:checkbox!important;display:inline-block!important;flex:0 0 22px!important;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;margin:0!important;padding:0!important;pointer-events:auto!important;position:relative!important;z-index:1!important;accent-color:#253b75!important}
+   #fju-youth-edit-form .fju-edit-project-option{position:relative!important;z-index:1!important;pointer-events:auto!important;touch-action:manipulation!important}
+   #fju-youth-edit-form .fju-language-dropdown{position:relative!important;z-index:2!important;overflow:visible!important;pointer-events:auto!important}
+   #fju-youth-edit-form .fju-language-dropdown summary{position:relative!important;z-index:3!important;pointer-events:auto!important;touch-action:manipulation!important}
+   #fju-youth-edit-form .fju-language-dropdown [data-language-options]{position:relative!important;z-index:4!important;pointer-events:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
    #fju-youth-edit-form .fju-edit-project-option .fju-project-option-mark{display:inline-grid!important;place-items:center!important;min-width:34px!important;min-height:34px!important;padding:0 8px!important;border-radius:9px!important;font-size:10px!important;font-weight:850!important}
    #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--help{background:#f5cf32!important;color:#171717!important}
    #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--culture{background:#ed8124!important;color:#171717!important}
