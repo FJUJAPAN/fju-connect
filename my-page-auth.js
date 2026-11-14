@@ -1662,6 +1662,7 @@ async function setupYouthProfileEdit(){
  const saveButton=form.querySelector('button[type="submit"]');
  if(saveButton)saveButton.disabled=true;
  const status=byId('fju-youth-edit-status');
+ let records,complements;
  const withTimeout=(promise,stage)=>Promise.race([
   promise,
   new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tempo esgotado ao '+stage+'.')),15000))
