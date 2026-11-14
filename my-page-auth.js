@@ -1682,6 +1682,8 @@ async function setupYouthProfileEdit(){
   root.hidden=false;
   return;
  }
+ status.textContent='Dados recebidos do banco. Preenchendo os campos…';
+ try{
  const extra=complements||{};
  const values={nome_completo:records.nome_completo||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
@@ -1703,8 +1705,14 @@ async function setupYouthProfileEdit(){
  const chosenLanguages=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
  const languageSummary=form.querySelector('[data-language-summary]');
  if(languageSummary)languageSummary.textContent=chosenLanguages.length?chosenLanguages.join(', '):'Selecione os idiomas';
- form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
+ if(marriageWrap)marriageWrap.hidden=form.elements.estado_civil.value!=='casado';
  root.hidden=false;
  unlockControls();
  byId('fju-youth-edit-status').textContent='Dados carregados. Confira sua ficha e faça as alterações necessárias.';
+ }catch(hydrationError){
+  if(request!==youthProfileLoadSequence)return;
+  status.textContent='Os dados chegaram, mas houve falha ao preencher a ficha: '+(hydrationError?.message||'Erro inesperado')+'. Seus dados continuam protegidos.';
+  root.hidden=false;
+  return;
+ }
 }
