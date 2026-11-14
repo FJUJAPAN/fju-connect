@@ -1030,6 +1030,12 @@ function renderUnifiedCoordinatorPage(enabled){
 
 async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   const current=++updateSequence;
+  // Never show the previous account's role card or dashboard while identity is being revalidated.
+  const staleCard=byId('fju-member-collectible');if(staleCard)staleCard.hidden=true;
+  const staleNational=byId('fju-national-full-dashboard');if(staleNational)staleNational.style.display='none';
+  const staleYouthAdmin=byId('fju-youth-admin-tile');if(staleYouthAdmin)staleYouthAdmin.hidden=true;
+  const staleShortcut=byId('fju-my-page-admin-shortcut');if(staleShortcut){staleShortcut.hidden=true;staleShortcut.style.display='none';}
+  renderUnifiedCoordinatorPage(false);
   // Validate in the background; never switch the UI to a verification splash.
   try{
     const {data:{user},error}=await client.auth.getUser();
@@ -1050,17 +1056,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     renderHeaderAccount(user);
     byId('fju-account-email').textContent=userEmail;
     const memberCard=byId('fju-member-collectible');
-    if(memberCard){
-      const meta=user.user_metadata||{};
-      byId('fju-member-card-name').textContent=meta.full_name||meta.name||meta.nome||userEmail.split('@')[0]||'FJU JAPAN';
-      const img=byId('fju-member-card-photo');
-      const photo=meta.avatar_url||meta.picture||meta.photo_url||'';
-      if(photo){img.src=photo;img.hidden=false;}else{img.hidden=true;img.removeAttribute('src');}
-      byId('fju-member-card-polo').textContent=meta.polo_nome||'Polo a confirmar';
-      byId('fju-member-card-project').textContent=meta.projeto_nome||'Projeto a confirmar';
-      byId('fju-member-card-rank').textContent='Patente definida pela liderança';
-      memberCard.hidden=false;
-    }
+    if(memberCard)memberCard.hidden=true;
     lastRole='member';
     let verifiedAdmin=false;
     let churchName='';
@@ -1113,6 +1109,13 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       }
     }
     if(churchName&&byId('fju-member-card-polo'))byId('fju-member-card-polo').textContent='FJU '+churchName;
+    if(verifiedAdmin&&memberCard){
+      byId('fju-member-card-name').textContent=profile.papel==='nacional'?'FJU JAPAN':'FJU '+(churchName||'Coordenador');
+      byId('fju-member-card-polo').textContent=churchName?'FJU '+churchName:'FJU JAPAN';
+      byId('fju-member-card-project').textContent='Painel administrativo';
+      byId('fju-member-card-rank').textContent=profile.papel==='nacional'?'Administrador Nacional':'Coordenador';
+      memberCard.hidden=false;
+    }
     if(!verifiedAdmin){
       const {data:cards}=await client.rpc('fju_consultar_meu_cartao_jovem');
       if(current!==updateSequence||passwordRecovery)return;
@@ -1123,6 +1126,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         byId('fju-member-card-project').textContent=(card.projetos||[]).join(' · ')||'FJU JAPAN';
         byId('fju-member-card-rank').textContent=card.categoria==='inconstante'||String(card.patente||'').toLowerCase()==='inconstante'?'Normal':(card.patente||(card.categoria==='firme'?'Firme':'Normal'));
       }
+      if(memberCard)memberCard.hidden=false;
       // Prefer the photo already saved in the approved youth record.
       // The RPC only exposes the signed-in user's own linked youth ID.
       let registeredPhoto=null;
