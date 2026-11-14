@@ -1428,44 +1428,62 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
 }
 
 
-/* Self-service youth profile changes: requests only, never direct updates. */
+/* Self-service youth profile editing: all personal and complementary fields, submitted for polo approval. */
 async function setupYouthProfileEdit(){
- const pane=byId('fju-youth-profile-pane');
- if(!pane)return;
+ const pane=byId('fju-youth-profile-pane');if(!pane)return;
  let root=byId('fju-youth-profile-edit');
  if(!root){
   root=document.createElement('section');root.id='fju-youth-profile-edit';
   root.style.cssText='background:#fff;color:#18294b;padding:18px;border-radius:16px;margin:18px 0;border:1px solid #dce3ef';
-  root.innerHTML='<h3>Solicitar alteração da minha ficha</h3><p>As alterações só aparecem na ficha após aprovação do coordenador do seu polo.</p><form id="fju-youth-edit-form" style="display:grid;gap:10px"><label>Data de nascimento<input name="nascimento" type="date"></label><label>Batismo nas águas<input name="batismo_aguas" type="date"></label><label>Batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label><label>Projetos (até 5, separados por vírgula)<input name="projetos" type="text" placeholder="Esporte, Cultura, HELP"></label><label>Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000"></textarea></label><button type="submit" style="padding:13px;background:#173b76;color:white;border:0;border-radius:10px">Enviar para aprovação</button></form><p id="fju-youth-edit-status" role="status"></p>';
+  root.innerHTML=`
+   <h3>Minha ficha FJU</h3>
+   <p>Confira e atualize seus dados pessoais, estado civil e informações da sua trajetória na FJU. As alterações serão encaminhadas ao coordenador do seu polo.</p>
+   <form id="fju-youth-edit-form" style="display:grid;gap:10px">
+    <label>Data de nascimento<input name="nascimento" type="date"></label>
+    <label>Estado civil<select name="estado_civil"><option value="nao_informado">Não informado</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option></select></label>
+    <label data-marriage-wrap>Data do casamento<input name="data_casamento" type="date"></label>
+    <label>Endereço no Japão<textarea name="endereco" rows="2" maxlength="350"></textarea></label>
+    <label>Data do batismo nas águas<input name="batismo_aguas" type="date"></label>
+    <label>Data do batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label>
+    <label>Data do batismo com o Espírito Santo (registro complementar)<input name="batismo_espirito" type="date"></label>
+    <label>Data de início no CPO<input name="inicio_cpo" type="date"></label>
+    <label>Data de início como Colaborador<input name="inicio_colaborador" type="date"></label>
+    <label>Data de início na Obra de Deus<input name="inicio_obra" type="date"></label>
+    <label>Data em que começou a cuidar da FJU<input name="inicio_coordenacao_fju" type="date"></label>
+    <label>Projetos (até 5, separados por vírgula)<input name="projetos" type="text" placeholder="Esporte, Cultura, HELP"></label>
+    <label>Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000"></textarea></label>
+    <label>Observações adicionais<textarea name="observacoes" rows="3" maxlength="3000"></textarea></label>
+    <button type="submit" style="padding:13px;background:#173b76;color:white;border:0;border-radius:10px">Enviar alterações</button>
+   </form><p id="fju-youth-edit-status" role="status"></p>`;
   pane.append(root);
-  root.querySelector('form').addEventListener('submit',async event=>{
-   event.preventDefault();
-   const form=event.currentTarget,button=form.querySelector('button'),status=byId('fju-youth-edit-status');
-   const data=Object.fromEntries(new FormData(form));
-   const projects=data.projetos.split(',').map(x=>x.trim()).filter(Boolean);
+  const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
+  form.elements.estado_civil.addEventListener('change',()=>{marriageWrap.hidden=form.elements.estado_civil.value!=='casado';});
+  form.addEventListener('submit',async event=>{
+   event.preventDefault();const button=form.querySelector('button'),status=byId('fju-youth-edit-status');
+   const data=Object.fromEntries(new FormData(form)),projects=data.projetos.split(',').map(x=>x.trim()).filter(Boolean);
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
-   const payload={nascimento:data.nascimento||null,batismo_aguas:data.batismo_aguas||null,batismo_espirito_santo:data.batismo_espirito_santo||null,projetos:projects,testemunho:data.testemunho||''};
-   button.disabled=true;status.textContent='Enviando...';
-   try{
-    const {error}=await client.rpc('fju_solicitar_edicao_meu_perfil',{p_dados:payload});
-    if(error)throw error;
-    status.textContent='Solicitação enviada ao coordenador. Sua ficha permanece inalterada até a aprovação.';
-   }catch(e){status.textContent='Não foi possível enviar: '+e.message;}
-   finally{button.disabled=false;}
+   if(data.estado_civil==='casado'&&!data.data_casamento){status.textContent='Informe a data do casamento.';return;}
+   if(data.estado_civil!=='casado')data.data_casamento='';
+   const payload={nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
+   button.disabled=true;status.textContent='Enviando alterações...';
+   try{const {error}=await client.rpc('fju_solicitar_edicao_meu_perfil',{p_dados:payload});if(error)throw error;status.textContent='Alterações enviadas ao coordenador do seu polo. Você verá os dados atualizados após a aprovação.';}
+   catch(e){status.textContent='Não foi possível enviar: '+e.message;}finally{button.disabled=false;}
   });
  }
- const {data:{user}}=await client.auth.getUser();
- if(!user){root.hidden=true;return;}
+ const {data:{user}}=await client.auth.getUser();if(!user){root.hidden=true;return;}
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
- if(linkError||!links?.length){root.hidden=true;return;}
- root.hidden=false;
- const {data:records,error}=await client.from('fju_jovens').select('nascimento,batismo_aguas,batismo_espirito_santo,projetos,testemunho').eq('id',links[0].jovem_id).maybeSingle();
+ if(linkError||!links?.length){root.hidden=true;return;}root.hidden=false;
+ const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
+  client.from('fju_jovens').select('nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento').eq('id',links[0].jovem_id).maybeSingle(),
+  client.rpc('fju_ler_meus_complementos')
+ ]);
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
- const form=root.querySelector('form');
- for(const key of ['nascimento','batismo_aguas','batismo_espirito_santo','testemunho'])form.elements[key].value=records[key]||'';
- form.elements.projetos.value=(records.projetos||[]).join(', ');
- const {data:pending}=await client.from('fju_edicoes_perfil_jovem').select('id').eq('jovem_id',links[0].jovem_id).eq('status','pendente').limit(1);
- const blocked=Boolean(pending?.length);
- form.querySelector('button').disabled=blocked;
- byId('fju-youth-edit-status').textContent=blocked?'Você já tem uma solicitação aguardando aprovação.':'';
+ if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar os campos complementares: '+complementError.message;return;}
+ const form=root.querySelector('form'),extra=complements||{};
+ const values={nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,projetos:(records.projetos||[]).join(', '),estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
+ for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
+ form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
+ const {data:pending,error:pendingError}=await client.from('fju_edicoes_perfil_jovem').select('id').eq('jovem_id',links[0].jovem_id).eq('status','pendente').limit(1);
+ const blocked=!pendingError&&Boolean(pending?.length);form.querySelector('button').disabled=blocked||Boolean(pendingError);
+ byId('fju-youth-edit-status').textContent=pendingError?'Não foi possível verificar se existe solicitação pendente. Tente novamente.':blocked?'Você já tem uma solicitação aguardando aprovação.':'';
 }
