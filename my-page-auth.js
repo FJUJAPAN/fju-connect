@@ -1492,6 +1492,14 @@ async function setupYouthProfileEdit(){
    #fju-youth-edit-form .fju-edit-projects{grid-column:1/-1!important;min-width:0!important;margin:0!important;padding:14px 16px!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#fff!important}
    #fju-youth-edit-form .fju-edit-projects legend{padding:0 6px!important;color:#233b63!important;font-size:14px!important;font-weight:800!important}
    #fju-youth-edit-form .fju-edit-project-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 14px!important}
+   #fju-youth-edit-form .fju-language-field{grid-column:1/-1!important;display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important}
+   #fju-youth-edit-form .fju-language-label{color:#233b63!important;font-size:14px!important;font-weight:700!important}
+   #fju-youth-edit-form .fju-language-dropdown{width:100%!important;min-width:0!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#fff!important;overflow:hidden!important}
+   #fju-youth-edit-form .fju-language-dropdown summary{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:52px!important;padding:13px 15px!important;list-style:none!important;cursor:pointer!important;color:#1b3155!important;font-size:16px!important;font-weight:600!important}
+   #fju-youth-edit-form .fju-language-dropdown summary::-webkit-details-marker{display:none!important}
+   #fju-youth-edit-form .fju-language-dropdown[open] summary{border-bottom:1px solid #e1e8f2!important;background:#f8faff!important}
+   #fju-youth-edit-form .fju-language-dropdown [data-language-options]{padding:12px!important;max-height:260px!important;overflow-y:auto!important;grid-template-columns:1fr!important}
+
    #fju-youth-edit-form .fju-edit-project-option{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border:1px solid #e1e8f2!important;border-radius:10px!important;background:#f8faff!important;font-size:15px!important;font-weight:650!important;cursor:pointer!important}
    #fju-youth-edit-form .fju-edit-project-option input{flex:0 0 22px!important}
    #fju-youth-edit-form .fju-edit-project-option .fju-project-option-mark{display:inline-grid!important;place-items:center!important;min-width:34px!important;min-height:34px!important;padding:0 8px!important;border-radius:9px!important;font-size:10px!important;font-weight:850!important}
@@ -1516,6 +1524,7 @@ async function setupYouthProfileEdit(){
     #fju-youth-edit-form .fju-edit-actions{flex-direction:column!important}
     #fju-youth-edit-form button{width:100%!important;flex-basis:auto!important}
     #fju-youth-edit-form .fju-edit-project-options{grid-template-columns:1fr!important;gap:8px!important}
+    #fju-youth-edit-form .fju-language-dropdown summary{min-height:54px!important}
     #fju-youth-edit-form .fju-edit-project-option{box-sizing:border-box;width:100%!important;min-height:48px!important;padding:8px 12px!important}
    }
   `;document.head.append(style);
@@ -1532,7 +1541,7 @@ async function setupYouthProfileEdit(){
      <label>Estado civil<select name="estado_civil"><option value="nao_informado">Não informado</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option></select></label>
      <label data-marriage-wrap>Data do casamento<input name="data_casamento" type="date"></label>
      <label class="fju-edit-full">Endereço no Japão<textarea name="endereco" rows="2" maxlength="350" autocomplete="street-address" placeholder="Digite seu endereço completo"></textarea></label>
-     <fieldset class="fju-edit-full fju-edit-projects"><legend>Idiomas que fala</legend><div data-language-options class="fju-edit-project-options"></div></fieldset>
+     <div class="fju-edit-full fju-language-field"><span class="fju-language-label">Idiomas que fala</span><details class="fju-language-dropdown"><summary><span data-language-summary>Selecione os idiomas</span><span aria-hidden="true">⌄</span></summary><div data-language-options class="fju-edit-project-options"></div></details></div>
     </section>
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Trajetória espiritual e FJU</h4>
@@ -1566,9 +1575,15 @@ async function setupYouthProfileEdit(){
   }
   const languageOptions=form.querySelector('[data-language-options]');
   const languages=['Português','Japonês','Inglês','Espanhol','Tagalog','Hindi','Nepali','Indonésio','Birmanês','Cingalês','Coreano','Chinês','Vietnamita','Tailandês','Outros'];
+  const languageSummary=form.querySelector('[data-language-summary]');
+  const updateLanguageSummary=()=>{
+   const chosen=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
+   languageSummary.textContent=chosen.length?chosen.join(', '):'Selecione os idiomas';
+  };
   for(const language of languages){
    const label=document.createElement('label');label.className='fju-edit-project-option';
    const check=document.createElement('input');check.type='checkbox';check.name='idiomas';check.value=language;
+   check.addEventListener('change',updateLanguageSummary);
    label.append(check,document.createTextNode(language));languageOptions.append(label);
   }
   form.elements.estado_civil.addEventListener('change',()=>{marriageWrap.hidden=form.elements.estado_civil.value!=='casado';});
@@ -1612,6 +1627,7 @@ async function setupYouthProfileEdit(){
  for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
  const selectedLanguages=new Set(records.idiomas||[]);
  for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
+ updateLanguageSummary();
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  for(const control of form.elements)control.disabled=false;
  form.querySelector('button').disabled=false;
