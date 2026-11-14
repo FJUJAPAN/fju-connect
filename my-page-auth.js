@@ -1666,42 +1666,23 @@ async function setupYouthProfileEdit(){
   promise,
   new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tempo esgotado ao '+stage+'.')),15000))
  ]);
- let loadingStage='confirmar sua sessão';
- let user=null,links=null,records=null,complements=null,error=null,complementError=null;
  try{
-  status.textContent='Verificando sua sessão…';
-  const authResult=await withTimeout(client.auth.getUser(),loadingStage);
-  user=authResult?.data?.user;
-  if(authResult?.error)throw authResult.error;
+  if(!activeUserId)throw new Error('Sessão não confirmada. Entre novamente na sua conta.');
+  status.textContent='Carregando sua ficha…';
+  const result=await withTimeout(client.rpc('fju_ler_meu_perfil'),'carregar sua ficha');
   if(request!==youthProfileLoadSequence)return;
-  if(!user){status.textContent='Não foi possível confirmar sua sessão. Entre novamente para carregar seus dados. A edição permanece bloqueada.';return;}
-  loadingStage='localizar o vínculo da sua ficha';
-  status.textContent='Localizando sua ficha…';
-  const linkResult=await withTimeout(client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1),loadingStage);
-  links=linkResult?.data;const linkError=linkResult?.error;
-  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
-  if(linkError||!links?.length){status.textContent='Não foi possível localizar sua ficha vinculada a esta conta. '+(linkError?.message||'Vínculo ativo não encontrado')+'. A edição permanece bloqueada.';return;}
-  loadingStage='carregar os dados da ficha';
-  status.textContent='Carregando os dados da ficha…';
-  const recordPromise=withTimeout(client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),loadingStage);
-  loadingStage='carregar os dados complementares';
-  status.textContent='Carregando os dados complementares…';
-  const complementPromise=withTimeout(client.rpc('fju_ler_meus_complementos'),loadingStage);
-  const results=await Promise.all([recordPromise,complementPromise]);
-  records=results[0]?.data;error=results[0]?.error;
-  complements=results[1]?.data;complementError=results[1]?.error;
+  if(result?.error)throw result.error;
+  if(!result?.data?.ficha)throw new Error('Ficha vinculada não encontrada.');
+  records=result.data.ficha;
+  complements=result.data.complementos||{};
  }catch(loadError){
   if(request!==youthProfileLoadSequence)return;
-  status.textContent='Não foi possível concluir o carregamento ao '+loadingStage+': '+(loadError?.message||'Erro inesperado')+'. A edição continua bloqueada. Tente novamente mais tarde.';
+  status.textContent='Não foi possível carregar sua ficha: '+(loadError?.message||'Erro inesperado')+'. Seus dados estão protegidos; tente novamente.';
   root.hidden=false;
   return;
  }
- if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
- if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar todos os dados complementares: '+complementError.message+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
  const extra=complements||{};
- const values={nome_completo:records.nome_completo||user.user_metadata?.full_name||user.user_metadata?.name||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
+ const values={nome_completo:records.nome_completo||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
   const field=form.querySelector('[name="'+key+'"]');
   if(field&&!editedDuringLoad.has(key))field.value=value??'';
@@ -1724,7 +1705,5 @@ async function setupYouthProfileEdit(){
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  root.hidden=false;
  unlockControls();
- byId('fju-youth-edit-status').textContent=complementError
-  ?'Dados principais carregados. Alguns campos complementares não puderam ser carregados: '+complementError.message
-  :'Confira os dados e toque em “Salvar minha ficha”.';
+ byId('fju-youth-edit-status').textContent='Dados carregados. Confira sua ficha e faça as alterações necessárias.';
 }
