@@ -1678,7 +1678,8 @@ async function setupYouthProfileEdit(){
  ]);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
- const extra=complementError?{}:(complements||{});
+ if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar todos os dados complementares: '+complementError.message+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
+ const extra=complements||{};
  const values={nome_completo:records.nome_completo||user.user_metadata?.full_name||user.user_metadata?.name||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
   const field=form.querySelector('[name="'+key+'"]');
