@@ -1600,11 +1600,14 @@ async function setupYouthProfileEdit(){
  ]);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
- if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar os campos complementares: '+complementError.message;return;}
- const extra=complements||{};
+ const extra=complementError?{}:(complements||{});
  const values={nome_completo:records.nome_completo,telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
- for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
- form.elements.deseja_obra_altar.checked=records.deseja_obra_altar===true;
+ for(const [key,value] of Object.entries(values)){
+  const field=form.querySelector('[name="'+key+'"]');
+  if(field)field.value=value??'';
+ }
+ const altarField=form.querySelector('[name="deseja_obra_altar"]');
+ if(altarField)altarField.checked=records.deseja_obra_altar===true;
  const selectedProjects=new Set(records.projetos||[]);
  for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
  const selectedLanguages=new Set(records.idiomas||[]);
@@ -1612,5 +1615,7 @@ async function setupYouthProfileEdit(){
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  for(const control of form.elements)control.disabled=false;
  form.querySelector('button').disabled=false;
- byId('fju-youth-edit-status').textContent='Confira os dados e toque em “Salvar minha ficha”.';
+ byId('fju-youth-edit-status').textContent=complementError
+  ?'Dados principais carregados. Alguns campos complementares não puderam ser carregados: '+complementError.message
+  :'Confira os dados e toque em “Salvar minha ficha”.';
 }
