@@ -270,3 +270,8 @@
     font-size:19px;margin-right:10px
   }
 }
+
+
+/* Youth profile: the connected-account panel does not need a third avatar. */
+#fju-youth-profile-pane .fju-account-identity .fju-account-avatar{display:none!important}
+#fju-youth-profile-pane .fju-account-identity{padding-top:22px}
