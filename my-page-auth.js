@@ -1323,8 +1323,8 @@ loginForm.addEventListener('submit',async event=>{
     });
     if(error)throw error;
     loginForm.reset();
-    await loadAccount();
-    // loadAccount reports authorization or recovery state; do not overwrite it with success.
+    // The SIGNED_IN auth listener performs one deferred account load after
+    // Supabase releases its internal auth lock. Do not race it with a second load.
   }catch(e){
     loginForm.reset();
     showView('login');
@@ -1434,7 +1434,15 @@ client.auth.onAuthStateChange((event,session)=>{
     accountAccess.hidden=true;
     const nationalDashboard=byId('fju-national-full-dashboard');if(nationalDashboard)nationalDashboard.style.display='none';
     renderUnifiedCoordinatorPage(false);
-    void loadAccount({keepAccountVisible:dialog?.open});
+    // Supabase auth callbacks run while its internal auth lock is held. Defer
+    // all session/profile queries until the callback has returned; otherwise
+    // getUser() inside loadAccount can race or deadlock during repeated logins.
+    const keepAccountVisible=Boolean(dialog?.open);
+    setTimeout(()=>{
+      if(session?.user?.id!==activeUserId){
+        void loadAccount({keepAccountVisible});
+      }
+    },0);
     return;
   }
   if(event==='PASSWORD_RECOVERY'){
