@@ -1637,20 +1637,15 @@ async function setupYouthProfileEdit(){
    if(data.estado_civil!=='casado')data.data_casamento='';
    if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
-   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:JSON.stringify(Array.isArray(projects)?projects:[]),testemunho:data.testemunho||'',observacoes:data.observacoes||''};
-   const projectsDebug=Array.from(form.querySelectorAll('input[name="projetos"]:checked'),input=>String(input.value).trim()).filter(Boolean);
-   const rpcPayload=JSON.parse(JSON.stringify(payload));
-   rpcPayload.projetos=projectsDebug;
-   const projectsPreview=JSON.stringify(rpcPayload.projetos);
-   status.textContent='Verificação local: '+projectsDebug.length+' projeto(s) marcado(s) — '+projectsPreview;
-   if(!Array.isArray(rpcPayload.projetos)){status.textContent+=' | ERRO: lista não é array';return;}
+   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;
+   status.textContent='Enviando sua ficha…';
    try{
-    const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:rpcPayload});
+    const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});
     if(error)throw error;
-    status.textContent='Sua ficha foi atualizada com sucesso. Projetos enviados: '+projectsPreview;
+    status.textContent='Sua ficha foi atualizada com sucesso.';
    }catch(e){
-    status.textContent='Falha no banco. Projetos coletados no iPhone: '+projectsPreview+'. Erro: '+e.message;
+    status.textContent='Não foi possível salvar sua ficha: '+(e?.message||'Tente novamente.');
    }finally{button.disabled=false;}
   });
  }
@@ -1687,9 +1682,15 @@ async function setupYouthProfileEdit(){
  }
  const altarField=form.querySelector('[name="deseja_obra_altar"]');
  if(altarField&&!editedDuringLoad.has('deseja_obra_altar'))altarField.checked=records.deseja_obra_altar===true;
- const selectedProjects=new Set(records.projetos||[]);
+ const normalizeSavedList=value=>{
+  if(Array.isArray(value))return value.map(item=>String(item).trim()).filter(Boolean);
+  if(typeof value!=='string'||!value.trim())return [];
+  try{const parsed=JSON.parse(value);if(Array.isArray(parsed))return parsed.map(item=>String(item).trim()).filter(Boolean);}catch(_){}
+  return value.split(',').map(item=>item.trim().replace(/^["']|["']$/g,'')).filter(Boolean);
+ };
+ const selectedProjects=new Set(normalizeSavedList(records.projetos));
  if(!editedDuringLoad.has('projetos'))for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
- const selectedLanguages=new Set(records.idiomas||[]);
+ const selectedLanguages=new Set(normalizeSavedList(records.idiomas));
  if(!editedDuringLoad.has('idiomas'))for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
  const chosenLanguages=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
  const languageSummary=form.querySelector('[data-language-summary]');
