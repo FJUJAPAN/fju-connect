@@ -1601,6 +1601,11 @@ async function setupYouthProfileEdit(){
   });
  }
  const form=root.querySelector('form');
+ const unlockControls=()=>{
+  for(const control of form.elements)control.disabled=false;
+  const saveButton=form.querySelector('button[type="submit"]');
+  if(saveButton)saveButton.disabled=false;
+ };
  for(const control of form.elements)control.disabled=true;
  byId('fju-youth-edit-status').textContent='Carregando seus dados…';
  const {data:{user}}=await client.auth.getUser();
@@ -1608,13 +1613,13 @@ async function setupYouthProfileEdit(){
  if(!user){root.hidden=true;return;}
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta.';root.hidden=false;return;}root.hidden=false;
+ if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta. Você pode preencher os dados e tentar salvar.';root.hidden=false;unlockControls();return;}root.hidden=false;
  const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
   client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
   client.rpc('fju_ler_meus_complementos')
  ]);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
+ if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Os campos foram liberados para edição; tente salvar após preencher.';unlockControls();return;}
  const extra=complementError?{}:(complements||{});
  const values={nome_completo:records.nome_completo,telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
@@ -1627,10 +1632,11 @@ async function setupYouthProfileEdit(){
  for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
  const selectedLanguages=new Set(records.idiomas||[]);
  for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
- updateLanguageSummary();
+ const chosenLanguages=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
+ const languageSummary=form.querySelector('[data-language-summary]');
+ if(languageSummary)languageSummary.textContent=chosenLanguages.length?chosenLanguages.join(', '):'Selecione os idiomas';
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
- for(const control of form.elements)control.disabled=false;
- form.querySelector('button').disabled=false;
+ unlockControls();
  byId('fju-youth-edit-status').textContent=complementError
   ?'Dados principais carregados. Alguns campos complementares não puderam ser carregados: '+complementError.message
   :'Confira os dados e toque em “Salvar minha ficha”.';
