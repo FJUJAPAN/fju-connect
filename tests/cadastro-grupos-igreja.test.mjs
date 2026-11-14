@@ -7,12 +7,14 @@ const auth=readFileSync(new URL('my-page-auth.js',root),'utf8');
 const index=readFileSync(new URL('index.html',root),'utf8');
 const sql=readFileSync(new URL('supabase/20261027_cadastro_grupos_igreja.sql',root),'utf8');
 
-test('foto permanece visível e obrigatória para todos os grupos',()=>{
- assert.match(auth,/signupDetails\.root\.hidden=false;/);
- assert.match(auth,/field\.required=key==='photo'\|\|youth/);
+test('a ficha detalhada FJU pede foto e dados no fluxo correto',()=>{
+ assert.match(auth,/signupDetails\.root\.hidden=youth&&!coordinator;/);
+ assert.match(auth,/field\.required=coordinator\|\|\(!youth&&key==='photo'\);/);
  assert.match(auth,/if\(key!=='photo'\)field\.closest\('label'\)\.style\.display=youth\?'grid':'none'/);
- assert.match(auth,/signupPolo\.required=youth\|\|isCoordinatorSignup\(\);/);
- assert.match(auth,/signupProjects\.hidden=!youth\|\|isCoordinatorSignup\(\);/);
+ assert.match(auth,/signupPolo\.hidden=youth&&!coordinator;signupProjects\.hidden=true;/);
+ assert.match(auth,/signupPolo\.required=coordinator;/);
+ assert.match(auth,/const photo=await prepareSignupPhoto\(details\.fields\.photo\.files\[0\]\)/);
+ assert.match(auth,/const input=document\.createElement\(key==='nationality'\?'select':'input'\);input\.required=true;/);
 });
 
 test('escolha do grupo é recuperável após confirmação de email',()=>{
