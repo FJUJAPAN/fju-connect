@@ -1638,9 +1638,20 @@ async function setupYouthProfileEdit(){
    if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
    const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:JSON.stringify(Array.isArray(projects)?projects:[]),testemunho:data.testemunho||'',observacoes:data.observacoes||''};
-   button.disabled=true;status.textContent='Salvando sua ficha...';
-   try{const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});if(error)throw error;status.textContent='Sua ficha foi atualizada com sucesso.';}
-   catch(e){status.textContent='Não foi possível salvar: '+e.message;}finally{button.disabled=false;}
+   const projectsDebug=Array.from(form.querySelectorAll('input[name="projetos"]:checked'),input=>String(input.value).trim()).filter(Boolean);
+   const rpcPayload=JSON.parse(JSON.stringify(payload));
+   rpcPayload.projetos=projectsDebug;
+   const projectsPreview=JSON.stringify(rpcPayload.projetos);
+   status.textContent='Verificação local: '+projectsDebug.length+' projeto(s) marcado(s) — '+projectsPreview;
+   if(!Array.isArray(rpcPayload.projetos)){status.textContent+=' | ERRO: lista não é array';return;}
+   button.disabled=true;
+   try{
+    const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:rpcPayload});
+    if(error)throw error;
+    status.textContent='Sua ficha foi atualizada com sucesso. Projetos enviados: '+projectsPreview;
+   }catch(e){
+    status.textContent='Falha no banco. Projetos coletados no iPhone: '+projectsPreview+'. Erro: '+e.message;
+   }finally{button.disabled=false;}
   });
  }
  const form=root.querySelector('form');
