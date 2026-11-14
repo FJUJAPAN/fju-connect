@@ -988,6 +988,7 @@ function renderUnifiedCoordinatorPage(enabled){
  }
  section.dataset.enabled=enabled?'1':'0';
  section.hidden=!enabled;
+ if(!enabled)section.style.setProperty('display','none','important');
  const home=byId('fju-youth-dashboard');
  const access=byId('fju-account-admin-access');
  const adminTile=byId('fju-youth-admin-tile');
@@ -1020,7 +1021,9 @@ function renderUnifiedCoordinatorPage(enabled){
   access?.style.removeProperty('display');
   adminTile?.style.removeProperty('display');
   const fullDashboard=byId('fju-national-full-dashboard');if(fullDashboard)fullDashboard.style.display='none';
-  section.style.removeProperty('display');
+  section.style.setProperty('display','none','important');
+  const hiddenFrame=byId('fju-coordinator-unified-frame');
+  if(hiddenFrame)hiddenFrame.style.setProperty('display','none','important');
   dialog.style.removeProperty('width');
   dialog.style.removeProperty('max-width');
   const frame=byId('fju-coordinator-unified-frame');
@@ -1035,10 +1038,11 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   lastRole='member';
   localize();
   // Never show the previous account's role card or dashboard while identity is being revalidated.
-  const staleCard=byId('fju-member-collectible');if(staleCard)staleCard.hidden=true;
-  const staleNational=byId('fju-national-full-dashboard');if(staleNational)staleNational.style.display='none';
-  const staleYouthAdmin=byId('fju-youth-admin-tile');if(staleYouthAdmin)staleYouthAdmin.hidden=true;
-  const staleShortcut=byId('fju-my-page-admin-shortcut');if(staleShortcut){staleShortcut.hidden=true;staleShortcut.style.display='none';}
+  const staleCard=byId('fju-member-collectible');if(staleCard){staleCard.hidden=true;staleCard.style.setProperty('display','none','important');}
+  const staleNational=byId('fju-national-full-dashboard');if(staleNational){staleNational.hidden=true;staleNational.style.setProperty('display','none','important');}
+  const staleYouthAdmin=byId('fju-youth-admin-tile');if(staleYouthAdmin){staleYouthAdmin.hidden=true;staleYouthAdmin.style.setProperty('display','none','important');}
+  const staleShortcut=byId('fju-my-page-admin-shortcut');if(staleShortcut){staleShortcut.hidden=true;staleShortcut.style.setProperty('display','none','important');}
+  const staleProfileLink=byId('fju-profile-admin-panel-link');if(staleProfileLink){staleProfileLink.hidden=true;staleProfileLink.style.setProperty('display','none','important');}
   renderUnifiedCoordinatorPage(false);
   // Validate in the background; never switch the UI to a verification splash.
   try{
