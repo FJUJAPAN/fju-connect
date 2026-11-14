@@ -9,6 +9,12 @@ const client=createClient(
 );
 const byId=id=>document.getElementById(id);
 const dialog=byId('fju-account-dialog');
+// Fail closed: conceal account content until this session's role is verified.
+const accountStateStyle=document.createElement('style');
+accountStateStyle.id='fju-account-role-gate';
+accountStateStyle.textContent='\n#fju-account-dialog[data-fju-account-state="checking"] #fju-account-my-page{visibility:hidden!important}\n#fju-account-dialog[data-fju-account-state="checking"] #fju-account-loading{display:block!important}\n#fju-account-dialog[data-fju-account-state="checking"] #fju-account-admin-access,\n#fju-account-dialog[data-fju-account-state="checking"] #fju-national-full-dashboard,\n#fju-account-dialog[data-fju-account-state="checking"] #fju-youth-admin-tile,\n#fju-account-dialog[data-fju-account-state="checking"] #fju-my-page-admin-shortcut,\n#fju-account-dialog[data-fju-account-state="checking"] #fju-profile-admin-panel-link{display:none!important}\n';
+document.head.append(accountStateStyle);
+dialog.dataset.fjuAccountState='checking';
 const feedback=byId('fju-account-feedback');
 const loginForm=byId('fju-account-login-form');
 const forgotForm=byId('fju-account-forgot-form');
@@ -1033,6 +1039,7 @@ function renderUnifiedCoordinatorPage(enabled){
 
 async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   const current=++updateSequence;
+  dialog.dataset.fjuAccountState='checking';
   // Reset the displayed role synchronously, before the first await. Otherwise the
   // previous National role remains in the account header while getUser/profile load.
   lastRole='member';
@@ -1055,6 +1062,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     const {data:{user},error}=await client.auth.getUser();
     if(current!==updateSequence||passwordRecovery)return;
     if(error||!user){
+      dialog.dataset.fjuAccountState='ready';
       authenticated=false;userEmail='';lastRole='';activeUserId='';preferredLanguageUser=null;
       renderHeaderAccount(null);
       showView('login');
@@ -1086,6 +1094,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     // Handle pending youth access before optional avatar and card requests.
     if(!profile?.ativo || !['nacional','coordenador'].includes(profile.papel)){
       const requestSection=byId('fju-youth-signup');
+      dialog.dataset.fjuAccountState='ready';
       showView('account');
       if(requestSection){myPage.append(requestSection);requestSection.hidden=false;}
       const group=await renderYouthSignup(user,false,current);
@@ -1180,6 +1189,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         for(const pane of ['profile','interactions','saved']){const node=byId('fju-youth-'+pane+'-pane');if(node)node.hidden=true;}
         const note=byId('fju-account-member-note');if(note)note.hidden=true;
         accountAccess.hidden=true;
+        dialog.dataset.fjuAccountState='ready';
         showView('account');
         signupOpen.hidden=true;
         loginOpen.hidden=true;
@@ -1234,6 +1244,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     const church=byId('fju-account-church');
     church.hidden=!churchName;
     if(churchName)byId('fju-account-church-name').textContent='FJU '+churchName;
+    dialog.dataset.fjuAccountState='ready';
     showView('account');
     localize();
     preferredLanguageUI();
@@ -1262,6 +1273,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     // A post-login profile/RPC failure must not be mistaken for invalid credentials.
     // Keep the authenticated session and offer an explicit retry without a new signup.
     if(authenticated){
+      dialog.dataset.fjuAccountState='ready';
       showView('account');
       signupOpen.hidden=true;
       loginOpen.hidden=true;
@@ -1483,7 +1495,8 @@ if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
     }
   })();
 }else{
-  void loadAccount();
+  // Avoid background role rendering at startup; validate only when My Page opens.
+  dialog.dataset.fjuAccountState='checking';
 }
 
 
