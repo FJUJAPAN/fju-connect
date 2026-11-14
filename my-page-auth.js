@@ -1602,7 +1602,7 @@ async function setupYouthProfileEdit(){
     </section>
     <div class="fju-edit-actions"><button type="submit">Salvar minha ficha</button></div>
    </form><p id="fju-youth-edit-status" role="status"></p>`;
-  pane.append(root);
+  pane.prepend(root);
   const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
   const editedDuringLoad=new Set();
   form.addEventListener('input',event=>{if(event.target?.name)editedDuringLoad.add(event.target.name);});
