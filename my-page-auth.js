@@ -1637,24 +1637,21 @@ async function setupYouthProfileEdit(){
    if(data.estado_civil!=='casado')data.data_casamento='';
    if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
-   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:JSON.stringify(Array.isArray(projects)?projects:[]),testemunho:data.testemunho||'',observacoes:data.observacoes||''};
-   const projectsDebug=Array.from(form.querySelectorAll('input[name="projetos"]:checked'),input=>String(input.value).trim()).filter(Boolean);
-   const rpcPayload=JSON.parse(JSON.stringify(payload));
-   rpcPayload.projetos=projectsDebug;
-   const projectsPreview=JSON.stringify(rpcPayload.projetos);
-   status.textContent='Verificação local: '+projectsDebug.length+' projeto(s) marcado(s) — '+projectsPreview;
-   if(!Array.isArray(rpcPayload.projetos)){status.textContent+=' | ERRO: lista não é array';return;}
+   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;
+   status.textContent='Enviando sua ficha…';
    try{
-    const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:rpcPayload});
+    const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});
     if(error)throw error;
-    status.textContent='Sua ficha foi atualizada com sucesso. Projetos enviados: '+projectsPreview;
+    status.textContent='Sua ficha foi atualizada com sucesso.';
    }catch(e){
-    status.textContent='Falha no banco. Projetos coletados no iPhone: '+projectsPreview+'. Erro: '+e.message;
+    status.textContent='Não foi possível salvar sua ficha: '+(e?.message||'Tente novamente.');
    }finally{button.disabled=false;}
   });
  }
  const form=root.querySelector('form');
+ // Do not expose an empty form while saved profile data is still loading.
+ root.hidden=true;
  const unlockControls=()=>{
   const saveButton=form.querySelector('button[type="submit"]');
   if(saveButton)saveButton.disabled=false;
@@ -1669,14 +1666,15 @@ async function setupYouthProfileEdit(){
  if(!user){root.hidden=true;return;}
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta. Você pode preencher os dados e tentar salvar.';root.hidden=false;unlockControls();return;}root.hidden=false;
+ if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta. Por segurança, a edição ficará bloqueada até localizar a ficha.';root.hidden=false;return;}
  const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
   client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
   client.rpc('fju_ler_meus_complementos')
  ]);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Os campos foram liberados para edição; tente salvar após preencher.';unlockControls();return;}
- const extra=complementError?{}:(complements||{});
+ if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
+ if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar todos os dados complementares: '+complementError.message+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
+ const extra=complements||{};
  const values={nome_completo:records.nome_completo||user.user_metadata?.full_name||user.user_metadata?.name||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
   const field=form.querySelector('[name="'+key+'"]');
@@ -1684,14 +1682,21 @@ async function setupYouthProfileEdit(){
  }
  const altarField=form.querySelector('[name="deseja_obra_altar"]');
  if(altarField&&!editedDuringLoad.has('deseja_obra_altar'))altarField.checked=records.deseja_obra_altar===true;
- const selectedProjects=new Set(records.projetos||[]);
+ const normalizeSavedList=value=>{
+  if(Array.isArray(value))return value.map(item=>String(item).trim()).filter(Boolean);
+  if(typeof value!=='string'||!value.trim())return [];
+  try{const parsed=JSON.parse(value);if(Array.isArray(parsed))return parsed.map(item=>String(item).trim()).filter(Boolean);}catch(_){}
+  return value.split(',').map(item=>item.trim().replace(/^["']|["']$/g,'')).filter(Boolean);
+ };
+ const selectedProjects=new Set(normalizeSavedList(records.projetos));
  if(!editedDuringLoad.has('projetos'))for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
- const selectedLanguages=new Set(records.idiomas||[]);
+ const selectedLanguages=new Set(normalizeSavedList(records.idiomas));
  if(!editedDuringLoad.has('idiomas'))for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
  const chosenLanguages=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
  const languageSummary=form.querySelector('[data-language-summary]');
  if(languageSummary)languageSummary.textContent=chosenLanguages.length?chosenLanguages.join(', '):'Selecione os idiomas';
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
+ root.hidden=false;
  unlockControls();
  byId('fju-youth-edit-status').textContent=complementError
   ?'Dados principais carregados. Alguns campos complementares não puderam ser carregados: '+complementError.message
