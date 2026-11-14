@@ -1434,41 +1434,63 @@ async function setupYouthProfileEdit(){
  let root=byId('fju-youth-profile-edit');
  if(!root){
   root=document.createElement('section');root.id='fju-youth-profile-edit';
-
   const style=document.createElement('style');style.id='fju-youth-edit-styles';style.textContent=`
-   #fju-youth-profile-edit{box-sizing:border-box!important;width:100%!important;max-width:760px!important;margin:16px auto!important;padding:20px!important;background:#fff!important;color:#17243b!important;border:1px solid #e4e9f1!important;border-radius:18px!important;box-shadow:0 8px 28px rgba(16,35,65,.08)!important;font-family:inherit!important}
-   #fju-youth-profile-edit h3{margin:0 0 8px!important;font-size:22px!important;line-height:1.25!important;font-weight:750!important;color:#17243b!important}
-   #fju-youth-profile-edit>p{margin:0 0 20px!important;color:#64748b!important;font-size:14px!important;line-height:1.55!important}
-   #fju-youth-edit-form{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 14px!important}
-   #fju-youth-edit-form label{display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0!important;color:#34445e!important;font-size:13px!important;font-weight:650!important;line-height:1.35!important}
-   #fju-youth-edit-form input,#fju-youth-edit-form select,#fju-youth-edit-form textarea{box-sizing:border-box!important;display:block!important;width:100%!important;min-width:0!important;min-height:48px!important;padding:12px 13px!important;border:1px solid #d5deea!important;border-radius:11px!important;background:#f8fafc!important;background-image:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;font-family:inherit!important;font-size:16px!important;font-weight:500!important;line-height:1.4!important;box-shadow:none!important;outline:none!important}
-   #fju-youth-edit-form textarea{min-height:94px!important;resize:vertical!important}
-   #fju-youth-edit-form input:focus,#fju-youth-edit-form select:focus,#fju-youth-edit-form textarea:focus{border-color:#315d9b!important;box-shadow:0 0 0 3px rgba(49,93,155,.12)!important;background:#fff!important}
+   #fju-youth-profile-edit{box-sizing:border-box!important;width:100%!important;max-width:760px!important;margin:16px auto!important;padding:22px!important;background:linear-gradient(155deg,#f8faff 0%,#fff 100%)!important;color:#192b4d!important;border:1px solid #d9e3f1!important;border-radius:22px!important;box-shadow:0 8px 28px rgba(20,42,82,.07)!important;font-family:inherit!important}
+   #fju-youth-profile-edit h3{margin:0 0 8px!important;font-size:23px!important;line-height:1.25!important;font-weight:800!important;letter-spacing:-.025em!important;color:#192b4d!important}
+   #fju-youth-profile-edit>p{margin:0 0 22px!important;color:#667895!important;font-size:14px!important;line-height:1.6!important}
+   #fju-youth-edit-form{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:20px 15px!important}
+   #fju-youth-edit-form .fju-edit-section{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px 14px!important;margin:0!important;padding:18px!important;border:1px solid #e1e8f2!important;border-radius:16px!important;background:rgba(255,255,255,.82)!important;min-width:0!important}
+   #fju-youth-edit-form .fju-edit-section-title{grid-column:1/-1!important;margin:0!important;padding:0 0 10px!important;border-bottom:1px solid #e9eef6!important;color:#243d6b!important;font-size:16px!important;font-weight:800!important}
+   #fju-youth-edit-form label{display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important;margin:0!important;color:#233b63!important;font-size:14px!important;font-weight:700!important;line-height:1.4!important}
+   #fju-youth-edit-form input,#fju-youth-edit-form select,#fju-youth-edit-form textarea{box-sizing:border-box!important;display:block!important;width:100%!important;min-width:0!important;min-height:52px!important;padding:13px 15px!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#fff!important;background-image:none!important;color:#1b3155!important;-webkit-text-fill-color:#1b3155!important;font-family:inherit!important;font-size:17px!important;font-weight:500!important;line-height:1.4!important;box-shadow:none!important;outline:none!important}
+   #fju-youth-edit-form textarea{min-height:110px!important;resize:vertical!important;line-height:1.55!important}
+   #fju-youth-edit-form input::placeholder,#fju-youth-edit-form textarea::placeholder{color:#9aa8bd!important;-webkit-text-fill-color:#9aa8bd!important}
+   #fju-youth-edit-form input:focus,#fju-youth-edit-form select:focus,#fju-youth-edit-form textarea:focus{border-color:#7295d0!important;box-shadow:0 0 0 3px rgba(49,93,155,.12)!important;background:#fff!important}
    #fju-youth-edit-form [data-marriage-wrap][hidden]{display:none!important}
-   #fju-youth-edit-form button{grid-column:1/-1!important;width:100%!important;min-height:50px!important;margin-top:4px!important;border:0!important;border-radius:12px!important;background:#173b76!important;color:#fff!important;font-size:16px!important;font-weight:700!important;cursor:pointer!important}
+   #fju-youth-edit-form .fju-edit-full{grid-column:1/-1!important}
+   #fju-youth-edit-form .fju-edit-actions{grid-column:1/-1!important;display:flex!important;gap:12px!important;flex-wrap:wrap!important;margin-top:2px!important}
+   #fju-youth-edit-form button{flex:1 1 220px!important;min-height:54px!important;margin:0!important;padding:14px 20px!important;border:0!important;border-radius:14px!important;background:#263f7d!important;color:#fff!important;font-size:16px!important;font-weight:800!important;cursor:pointer!important;box-shadow:0 5px 14px rgba(34,61,120,.15)!important}
    #fju-youth-edit-form button:disabled{opacity:.55!important;cursor:not-allowed!important}
-   #fju-youth-edit-status{margin:12px 0 0!important;color:#315078!important;font-size:14px!important;line-height:1.5!important}
-   @media(max-width:560px){#fju-youth-profile-edit{padding:16px!important;border-radius:15px!important}#fju-youth-profile-edit h3{font-size:20px!important}#fju-youth-edit-form{grid-template-columns:1fr!important;gap:14px!important}#fju-youth-edit-form button{grid-column:1!important}}
+   #fju-youth-edit-status{margin:14px 0 0!important;padding:0 2px!important;color:#315078!important;font-size:14px!important;line-height:1.55!important}
+   @media(max-width:600px){
+    #fju-youth-profile-edit{padding:16px!important;border-radius:18px!important}
+    #fju-youth-profile-edit h3{font-size:21px!important}
+    #fju-youth-edit-form{grid-template-columns:1fr!important;gap:15px!important}
+    #fju-youth-edit-form .fju-edit-section{grid-template-columns:1fr!important;gap:15px!important;padding:15px!important}
+    #fju-youth-edit-form .fju-edit-section-title,#fju-youth-edit-form .fju-edit-full{grid-column:1!important}
+    #fju-youth-edit-form input,#fju-youth-edit-form select,#fju-youth-edit-form textarea{min-height:54px!important;font-size:17px!important}
+    #fju-youth-edit-form .fju-edit-actions{flex-direction:column!important}
+    #fju-youth-edit-form button{width:100%!important;flex-basis:auto!important}
+   }
   `;document.head.append(style);
   root.innerHTML=`
    <h3>Minha ficha FJU</h3>
-   <p>Confira e atualize seus dados pessoais, estado civil e informações da sua trajetória na FJU. Você pode atualizar seus próprios dados. As alterações serão salvas diretamente na sua ficha.</p>
-   <form id="fju-youth-edit-form" style="display:grid;gap:10px">
-    <label>Data de nascimento<input name="nascimento" type="date"></label>
-    <label>Estado civil<select name="estado_civil"><option value="nao_informado">Não informado</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option></select></label>
-    <label data-marriage-wrap>Data do casamento<input name="data_casamento" type="date"></label>
-    <label>Endereço no Japão<textarea name="endereco" rows="2" maxlength="350"></textarea></label>
-    <label>Data do batismo nas águas<input name="batismo_aguas" type="date"></label>
-    <label>Data do batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label>
-    <label>Data do batismo com o Espírito Santo (registro complementar)<input name="batismo_espirito" type="date"></label>
-    <label>Data de início no CPO<input name="inicio_cpo" type="date"></label>
-    <label>Data de início como Colaborador<input name="inicio_colaborador" type="date"></label>
-    <label>Data de início na Obra de Deus<input name="inicio_obra" type="date"></label>
-    <label>Data em que começou a cuidar da FJU<input name="inicio_coordenacao_fju" type="date"></label>
-    <label>Projetos (até 5, separados por vírgula)<input name="projetos" type="text" placeholder="Esporte, Cultura, HELP"></label>
-    <label>Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000"></textarea></label>
-    <label>Observações adicionais<textarea name="observacoes" rows="3" maxlength="3000"></textarea></label>
-    <button type="submit" style="padding:13px;background:#173b76;color:white;border:0;border-radius:10px">Salvar minha ficha</button>
+   <p>Confira e atualize seus dados pessoais, estado civil e informações da sua trajetória na FJU. As alterações serão salvas diretamente na sua ficha.</p>
+   <form id="fju-youth-edit-form">
+    <section class="fju-edit-section">
+     <h4 class="fju-edit-section-title">Dados pessoais</h4>
+     <label>Data de nascimento<input name="nascimento" type="date"></label>
+     <label>Estado civil<select name="estado_civil"><option value="nao_informado">Não informado</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option></select></label>
+     <label data-marriage-wrap>Data do casamento<input name="data_casamento" type="date"></label>
+     <label class="fju-edit-full">Endereço no Japão<textarea name="endereco" rows="2" maxlength="350" placeholder="Digite seu endereço completo"></textarea></label>
+    </section>
+    <section class="fju-edit-section">
+     <h4 class="fju-edit-section-title">Trajetória espiritual e FJU</h4>
+     <label>Data do batismo nas águas<input name="batismo_aguas" type="date"></label>
+     <label>Data do batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label>
+     <label>Registro complementar do batismo<input name="batismo_espirito" type="date"></label>
+     <label>Início no CPO<input name="inicio_cpo" type="date"></label>
+     <label>Início como Colaborador<input name="inicio_colaborador" type="date"></label>
+     <label>Início na Obra de Deus<input name="inicio_obra" type="date"></label>
+     <label class="fju-edit-full">Quando começou a cuidar da FJU<input name="inicio_coordenacao_fju" type="date"></label>
+    </section>
+    <section class="fju-edit-section">
+     <h4 class="fju-edit-section-title">Projetos e informações adicionais</h4>
+     <label class="fju-edit-full">Projetos dos quais participa (até 5)<input name="projetos" type="text" placeholder="Ex.: HELP, Esporte, Cultura"></label>
+     <label class="fju-edit-full">Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000" placeholder="Compartilhe seu testemunho"></textarea></label>
+     <label class="fju-edit-full">Observações adicionais<textarea name="observacoes" rows="3" maxlength="3000" placeholder="Informações complementares"></textarea></label>
+    </section>
+    <div class="fju-edit-actions"><button type="submit">Salvar minha ficha</button></div>
    </form><p id="fju-youth-edit-status" role="status"></p>`;
   pane.append(root);
   const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
@@ -1480,9 +1502,9 @@ async function setupYouthProfileEdit(){
    if(data.estado_civil==='casado'&&!data.data_casamento){status.textContent='Informe a data do casamento.';return;}
    if(data.estado_civil!=='casado')data.data_casamento='';
    const payload={nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
-   button.disabled=true;status.textContent='Enviando alterações...';
+   button.disabled=true;status.textContent='Salvando sua ficha...';
    try{const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});if(error)throw error;status.textContent='Sua ficha foi atualizada com sucesso.';}
-   catch(e){status.textContent='Não foi possível enviar: '+e.message;}finally{button.disabled=false;}
+   catch(e){status.textContent='Não foi possível salvar: '+e.message;}finally{button.disabled=false;}
   });
  }
  const {data:{user}}=await client.auth.getUser();if(!user){root.hidden=true;return;}
@@ -1499,5 +1521,5 @@ async function setupYouthProfileEdit(){
  for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  form.querySelector('button').disabled=false;
- byId('fju-youth-edit-status').textContent='Edite seus dados e toque em “Salvar minha ficha”.';
+ byId('fju-youth-edit-status').textContent='Confira os dados e toque em “Salvar minha ficha”.';
 }
