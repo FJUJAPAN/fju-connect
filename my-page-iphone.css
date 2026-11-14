@@ -205,3 +205,68 @@
  #fju-account-dialog[data-fju-view="account"] .fju-profile-photo-preview{width:66px;height:66px}
  #fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-photo-frame{height:128px}
 }
+
+
+/* Youth member identity card: compact, personal, and not an event banner. */
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-collectible{
+  display:grid;grid-template-columns:88px minmax(0,1fr);grid-template-rows:auto auto auto auto auto;
+  align-items:center;column-gap:14px;row-gap:0;
+  width:min(100%,430px);max-width:100%;margin:0 auto 16px;padding:0;
+  overflow:hidden;border:1px solid #dce6f3;border-radius:18px;
+  background:#fff;color:#172b4d;text-align:left;
+  box-shadow:0 8px 24px rgba(20,43,80,.08)
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-top{
+  grid-column:1/-1;grid-row:1;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin:0;padding:13px 16px;background:linear-gradient(110deg,#142e5a,#28549a);
+  color:#fff;font-size:9px;font-weight:850;letter-spacing:1.25px
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-photo-frame{
+  grid-column:1;grid-row:2/5;align-self:center;justify-self:center;
+  width:76px;height:76px;min-width:76px;margin:14px 0 14px 12px;
+  border:3px solid #e4edf9;border-radius:50%;background:#edf3fb;
+  display:grid;place-items:center;overflow:hidden
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-photo-frame img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%;border-radius:50%
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-monogram{
+  font-size:23px;font-weight:900;color:#31558b;opacity:.55
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane #fju-member-card-name{
+  grid-column:2;grid-row:2;align-self:end;display:block;
+  margin:13px 14px 3px 0;font-size:21px;line-height:1.2;font-weight:900;
+  letter-spacing:-.35px;color:#172f59;overflow-wrap:anywhere
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-details{
+  grid-column:2;grid-row:3;justify-content:flex-start;gap:6px;
+  margin:2px 12px 0 0;min-width:0
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-details span{
+  display:inline-flex;align-items:center;max-width:100%;padding:6px 9px;
+  border:1px solid #dce7f7;border-radius:999px;background:#f2f6fc;
+  color:#294b7d;font-size:10px;font-weight:800;line-height:1.2;overflow-wrap:anywhere
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane #fju-member-card-project{display:none!important}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane #fju-member-card-rank{
+  grid-column:2;grid-row:4;justify-self:start;align-self:start;
+  display:inline-flex;width:max-content;max-width:calc(100% - 14px);
+  margin:7px 14px 14px 0;padding:6px 11px;border:0;border-radius:999px;
+  background:#e4f5ed;color:#176b50;font-size:11px;font-weight:850;line-height:1.2
+}
+#fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-bottom{
+  grid-column:1/-1;grid-row:5;margin:0 15px;padding:11px 0 13px;
+  border-top:1px solid #e7edf5;color:#71829c;text-align:center;
+  font-size:9px;font-weight:850;letter-spacing:1.05px
+}
+@media(max-width:420px){
+  #fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-collectible{
+    grid-template-columns:78px minmax(0,1fr);column-gap:11px
+  }
+  #fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane .fju-member-card-photo-frame{
+    width:68px;height:68px;min-width:68px;margin-left:10px
+  }
+  #fju-account-dialog[data-fju-view="account"] #fju-youth-profile-pane #fju-member-card-name{
+    font-size:19px;margin-right:10px
+  }
+}
