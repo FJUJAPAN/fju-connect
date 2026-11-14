@@ -1094,7 +1094,8 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     // Handle pending youth access before optional avatar and card requests.
     if(!profile?.ativo || !['nacional','coordenador'].includes(profile.papel)){
       const requestSection=byId('fju-youth-signup');
-      dialog.dataset.fjuAccountState='ready';
+      // Keep the account view concealed until youth access checks finish.
+      // Releasing the gate here exposed stale privileged UI while async checks ran.
       showView('account');
       if(requestSection){myPage.append(requestSection);requestSection.hidden=false;}
       const group=await renderYouthSignup(user,false,current);
@@ -1110,6 +1111,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
           signupOpen.hidden=true;
           loginOpen.hidden=true;
           setFeedback(request?.status==='pendente'?'Solicitação recebida. Aguarde aprovação.':'Complete o cadastro para solicitar acesso.');
+          dialog.dataset.fjuAccountState='ready';
           return;
         }
       }
