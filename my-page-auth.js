@@ -1475,6 +1475,14 @@ async function setupYouthProfileEdit(){
    #fju-youth-edit-form .fju-edit-projects legend{padding:0 6px!important;color:#233b63!important;font-size:14px!important;font-weight:800!important}
    #fju-youth-edit-form .fju-edit-project-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 14px!important}
    #fju-youth-edit-form .fju-edit-project-option{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border:1px solid #e1e8f2!important;border-radius:10px!important;background:#f8faff!important;font-size:15px!important;font-weight:650!important;cursor:pointer!important}
+   #fju-youth-edit-form .fju-edit-project-option input{flex:0 0 22px!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-option-mark{display:inline-grid!important;place-items:center!important;min-width:34px!important;min-height:34px!important;padding:0 8px!important;border-radius:9px!important;font-size:10px!important;font-weight:850!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--help{background:#f5cf32!important;color:#171717!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--culture{background:#ed8124!important;color:#171717!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--sport{background:#269b55!important;color:#fff!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--media{background:#173b70!important;color:#fff!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--bjj{background:#d3232a!important;color:#fff!important}
+   #fju-youth-edit-form .fju-edit-project-option .fju-project-mark--uniforca{background:#d99a16!important;color:#171717!important}
    #fju-youth-edit-form .fju-edit-project-option input{appearance:auto!important;-webkit-appearance:checkbox!important;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;margin:0!important;padding:0!important;accent-color:#253b75!important}
    #fju-youth-edit-form .fju-edit-actions{grid-column:1/-1!important;display:flex!important;gap:12px!important;flex-wrap:wrap!important;margin-top:2px!important}
    #fju-youth-edit-form button{flex:1 1 220px!important;min-height:54px!important;margin:0!important;padding:14px 20px!important;border:0!important;border-radius:14px!important;background:#263f7d!important;color:#fff!important;font-size:16px!important;font-weight:800!important;cursor:pointer!important;box-shadow:0 5px 14px rgba(34,61,120,.15)!important}
@@ -1497,10 +1505,14 @@ async function setupYouthProfileEdit(){
    <form id="fju-youth-edit-form">
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Dados pessoais</h4>
+     <label class="fju-edit-full">Nome completo<input name="nome_completo" type="text" maxlength="180" autocomplete="name" required></label>
      <label>Data de nascimento<input name="nascimento" type="date"></label>
+     <label>Telefone<input name="telefone" type="tel" maxlength="50" autocomplete="tel"></label>
+     <label>Nacionalidade<select name="nacionalidade_iso2"><option value="">Selecione</option><option value="BR">🇧🇷 Brasil</option><option value="JP">🇯🇵 Japão</option><option value="PH">🇵🇭 Filipinas</option><option value="PE">🇵🇪 Peru</option><option value="BO">🇧🇴 Bolívia</option><option value="PY">🇵🇾 Paraguai</option><option value="AR">🇦🇷 Argentina</option><option value="CO">🇨🇴 Colômbia</option><option value="VE">🇻🇪 Venezuela</option><option value="US">🇺🇸 Estados Unidos</option><option value="CN">🇨🇳 China</option><option value="KR">🇰🇷 Coreia do Sul</option><option value="VN">🇻🇳 Vietnã</option><option value="ID">🇮🇩 Indonésia</option><option value="NP">🇳🇵 Nepal</option><option value="IN">🇮🇳 Índia</option><option value="LK">🇱🇰 Sri Lanka</option><option value="MM">🇲🇲 Mianmar</option><option value="TH">🇹🇭 Tailândia</option><option value="PK">🇵🇰 Paquistão</option><option value="BD">🇧🇩 Bangladesh</option><option value="GB">🇬🇧 Reino Unido</option><option value="FR">🇫🇷 França</option><option value="DE">🇩🇪 Alemanha</option><option value="PT">🇵🇹 Portugal</option><option value="ES">🇪🇸 Espanha</option><option value="MX">🇲🇽 México</option><option value="NG">🇳🇬 Nigéria</option><option value="GH">🇬🇭 Gana</option><option value="NL">🇳🇱 Países Baixos</option><option value="CD">🇨🇩 Congo</option></select></label>
      <label>Estado civil<select name="estado_civil"><option value="nao_informado">Não informado</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option></select></label>
      <label data-marriage-wrap>Data do casamento<input name="data_casamento" type="date"></label>
-     <label class="fju-edit-full">Endereço no Japão<textarea name="endereco" rows="2" maxlength="350" placeholder="Digite seu endereço completo"></textarea></label>
+     <label class="fju-edit-full">Endereço no Japão<textarea name="endereco" rows="2" maxlength="350" autocomplete="street-address" placeholder="Digite seu endereço completo"></textarea></label>
+     <fieldset class="fju-edit-full fju-edit-projects"><legend>Idiomas que fala</legend><div data-language-options class="fju-edit-project-options"></div></fieldset>
     </section>
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Trajetória espiritual e FJU</h4>
@@ -1524,18 +1536,30 @@ async function setupYouthProfileEdit(){
   pane.append(root);
   const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
   const projectOptions=form.querySelector('[data-project-options]');projectOptions.className='fju-edit-project-options';
-  for(const project of ['Esporte','Cultura','Mídia','Banda']){
+  const projectItems=[['HELP','HELP','fju-project-mark--help'],['Cultura','CUL','fju-project-mark--culture'],['Esporte','ESP','fju-project-mark--sport'],['Mídia','MID','fju-project-mark--media'],['FJU BJJ','BJJ','fju-project-mark--bjj'],['Uniforça','UNI','fju-project-mark--uniforca']];
+  for(const [project,short,markClass] of projectItems){
    const label=document.createElement('label');label.className='fju-edit-project-option';
    const check=document.createElement('input');check.type='checkbox';check.name='projetos';check.value=project;
-   label.append(check,document.createTextNode(project));projectOptions.append(label);
+   const mark=document.createElement('span');mark.className='fju-project-option-mark '+markClass;mark.setAttribute('aria-hidden','true');mark.textContent=short;
+   const name=document.createElement('span');name.textContent=project;
+   label.append(check,mark,name);projectOptions.append(label);
+  }
+  const languageOptions=form.querySelector('[data-language-options]');
+  const languages=['Português','Japonês','Inglês','Espanhol','Tagalog','Hindi','Nepali','Indonésio','Birmanês','Cingalês','Coreano','Chinês','Vietnamita','Tailandês','Outros'];
+  for(const language of languages){
+   const label=document.createElement('label');label.className='fju-edit-project-option';
+   const check=document.createElement('input');check.type='checkbox';check.name='idiomas';check.value=language;
+   label.append(check,document.createTextNode(language));languageOptions.append(label);
   }
   form.elements.estado_civil.addEventListener('change',()=>{marriageWrap.hidden=form.elements.estado_civil.value!=='casado';});
   form.addEventListener('submit',async event=>{
    event.preventDefault();const button=form.querySelector('button'),status=byId('fju-youth-edit-status');
-   const data=Object.fromEntries(new FormData(form)),projects=[...form.querySelectorAll('input[name="projetos"]:checked')].map(x=>x.value);
+   const data=Object.fromEntries(new FormData(form)),projects=[...form.querySelectorAll('input[name="projetos"]:checked')].map(x=>x.value),languages=[...form.querySelectorAll('input[name="idiomas"]:checked')].map(x=>x.value);
    if(data.estado_civil==='casado'&&!data.data_casamento){status.textContent='Informe a data do casamento.';return;}
    if(data.estado_civil!=='casado')data.data_casamento='';
-   const payload={deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
+   if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
+   if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
+   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;status.textContent='Salvando sua ficha...';
    try{const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});if(error)throw error;status.textContent='Sua ficha foi atualizada com sucesso.';}
    catch(e){status.textContent='Não foi possível salvar: '+e.message;}finally{button.disabled=false;}
@@ -1545,17 +1569,19 @@ async function setupYouthProfileEdit(){
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(linkError||!links?.length){root.hidden=true;return;}root.hidden=false;
  const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
-  client.from('fju_jovens').select('nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
+  client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
   client.rpc('fju_ler_meus_complementos')
  ]);
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar a ficha: '+(error?.message||'Sem acesso');return;}
  if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar os campos complementares: '+complementError.message;return;}
  const form=root.querySelector('form'),extra=complements||{};
- const values={nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,projetos:(records.projetos||[]).join(', '),estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
+ const values={nome_completo:records.nome_completo,telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
  form.elements.deseja_obra_altar.checked=records.deseja_obra_altar===true;
  const selectedProjects=new Set(records.projetos||[]);
  for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
+ const selectedLanguages=new Set(records.idiomas||[]);
+ for(const check of form.querySelectorAll('input[name="idiomas"]'))check.checked=selectedLanguages.has(check.value);
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  form.querySelector('button').disabled=false;
  byId('fju-youth-edit-status').textContent='Confira os dados e toque em “Salvar minha ficha”.';
