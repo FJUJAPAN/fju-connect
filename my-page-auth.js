@@ -1661,21 +1661,42 @@ async function setupYouthProfileEdit(){
  // hydration below will preserve that field instead of overwriting their input.
  const saveButton=form.querySelector('button[type="submit"]');
  if(saveButton)saveButton.disabled=true;
- byId('fju-youth-edit-status').textContent='Carregando seus dados…';
- const {data:{user},error:authError}=await client.auth.getUser();
- if(request!==youthProfileLoadSequence)return;
- if(!user){
-  byId('fju-youth-edit-status').textContent='Não foi possível confirmar sua sessão. Feche e entre novamente para carregar seus dados. A edição permanece bloqueada.';
+ const status=byId('fju-youth-edit-status');
+ const withTimeout=(promise,stage)=>Promise.race([
+  promise,
+  new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tempo esgotado ao '+stage+'.')),15000))
+ ]);
+ let loadingStage='confirmar sua sessão';
+ let user=null,links=null,records=null,complements=null,error=null,complementError=null;
+ try{
+  status.textContent='Verificando sua sessão…';
+  const authResult=await withTimeout(client.auth.getUser(),loadingStage);
+  user=authResult?.data?.user;
+  if(authResult?.error)throw authResult.error;
+  if(request!==youthProfileLoadSequence)return;
+  if(!user){status.textContent='Não foi possível confirmar sua sessão. Entre novamente para carregar seus dados. A edição permanece bloqueada.';return;}
+  loadingStage='localizar o vínculo da sua ficha';
+  status.textContent='Localizando sua ficha…';
+  const linkResult=await withTimeout(client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1),loadingStage);
+  links=linkResult?.data;const linkError=linkResult?.error;
+  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
+  if(linkError||!links?.length){status.textContent='Não foi possível localizar sua ficha vinculada a esta conta. '+(linkError?.message||'Vínculo ativo não encontrado')+'. A edição permanece bloqueada.';return;}
+  loadingStage='carregar os dados da ficha';
+  status.textContent='Carregando os dados da ficha…';
+  const recordPromise=withTimeout(client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),loadingStage);
+  loadingStage='carregar os dados complementares';
+  status.textContent='Carregando os dados complementares…';
+  const complementPromise=withTimeout(client.rpc('fju_ler_meus_complementos'),loadingStage);
+  const results=await Promise.all([recordPromise,complementPromise]);
+  records=results[0]?.data;error=results[0]?.error;
+  complements=results[1]?.data;complementError=results[1]?.error;
+ }catch(loadError){
+  if(request!==youthProfileLoadSequence)return;
+  status.textContent='Não foi possível concluir o carregamento ao '+loadingStage+': '+(loadError?.message||'Erro inesperado')+'. A edição continua bloqueada. Tente novamente mais tarde.';
   root.hidden=false;
   return;
  }
- const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
- if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta. Por segurança, a edição ficará bloqueada até localizar a ficha.';root.hidden=false;return;}
- const [{data:records,error},{data:complements,error:complementError}]=await Promise.all([
-  client.from('fju_jovens').select('nome_completo,telefone,nacionalidade_iso2,idiomas,nascimento,endereco,batismo_aguas,batismo_espirito_santo,testemunho,projetos,estado_civil,data_casamento,deseja_obra_altar').eq('id',links[0].jovem_id).maybeSingle(),
-  client.rpc('fju_ler_meus_complementos')
- ]);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
  if(error||!records){byId('fju-youth-edit-status').textContent='Não foi possível carregar os dados existentes: '+(error?.message||'Sem acesso')+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
  if(complementError){byId('fju-youth-edit-status').textContent='Não foi possível carregar todos os dados complementares: '+complementError.message+'. Por segurança, a edição ficará bloqueada para evitar sobrescrever informações.';root.hidden=false;return;}
