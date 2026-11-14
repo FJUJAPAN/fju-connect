@@ -1030,6 +1030,10 @@ function renderUnifiedCoordinatorPage(enabled){
 
 async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
   const current=++updateSequence;
+  // Reset the displayed role synchronously, before the first await. Otherwise the
+  // previous National role remains in the account header while getUser/profile load.
+  lastRole='member';
+  localize();
   // Never show the previous account's role card or dashboard while identity is being revalidated.
   const staleCard=byId('fju-member-collectible');if(staleCard)staleCard.hidden=true;
   const staleNational=byId('fju-national-full-dashboard');if(staleNational)staleNational.style.display='none';
@@ -1421,7 +1425,8 @@ byId('fju-account-logout').addEventListener('click',async()=>{
 });
 client.auth.onAuthStateChange((event,session)=>{
   if(event==='SIGNED_IN'&&session?.user?.id&&session.user.id!==activeUserId){
-    updateSequence++;authenticated=false;userEmail='';lastRole='';preferredLanguageUser=null;
+    updateSequence++;authenticated=false;userEmail='';lastRole='member';preferredLanguageUser=null;
+    localize();
     clearHeaderAvatarObjectUrl();renderHeaderAccount(null);
     const cardPhoto=byId('fju-member-card-photo');if(cardPhoto){cardPhoto.hidden=true;cardPhoto.removeAttribute('src');}
     const heroPhoto=byId('fju-youth-hero-photo');if(heroPhoto){heroPhoto.hidden=true;heroPhoto.removeAttribute('src');}
@@ -1442,7 +1447,8 @@ client.auth.onAuthStateChange((event,session)=>{
     resetProfilePassword();
     passwordRecovery=false;
     updateSequence++;
-    authenticated=false;userEmail='';lastRole='';
+    authenticated=false;userEmail='';lastRole='member';activeUserId='';preferredLanguageUser=null;
+    localize();
     renderHeaderAccount(null);
     showView('login');
     localize();
