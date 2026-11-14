@@ -1448,6 +1448,11 @@ async function setupYouthProfileEdit(){
    #fju-youth-edit-form input:focus,#fju-youth-edit-form select:focus,#fju-youth-edit-form textarea:focus{border-color:#7295d0!important;box-shadow:0 0 0 3px rgba(49,93,155,.12)!important;background:#fff!important}
    #fju-youth-edit-form [data-marriage-wrap][hidden]{display:none!important}
    #fju-youth-edit-form .fju-edit-full{grid-column:1/-1!important}
+   #fju-youth-edit-form .fju-edit-projects{grid-column:1/-1!important;min-width:0!important;margin:0!important;padding:14px 16px!important;border:1px solid #cbd8e9!important;border-radius:13px!important;background:#fff!important}
+   #fju-youth-edit-form .fju-edit-projects legend{padding:0 6px!important;color:#233b63!important;font-size:14px!important;font-weight:800!important}
+   #fju-youth-edit-form .fju-edit-project-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 14px!important}
+   #fju-youth-edit-form .fju-edit-project-option{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border:1px solid #e1e8f2!important;border-radius:10px!important;background:#f8faff!important;font-size:15px!important;font-weight:650!important;cursor:pointer!important}
+   #fju-youth-edit-form .fju-edit-project-option input{appearance:auto!important;-webkit-appearance:checkbox!important;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;margin:0!important;padding:0!important;accent-color:#253b75!important}
    #fju-youth-edit-form .fju-edit-actions{grid-column:1/-1!important;display:flex!important;gap:12px!important;flex-wrap:wrap!important;margin-top:2px!important}
    #fju-youth-edit-form button{flex:1 1 220px!important;min-height:54px!important;margin:0!important;padding:14px 20px!important;border:0!important;border-radius:14px!important;background:#263f7d!important;color:#fff!important;font-size:16px!important;font-weight:800!important;cursor:pointer!important;box-shadow:0 5px 14px rgba(34,61,120,.15)!important}
    #fju-youth-edit-form button:disabled{opacity:.55!important;cursor:not-allowed!important}
@@ -1486,7 +1491,7 @@ async function setupYouthProfileEdit(){
     </section>
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Projetos e informações adicionais</h4>
-     <label class="fju-edit-full">Projetos dos quais participa (até 5)<input name="projetos" type="text" placeholder="Ex.: HELP, Esporte, Cultura"></label>
+     <fieldset class="fju-edit-full fju-edit-projects"><legend>Projetos dos quais participa</legend><div data-project-options></div></fieldset>
      <label class="fju-edit-full">Meu testemunho<textarea name="testemunho" rows="5" maxlength="10000" placeholder="Compartilhe seu testemunho"></textarea></label>
      <label class="fju-edit-full">Observações adicionais<textarea name="observacoes" rows="3" maxlength="3000" placeholder="Informações complementares"></textarea></label>
     </section>
@@ -1494,11 +1499,16 @@ async function setupYouthProfileEdit(){
    </form><p id="fju-youth-edit-status" role="status"></p>`;
   pane.append(root);
   const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
+  const projectOptions=form.querySelector('[data-project-options]');projectOptions.className='fju-edit-project-options';
+  for(const project of ['Esporte','Cultura','Mídia','Banda']){
+   const label=document.createElement('label');label.className='fju-edit-project-option';
+   const check=document.createElement('input');check.type='checkbox';check.name='projetos';check.value=project;
+   label.append(check,document.createTextNode(project));projectOptions.append(label);
+  }
   form.elements.estado_civil.addEventListener('change',()=>{marriageWrap.hidden=form.elements.estado_civil.value!=='casado';});
   form.addEventListener('submit',async event=>{
    event.preventDefault();const button=form.querySelector('button'),status=byId('fju-youth-edit-status');
-   const data=Object.fromEntries(new FormData(form)),projects=data.projetos.split(',').map(x=>x.trim()).filter(Boolean);
-   if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
+   const data=Object.fromEntries(new FormData(form)),projects=[...form.querySelectorAll('input[name="projetos"]:checked')].map(x=>x.value);
    if(data.estado_civil==='casado'&&!data.data_casamento){status.textContent='Informe a data do casamento.';return;}
    if(data.estado_civil!=='casado')data.data_casamento='';
    const payload={nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
@@ -1519,6 +1529,8 @@ async function setupYouthProfileEdit(){
  const form=root.querySelector('form'),extra=complements||{};
  const values={nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,projetos:(records.projetos||[]).join(', '),estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values))if(form.elements[key])form.elements[key].value=value||'';
+ const selectedProjects=new Set(records.projetos||[]);
+ for(const check of form.querySelectorAll('input[name="projetos"]'))check.checked=selectedProjects.has(check.value);
  form.querySelector('[data-marriage-wrap]').hidden=form.elements.estado_civil.value!=='casado';
  form.querySelector('button').disabled=false;
  byId('fju-youth-edit-status').textContent='Confira os dados e toque em “Salvar minha ficha”.';
