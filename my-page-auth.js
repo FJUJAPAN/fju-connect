@@ -1434,7 +1434,22 @@ async function setupYouthProfileEdit(){
  let root=byId('fju-youth-profile-edit');
  if(!root){
   root=document.createElement('section');root.id='fju-youth-profile-edit';
-  root.style.cssText='background:#fff;color:#18294b;padding:18px;border-radius:16px;margin:18px 0;border:1px solid #dce3ef';
+
+  const style=document.createElement('style');style.id='fju-youth-edit-styles';style.textContent=`
+   #fju-youth-profile-edit{box-sizing:border-box!important;width:100%!important;max-width:760px!important;margin:16px auto!important;padding:20px!important;background:#fff!important;color:#17243b!important;border:1px solid #e4e9f1!important;border-radius:18px!important;box-shadow:0 8px 28px rgba(16,35,65,.08)!important;font-family:inherit!important}
+   #fju-youth-profile-edit h3{margin:0 0 8px!important;font-size:22px!important;line-height:1.25!important;font-weight:750!important;color:#17243b!important}
+   #fju-youth-profile-edit>p{margin:0 0 20px!important;color:#64748b!important;font-size:14px!important;line-height:1.55!important}
+   #fju-youth-edit-form{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 14px!important}
+   #fju-youth-edit-form label{display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0!important;color:#34445e!important;font-size:13px!important;font-weight:650!important;line-height:1.35!important}
+   #fju-youth-edit-form input,#fju-youth-edit-form select,#fju-youth-edit-form textarea{box-sizing:border-box!important;display:block!important;width:100%!important;min-width:0!important;min-height:48px!important;padding:12px 13px!important;border:1px solid #d5deea!important;border-radius:11px!important;background:#f8fafc!important;background-image:none!important;color:#17243b!important;-webkit-text-fill-color:#17243b!important;font:500 16px/1.4 inherit!important;box-shadow:none!important;outline:none!important}
+   #fju-youth-edit-form textarea{min-height:94px!important;resize:vertical!important}
+   #fju-youth-edit-form input:focus,#fju-youth-edit-form select:focus,#fju-youth-edit-form textarea:focus{border-color:#315d9b!important;box-shadow:0 0 0 3px rgba(49,93,155,.12)!important;background:#fff!important}
+   #fju-youth-edit-form [data-marriage-wrap][hidden]{display:none!important}
+   #fju-youth-edit-form button{grid-column:1/-1!important;width:100%!important;min-height:50px!important;margin-top:4px!important;border:0!important;border-radius:12px!important;background:#173b76!important;color:#fff!important;font-size:16px!important;font-weight:700!important;cursor:pointer!important}
+   #fju-youth-edit-form button:disabled{opacity:.55!important;cursor:not-allowed!important}
+   #fju-youth-edit-status{margin:12px 0 0!important;color:#315078!important;font-size:14px!important;line-height:1.5!important}
+   @media(max-width:560px){#fju-youth-profile-edit{padding:16px!important;border-radius:15px!important}#fju-youth-profile-edit h3{font-size:20px!important}#fju-youth-edit-form{grid-template-columns:1fr!important;gap:14px!important}#fju-youth-edit-form button{grid-column:1!important}}
+  `;document.head.append(style);
   root.innerHTML=`
    <h3>Minha ficha FJU</h3>
    <p>Confira e atualize seus dados pessoais, estado civil e informações da sua trajetória na FJU. As alterações serão encaminhadas ao coordenador do seu polo.</p>
