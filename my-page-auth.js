@@ -1650,8 +1650,9 @@ async function setupYouthProfileEdit(){
   });
  }
  const form=root.querySelector('form');
- // Do not expose an empty form while saved profile data is still loading.
- root.hidden=true;
+ // Keep the fields visible while loading; only the save action stays disabled
+ // until every existing value has been retrieved successfully.
+ root.hidden=false;
  const unlockControls=()=>{
   const saveButton=form.querySelector('button[type="submit"]');
   if(saveButton)saveButton.disabled=false;
@@ -1661,9 +1662,13 @@ async function setupYouthProfileEdit(){
  const saveButton=form.querySelector('button[type="submit"]');
  if(saveButton)saveButton.disabled=true;
  byId('fju-youth-edit-status').textContent='Carregando seus dados…';
- const {data:{user}}=await client.auth.getUser();
+ const {data:{user},error:authError}=await client.auth.getUser();
  if(request!==youthProfileLoadSequence)return;
- if(!user){root.hidden=true;return;}
+ if(!user){
+  byId('fju-youth-edit-status').textContent='Não foi possível confirmar sua sessão. Feche e entre novamente para carregar seus dados. A edição permanece bloqueada.';
+  root.hidden=false;
+  return;
+ }
  const {data:links,error:linkError}=await client.from('fju_vinculos_conta_jovem').select('jovem_id').eq('usuario_id',user.id).eq('ativo',true).limit(1);
  if(request!==youthProfileLoadSequence||(activeUserId&&user.id!==activeUserId))return;
  if(linkError||!links?.length){byId('fju-youth-edit-status').textContent='Não foi possível localizar sua ficha vinculada a esta conta. Por segurança, a edição ficará bloqueada até localizar a ficha.';root.hidden=false;return;}
