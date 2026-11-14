@@ -758,16 +758,36 @@ async function renderYouthSignup(user,isAdmin,current){
 // The admin application still checks fju_perfis and Supabase RLS independently.
 function setupMyPagePhotoUpload(){
  const pane=byId('fju-youth-profile-pane');if(!pane||byId('fju-my-page-photo-upload'))return;
- const area=document.createElement('div');area.id='fju-my-page-photo-upload';
- area.style.cssText='display:grid;gap:10px;padding:16px;margin:14px 0;border:1px solid #dce3ef;border-radius:16px;background:#fff';
- const heading=document.createElement('strong');heading.textContent='Minha foto de perfil';
- const input=document.createElement('input');input.type='file';input.accept='image/*';input.setAttribute('aria-label','Selecionar foto de perfil');
- const save=document.createElement('button');save.type='button';save.textContent='Salvar foto';save.style.cssText='padding:12px;border:0;border-radius:12px;background:#284987;color:white;font-weight:700';
- const message=document.createElement('p');message.setAttribute('role','status');message.style.cssText='margin:0;font-size:13px';
- area.append(heading,input,save,message);pane.prepend(area);
+ const words={
+  pt:{title:'Sua foto de perfil',hint:'Use uma foto nítida para personalizar seu cartão FJU.',choose:'Escolher foto',save:'Salvar foto',empty:'Escolha uma imagem para continuar.',uploading:'Salvando sua foto…',success:'Foto atualizada com sucesso.',failed:'Não foi possível salvar: ',alt:'Prévia da foto de perfil'},
+  ja:{title:'プロフィール写真',hint:'FJUカードに表示する写真を選択してください。',choose:'写真を選択',save:'写真を保存',empty:'写真を選択してください。',uploading:'写真を保存しています…',success:'プロフィール写真を更新しました。',failed:'保存できませんでした: ',alt:'プロフィール写真のプレビュー'},
+  en:{title:'Profile photo',hint:'Choose a clear photo for your FJU membership card.',choose:'Choose photo',save:'Save photo',empty:'Choose an image to continue.',uploading:'Saving your photo…',success:'Your profile photo was updated.',failed:'Could not save: ',alt:'Profile photo preview'}
+ }[lang()]||{title:'Sua foto de perfil',hint:'Use uma foto nítida para personalizar seu cartão FJU.',choose:'Escolher foto',save:'Salvar foto',empty:'Escolha uma imagem para continuar.',uploading:'Salvando sua foto…',success:'Foto atualizada com sucesso.',failed:'Não foi possível salvar: ',alt:'Prévia da foto de perfil'};
+ const area=document.createElement('section');area.id='fju-my-page-photo-upload';area.className='fju-profile-photo-card';
+ const heading=document.createElement('h3');heading.textContent=words.title;
+ const hint=document.createElement('p');hint.className='fju-profile-photo-hint';hint.textContent=words.hint;
+ const previewWrap=document.createElement('div');previewWrap.className='fju-profile-photo-preview';
+ const preview=document.createElement('img');preview.alt=words.alt;preview.hidden=true;
+ const placeholder=document.createElement('span');placeholder.className='fju-profile-photo-placeholder';placeholder.textContent='F';
+ const current=byId('fju-member-card-photo');
+ if(current&&!current.hidden&&current.getAttribute('src')){preview.src=current.src;preview.hidden=false;placeholder.hidden=true;}
+ previewWrap.append(preview,placeholder);
+ const controls=document.createElement('div');controls.className='fju-profile-photo-controls';
+ const input=document.createElement('input');input.type='file';input.accept='image/*';input.id='fju-profile-photo-input';input.setAttribute('aria-label',words.choose);
+ const choose=document.createElement('label');choose.htmlFor=input.id;choose.className='fju-profile-photo-choose';choose.textContent=words.choose;
+ const save=document.createElement('button');save.type='button';save.className='fju-profile-photo-save';save.textContent=words.save;save.disabled=true;
+ const message=document.createElement('p');message.className='fju-profile-photo-status';message.setAttribute('role','status');message.setAttribute('aria-live','polite');
+ controls.append(choose,input,save);
+ area.append(heading,hint,previewWrap,controls,message);
+ const card=byId('fju-member-collectible');pane.insertBefore(area,card||pane.firstChild);
+ input.addEventListener('change',()=>{
+  const file=input.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')){message.textContent=words.empty;return;}
+  const url=URL.createObjectURL(file);preview.src=url;preview.hidden=false;placeholder.hidden=true;save.disabled=false;message.textContent='';
+ });
  save.addEventListener('click',async()=>{
-  if(!input.files?.length){message.textContent='Selecione uma foto primeiro.';return;}
-  save.disabled=true;message.textContent='Enviando foto…';
+  if(!input.files?.length){message.textContent=words.empty;return;}
+  save.disabled=true;choose.setAttribute('aria-disabled','true');message.textContent=words.uploading;
   try{
    const {data:{user},error:authError}=await client.auth.getUser();
    if(authError||!user)throw new Error('Entre novamente na sua conta.');
@@ -780,9 +800,10 @@ function setupMyPagePhotoUpload(){
     const img=byId(id);if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
    }
    const fallback=byId('fju-youth-hero-fallback');if(fallback)fallback.hidden=true;
-   message.textContent='Foto salva com sucesso.';input.value='';
-  }catch(error){message.textContent='Não foi possível salvar: '+(error?.message||'Tente novamente.');}
-  finally{save.disabled=false;}
+   preview.src=headerAvatarObjectUrl;preview.hidden=false;placeholder.hidden=true;
+   message.textContent=words.success;input.value='';
+  }catch(error){message.textContent=words.failed+(error?.message||'Tente novamente.');}
+  finally{save.disabled=!input.files?.length;choose.removeAttribute('aria-disabled');}
  });
 }
 function renderUnifiedCoordinatorPage(enabled){
