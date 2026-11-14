@@ -280,3 +280,23 @@
 /* One profile photo only: the member card is the single visible photo preview. */
 #fju-my-page-photo-upload .fju-profile-photo-preview{display:none!important}
 #fju-my-page-photo-upload .fju-profile-photo-controls{width:100%;margin-top:18px}
+
+
+/* iPhone: upload controls use the full card width when the photo is shown only on the FJU card. */
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload{
+  grid-template-columns:minmax(0,1fr)!important;gap:10px!important;padding:17px!important
+}
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload h3,
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-hint,
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-controls,
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-status{
+  grid-column:1/-1!important;width:100%!important;min-width:0!important;box-sizing:border-box!important
+}
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-controls{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;margin:4px 0 0!important
+}
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-choose,
+#fju-account-dialog[data-fju-view="account"] #fju-my-page-photo-upload .fju-profile-photo-save{
+  width:100%!important;min-width:0!important;min-height:54px!important;padding:14px 16px!important;
+  white-space:nowrap!important;overflow:visible!important;font-size:15px!important;line-height:1.2!important
+}
