@@ -890,7 +890,7 @@ function renderUnifiedCoordinatorPage(enabled){
   // National admins need the full dashboard, not the clipped embedded preview.
   const fullDashboard=document.createElement('a');
   fullDashboard.id='fju-national-full-dashboard';
-  fullDashboard.href='https://fjujapan.github.io/fju-connect-admin/';
+  fullDashboard.href='https://fju-connect-admin.vercel.app/';
   fullDashboard.textContent='Abrir Painel Nacional completo';
   fullDashboard.style.cssText='display:none;margin:4px 8px 14px;padding:15px 18px;border-radius:14px;background:#142d59;color:#fff;text-decoration:none;text-align:center;font-weight:700;font-size:15px';
   section.append(fullDashboard);
@@ -1067,7 +1067,7 @@ function renderUnifiedCoordinatorPage(enabled){
   }else{
    frame.style.display='block';
   }
-  if(lastRole!=='national'&&!frame.getAttribute('src'))frame.src='https://fjujapan.github.io/fju-connect-admin/?embed=1&ui=20261028-no-journey-252';
+  if(lastRole!=='national'&&!frame.getAttribute('src'))frame.src='https://fju-connect-admin.vercel.app/?embed=1&ui=20261028-no-journey-252';
   const l=lang();
   byId('fju-coordinator-unified-title').textContent=l==='ja'?'管理パネル':l==='en'?'Control Panel':'Painel de Controle';
   const profileLabel=section.querySelector('button');
@@ -1286,7 +1286,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       if(!shortcut){
         shortcut=document.createElement('a');
         shortcut.id='fju-my-page-admin-shortcut';
-        shortcut.href='https://fjujapan.github.io/fju-connect-admin/';
+        shortcut.href='https://fju-connect-admin.vercel.app/';
         shortcut.style.cssText='display:block!important;box-sizing:border-box;width:100%;margin:16px 0;padding:17px 18px;border-radius:15px;background:#173b76;color:#fff;text-align:center;font-size:16px;font-weight:800;text-decoration:none';
         shortcut.textContent='Painel do Coordenador →';
         hero.prepend(shortcut);
@@ -1317,7 +1317,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
       if(!panelLink){
         panelLink=document.createElement('a');
         panelLink.id='fju-profile-admin-panel-link';
-        panelLink.href='https://fjujapan.github.io/fju-connect-admin/';
+        panelLink.href='https://fju-connect-admin.vercel.app/';
         panelLink.style.cssText='display:block;padding:15px 18px;margin:16px 0;border-radius:14px;background:#173b76;color:#fff;text-align:center;text-decoration:none;font-weight:700';
         profilePane.append(panelLink);
       }
