@@ -105,7 +105,9 @@ async function setupYouthProfileCompletion(){
   const has=value=>value!==null&&value!==undefined&&String(value).trim()!=='';
   const cardPhoto=byId('fju-member-card-photo');
   const photo=Boolean((cardPhoto&&!cardPhoto.hidden&&cardPhoto.getAttribute('src'))||(headerAvatar&&!headerAvatar.hidden&&headerAvatar.getAttribute('src')));
-  const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,[ficha.batismo_aguas,ficha.batismo_espirito_santo,extra.batismo_espirito,extra.inicio_cpo,extra.inicio_colaborador,extra.inicio_obra,extra.inicio_coordenacao_fju].some(has),has(ficha.testemunho),photo];
+  const rankKey={cpo:'inicio_cpo',colaborador:'inicio_colaborador',obreiro:'inicio_obra',coordenador:'inicio_coordenacao_fju'}[String(ficha.patente||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase()];
+  const rankDateRequired=rankKey?has(extra[rankKey]):true;
+  const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,has(ficha.batismo_espirito_santo)||has(extra.batismo_espirito),rankDateRequired,has(ficha.testemunho),photo];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   byId('fju-profile-completion-title').textContent=words.title;byId('fju-profile-completion-percent').textContent=pct+'%';byId('fju-profile-completion-fill').style.width=pct+'%';
   const track=byId('fju-profile-completion-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label',words.title);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(pct));
