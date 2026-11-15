@@ -76,6 +76,42 @@ function showYouthPane(target=''){
  }
  if(dialog?.open)dialog.scrollTop=0;
 }
+async function setupYouthProfileCompletion(){
+ const dashboard=byId('fju-youth-dashboard');
+ if(!dashboard||lastRole==='national'||lastRole==='coordinator')return;
+ let card=byId('fju-profile-completion');
+ if(!card){
+  card=document.createElement('section');card.id='fju-profile-completion';card.className='fju-profile-completion';
+  const heading=document.createElement('div');heading.className='fju-profile-completion-heading';
+  const title=document.createElement('strong');title.id='fju-profile-completion-title';
+  const percent=document.createElement('strong');percent.id='fju-profile-completion-percent';heading.append(title,percent);
+  const track=document.createElement('div');track.id='fju-profile-completion-track';track.className='fju-profile-completion-track';
+  const fill=document.createElement('span');fill.id='fju-profile-completion-fill';track.append(fill);
+  const note=document.createElement('p');note.id='fju-profile-completion-note';
+  const link=document.createElement('button');link.type='button';link.id='fju-profile-completion-link';link.addEventListener('click',()=>showYouthPane('profile'));
+  card.append(heading,track,note,link);
+  const style=document.createElement('style');style.id='fju-profile-completion-style';
+  style.textContent='#fju-profile-completion{box-sizing:border-box;width:100%;margin:14px 0 20px;padding:16px 17px;border:1px solid #dce5f2;border-radius:16px;background:linear-gradient(145deg,#fff 0%,#f5f8fe 100%);box-shadow:0 5px 18px rgba(27,49,85,.06);color:#20365f}#fju-profile-completion .fju-profile-completion-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 11px;font-size:14px}#fju-profile-completion-title{font-weight:800;color:#20365f}#fju-profile-completion-percent{font-size:20px;font-weight:850;color:#28477f;font-variant-numeric:tabular-nums}#fju-profile-completion-track{height:11px;width:100%;overflow:hidden;border-radius:99px;background:#e4eaf4;box-shadow:inset 0 1px 2px #20365f12}#fju-profile-completion-fill{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#5c8ed4,#28477f);transition:width .25s ease}#fju-profile-completion-note{margin:10px 0 12px;color:#687b98;font-size:12px;line-height:1.45}#fju-profile-completion-link{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid #d5dfef;border-radius:10px;background:#eaf0fa;color:#284477;font-family:inherit;font-size:12px;font-weight:750;line-height:1.2;cursor:pointer}#fju-profile-completion-link:focus-visible{outline:2px solid #5487cf;outline-offset:3px}';
+  document.head.append(style);
+  const greeting=dashboard.querySelector('.fju-youth-greeting');
+  if(greeting)greeting.insertAdjacentElement('afterend',card);else dashboard.prepend(card);
+ }
+ const words={pt:{title:'Perfil preenchido',note:p=>p>=100?'Seu perfil está completo!':`Seu perfil está ${p}% completo. Complete os dados que faltam para manter sua ficha atualizada.`,action:'Completar meu perfil'},ja:{title:'プロフィール入力率',note:p=>p>=100?'プロフィールはすべて入力されています。':`プロフィールの入力率は${p}%です。残りの情報を入力してください。`,action:'プロフィールを完成する'},en:{title:'Profile completion',note:p=>p>=100?'Your profile is complete!':`Your profile is ${p}% complete. Fill in the remaining details to keep your record up to date.`,action:'Complete my profile'}}[lang()]||{title:'Perfil preenchido',note:p=>`Seu perfil está ${p}% completo.`,action:'Completar meu perfil'};
+ try{
+  const {data,error}=await client.rpc('fju_ler_meu_perfil');if(error)throw error;
+  const ficha=data?.ficha;if(!ficha){card.hidden=true;return;}
+  const extra=data?.complementos||{};
+  const list=value=>{if(Array.isArray(value))return value.map(x=>String(x).trim()).filter(Boolean);if(typeof value!=='string'||!value.trim())return [];try{const parsed=JSON.parse(value);if(Array.isArray(parsed))return parsed.map(x=>String(x).trim()).filter(Boolean);}catch(_){}return value.split(',').map(x=>x.trim().replace(/^['\"]|['\"]$/g,'')).filter(Boolean);};
+  const has=value=>value!==null&&value!==undefined&&String(value).trim()!=='';
+  const cardPhoto=byId('fju-member-card-photo');
+  const photo=Boolean((cardPhoto&&!cardPhoto.hidden&&cardPhoto.getAttribute('src'))||(headerAvatar&&!headerAvatar.hidden&&headerAvatar.getAttribute('src')));
+  const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,[ficha.batismo_aguas,ficha.batismo_espirito_santo,extra.batismo_espirito,extra.inicio_cpo,extra.inicio_colaborador,extra.inicio_obra,extra.inicio_coordenacao_fju].some(has),has(ficha.testemunho),photo];
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  byId('fju-profile-completion-title').textContent=words.title;byId('fju-profile-completion-percent').textContent=pct+'%';byId('fju-profile-completion-fill').style.width=pct+'%';
+  const track=byId('fju-profile-completion-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label',words.title);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(pct));
+  byId('fju-profile-completion-note').textContent=words.note(pct);byId('fju-profile-completion-link').textContent=words.action;card.hidden=false;
+ }catch(error){card.hidden=true;}
+}
 function syncYouthHero(isAdmin=false,churchGroup=null){
  const profileName=byId('fju-member-card-name')?.textContent?.trim()||userEmail.split('@')[0]||'FJU JAPAN';
  const profileChurch=byId('fju-member-card-polo')?.textContent?.trim()||'FJU JAPAN';
@@ -809,6 +845,7 @@ function setupMyPagePhotoUpload(){
    const fallback=byId('fju-youth-hero-fallback');if(fallback)fallback.hidden=true;
    if(pendingPhotoPreviewUrl){URL.revokeObjectURL(pendingPhotoPreviewUrl);pendingPhotoPreviewUrl=null;}
    message.textContent=words.success;input.value='';
+   void setupYouthProfileCompletion();
   }catch(error){message.textContent=words.failed+(error?.message||'Tente novamente.');}
   finally{save.disabled=!input.files?.length;choose.removeAttribute('aria-disabled');}
  });
@@ -1252,6 +1289,7 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
     preferredLanguageUI();
     syncYouthHero(verifiedAdmin,churchGroup);
     showYouthPane('');
+    if(!verifiedAdmin)void setupYouthProfileCompletion();
     // Personal account settings stay separate from privileged administrative functions.
     const profilePane=byId('fju-youth-profile-pane');
     if(profilePane){
@@ -1644,6 +1682,7 @@ async function setupYouthProfileEdit(){
     const {error}=await client.rpc('fju_salvar_meu_perfil',{p_dados:payload});
     if(error)throw error;
     status.textContent='Sua ficha foi atualizada com sucesso.';
+    void setupYouthProfileCompletion();
    }catch(e){
     status.textContent='Não foi possível salvar sua ficha: '+(e?.message||'Tente novamente.');
    }finally{button.disabled=false;}
