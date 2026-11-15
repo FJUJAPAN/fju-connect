@@ -1498,32 +1498,6 @@ byId('fju-account-logout').addEventListener('click',async()=>{
     setFeedback(t('signedOut'));
   }catch(e){setFeedback(t('sessionError'),true);}
 });
-// Seamless transition card while the secure handoff is being prepared.
-let fjuAdminHandoffBusy=false;
-let fjuAdminHandoffCard=null;
-function showFjuAdminHandoffCard(){
- if(!fjuAdminHandoffCard){
-  fjuAdminHandoffCard=document.createElement('div');
-  fjuAdminHandoffCard.id='fju-admin-handoff-wait';
-  fjuAdminHandoffCard.setAttribute('role','status');
-  fjuAdminHandoffCard.setAttribute('aria-live','polite');
-  fjuAdminHandoffCard.style.cssText='position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(12,25,49,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)';
-  const card=document.createElement('div');
-  card.style.cssText='box-sizing:border-box;width:min(100%,360px);padding:30px 24px;border:1px solid #e3eaf5;border-radius:22px;background:#fff;color:#20365f;text-align:center;box-shadow:0 24px 70px #06132d55;font-family:system-ui,sans-serif';
-  const mark=document.createElement('div');mark.textContent='FJU';mark.style.cssText='font-size:26px;font-weight:900;letter-spacing:2px;color:#29477f;margin-bottom:14px';
-  const spinner=document.createElement('div');spinner.setAttribute('aria-hidden','true');spinner.style.cssText='width:34px;height:34px;margin:0 auto 16px;border:3px solid #dce6f5;border-top-color:#29477f;border-radius:50%;animation:fju-handoff-spin .8s linear infinite';
-  const title=document.createElement('strong');title.id='fju-admin-handoff-title';title.style.cssText='display:block;font-size:17px;font-weight:800';
-  const note=document.createElement('p');note.id='fju-admin-handoff-note';note.style.cssText='margin:8px 0 0;color:#66748e;font-size:13px;line-height:1.5';
-  card.append(mark,spinner,title,note);fjuAdminHandoffCard.append(card);
-  const style=document.createElement('style');style.id='fju-admin-handoff-style';style.textContent='@keyframes fju-handoff-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){#fju-admin-handoff-wait div[aria-hidden=true]{animation:none}}';
-  document.head.append(style);document.body.append(fjuAdminHandoffCard);
- }
- const l=lang();
- byId('fju-admin-handoff-title').textContent=l==='ja'?'管理パネルに接続しています…':l==='en'?'Connecting to the admin panel…':'Conectando ao painel administrativo…';
- byId('fju-admin-handoff-note').textContent=l==='ja'?'安全にアカウントを確認しています。しばらくお待ちください。':l==='en'?'Securely verifying your account. Please wait.':'Estamos confirmando sua conta com segurança. Aguarde só um instante.';
- fjuAdminHandoffCard.hidden=false;
-}
-function hideFjuAdminHandoffCard(){if(fjuAdminHandoffCard)fjuAdminHandoffCard.hidden=true;}
 // Secure one-time handoff: the admin app receives a short-lived ticket, never the user's JWT.
 document.addEventListener('click',async event=>{
  const link=event.target?.closest?.('a[href]');
@@ -1532,11 +1506,7 @@ document.addEventListener('click',async event=>{
  try{destination=new URL(link.href,location.href)}catch(_){return}
  if(destination.origin!=='https://fju-connect-admin.vercel.app')return;
  event.preventDefault();
- if(fjuAdminHandoffBusy)return;
  if(!authenticated||!activeUserId){setFeedback('Sua sessão não está confirmada. Entre novamente.',true);return;}
- fjuAdminHandoffBusy=true;
- link.setAttribute('aria-busy','true');
- showFjuAdminHandoffCard();
  try{
   const {data:{session},error:sessionError}=await client.auth.getSession();
   if(sessionError)throw sessionError;
@@ -1547,10 +1517,7 @@ document.addEventListener('click',async event=>{
   if(!data?.ticket)throw new Error('Não foi possível gerar a autorização segura.');
   location.assign('https://fju-connect-admin.vercel.app/?fju_handoff='+encodeURIComponent(data.ticket));
  }catch(error){
-  hideFjuAdminHandoffCard();
-  fjuAdminHandoffBusy=false;
   setFeedback('Não foi possível abrir o painel: '+(error?.message||'tente novamente.'),true);
-  link.removeAttribute('aria-busy');
  }
 },true);
 client.auth.onAuthStateChange((event,session)=>{
