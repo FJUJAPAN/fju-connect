@@ -108,7 +108,7 @@ async function setupYouthProfileCompletion(){
   const photo=Boolean((cardPhoto&&!cardPhoto.hidden&&cardPhoto.getAttribute('src'))||(headerAvatar&&!headerAvatar.hidden&&headerAvatar.getAttribute('src')));
   const rankKey={cpo:'inicio_cpo',colaborador:'inicio_colaborador',obreiro:'inicio_obra',coordenador:'inicio_coordenacao_fju'}[String(ficha.patente||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase()];
   const rankDateRequired=rankKey?hasValidDate(extra[rankKey]):true;
-  const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,has(ficha.batismo_espirito_santo)||has(extra.batismo_espirito),rankDateRequired,has(ficha.testemunho),photo];
+  const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,has(ficha.batismo_espirito_santo),rankDateRequired,has(ficha.testemunho),photo];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   byId('fju-profile-completion-title').textContent=words.title;byId('fju-profile-completion-percent').textContent=pct+'%';byId('fju-profile-completion-fill').style.width=pct+'%';
   const track=byId('fju-profile-completion-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label',words.title);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(pct));
@@ -1656,7 +1656,6 @@ async function setupYouthProfileEdit(){
      <h4 class="fju-edit-section-title">Trajetória espiritual e FJU</h4>
      <label>Data do batismo nas águas<input name="batismo_aguas" type="date"></label>
      <label>Data do batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label>
-     <label>Registro complementar do batismo<input name="batismo_espirito" type="date"></label>
      <label data-rank-field="cpo" hidden>Início no CPO<input name="inicio_cpo" type="date"></label>
      <label data-rank-field="colaborador" hidden>Início como Colaborador<input name="inicio_colaborador" type="date"></label>
      <label data-rank-field="obreiro" hidden>Início na Obra de Deus<input name="inicio_obra" type="date"></label>
@@ -1706,7 +1705,7 @@ async function setupYouthProfileEdit(){
    if(data.estado_civil!=='casado')data.data_casamento='';
    if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
-   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',...(form.querySelector('[data-rank-field="cpo"]').hidden?{}:{inicio_cpo:data.inicio_cpo||''}),...(form.querySelector('[data-rank-field="colaborador"]').hidden?{}:{inicio_colaborador:data.inicio_colaborador||''}),...(form.querySelector('[data-rank-field="obreiro"]').hidden?{}:{inicio_obra:data.inicio_obra||''}),...(form.querySelector('[data-rank-field="coordenador"]').hidden?{}:{inicio_coordenacao_fju:data.inicio_coordenacao_fju||''}),projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
+   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',...(form.querySelector('[data-rank-field="cpo"]').hidden?{}:{inicio_cpo:data.inicio_cpo||''}),...(form.querySelector('[data-rank-field="colaborador"]').hidden?{}:{inicio_colaborador:data.inicio_colaborador||''}),...(form.querySelector('[data-rank-field="obreiro"]').hidden?{}:{inicio_obra:data.inicio_obra||''}),...(form.querySelector('[data-rank-field="coordenador"]').hidden?{}:{inicio_coordenacao_fju:data.inicio_coordenacao_fju||''}),projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;
    status.textContent='Enviando sua ficha…';
    try{
@@ -1765,7 +1764,7 @@ async function setupYouthProfileEdit(){
  status.textContent='Dados recebidos do banco. Preenchendo os campos…';
  try{
  const extra=complements||{};
- const values={nome_completo:records.nome_completo||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,batismo_espirito:extra.batismo_espirito,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
+ const values={nome_completo:records.nome_completo||'',telefone:records.telefone,nacionalidade_iso2:records.nacionalidade_iso2,nascimento:records.nascimento,endereco:records.endereco,batismo_aguas:records.batismo_aguas,batismo_espirito_santo:records.batismo_espirito_santo,testemunho:records.testemunho,estado_civil:records.estado_civil||'nao_informado',data_casamento:records.data_casamento,inicio_cpo:extra.inicio_cpo,inicio_colaborador:extra.inicio_colaborador,inicio_obra:extra.inicio_obra,inicio_coordenacao_fju:extra.inicio_coordenacao_fju,observacoes:extra.observacoes};
  for(const [key,value] of Object.entries(values)){
   const field=form.querySelector('[name="'+key+'"]');
   if(field&&!editedDuringLoad.has(key))field.value=value??'';
