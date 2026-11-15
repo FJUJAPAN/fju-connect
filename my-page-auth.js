@@ -1498,6 +1498,30 @@ byId('fju-account-logout').addEventListener('click',async()=>{
     setFeedback(t('signedOut'));
   }catch(e){setFeedback(t('sessionError'),true);}
 });
+// Secure one-time handoff: the admin app receives a short-lived ticket, never the user's JWT.
+document.addEventListener('click',async event=>{
+ const link=event.target?.closest?.('a[href]');
+ if(!link)return;
+ let destination;
+ try{destination=new URL(link.href,location.href)}catch(_){return}
+ if(destination.origin!=='https://fju-connect-admin.vercel.app')return;
+ event.preventDefault();
+ if(!authenticated||!activeUserId){setFeedback('Sua sessão não está confirmada. Entre novamente.',true);return;}
+ link.setAttribute('aria-busy','true');
+ try{
+  const {data:{session},error:sessionError}=await client.auth.getSession();
+  if(sessionError)throw sessionError;
+  if(!session?.access_token||session.user?.id!==activeUserId)throw new Error('A sessão mudou. Entre novamente no My Page.');
+  if(!['national','coordinator'].includes(lastRole))throw new Error('Esta conta não possui acesso administrativo.');
+  const {data,error}=await client.functions.invoke('fju-admin-handoff',{body:{action:'create'}});
+  if(error)throw error;
+  if(!data?.ticket)throw new Error('Não foi possível gerar a autorização segura.');
+  location.assign('https://fju-connect-admin.vercel.app/?fju_handoff='+encodeURIComponent(data.ticket));
+ }catch(error){
+  setFeedback('Não foi possível abrir o painel: '+(error?.message||'tente novamente.'),true);
+  link.removeAttribute('aria-busy');
+ }
+},true);
 client.auth.onAuthStateChange((event,session)=>{
   if(event==='SIGNED_IN'&&session?.user?.id&&session.user.id!==activeUserId){
     updateSequence++;authenticated=false;userEmail='';lastRole='member';preferredLanguageUser=null;
