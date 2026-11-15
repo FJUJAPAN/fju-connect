@@ -112,6 +112,29 @@ async function setupYouthProfileCompletion(){
   byId('fju-profile-completion-note').textContent=words.note(pct);byId('fju-profile-completion-link').textContent=words.action;card.hidden=false;
  }catch(error){card.hidden=true;}
 }
+function renderCurrentRankTenure(rank,complements={}){
+ const card=byId('fju-member-collectible');
+ if(!card)return;
+ let node=byId('fju-member-card-tenure');
+ if(!node){node=document.createElement('p');node.id='fju-member-card-tenure';node.style.cssText='margin:0 0 12px;color:#f8dc8d;font:700 12px system-ui;line-height:1.4';byId('fju-member-card-rank')?.insertAdjacentElement('afterend',node);}
+ const normalized=String(rank||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase();
+ const dateKey={cpo:'inicio_cpo',colaborador:'inicio_colaborador',obreiro:'inicio_obra',coordenador:'inicio_coordenacao_fju'}[normalized];
+ const raw=dateKey?complements?.[dateKey]:null;
+ if(!raw){node.hidden=true;node.textContent='';return;}
+ const start=new Date(String(raw).slice(0,10)+'T00:00:00');
+ const today=new Date();today.setHours(0,0,0,0);
+ if(Number.isNaN(start.getTime())||start>today){node.hidden=true;node.textContent='';return;}
+ let years=today.getFullYear()-start.getFullYear();
+ let months=today.getMonth()-start.getMonth();
+ let days=today.getDate()-start.getDate();
+ if(days<0){months--;days+=new Date(today.getFullYear(),today.getMonth(),0).getDate();}
+ if(months<0){years--;months+=12;}
+ const l=lang();
+ const parts=l==='ja'?[...(years?[years+'年']:[]),...(months?[months+'か月']:[]),...(days?[days+'日']:[])]:l==='en'?[...(years?[years+'y']:[]),...(months?[months+'mo']:[]),...(days?[days+'d']:[])]:[...(years?[years+'a']:[]),...(months?[months+'m']:[]),...(days?[days+'d']:[])];
+ const duration=parts.length?parts.join(' '):(l==='ja'?'開始から1日未満':l==='en'?'Less than a day':'Menos de 1 dia');
+ node.textContent=l==='ja'?'現在のランクの期間：'+duration:l==='en'?'Time in current rank: '+duration:'Tempo na patente atual: '+duration;
+ node.hidden=false;
+}
 function syncYouthHero(isAdmin=false,churchGroup=null){
  const profileName=byId('fju-member-card-name')?.textContent?.trim()||userEmail.split('@')[0]||'FJU JAPAN';
  const profileChurch=byId('fju-member-card-polo')?.textContent?.trim()||'FJU JAPAN';
@@ -1187,6 +1210,11 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         byId('fju-member-card-polo').textContent='FJU '+card.polo_nome;
         byId('fju-member-card-project').textContent=(card.projetos||[]).join(' · ')||'FJU JAPAN';
         byId('fju-member-card-rank').textContent=card.categoria==='inconstante'||String(card.patente||'').toLowerCase()==='inconstante'?'Normal':(card.patente||(card.categoria==='firme'?'Firme':'Normal'));
+        const {data:profileDetails,error:profileDetailsError}=await client.rpc('fju_ler_meu_perfil');
+        if(current!==updateSequence||passwordRecovery)return;
+        renderCurrentRankTenure(card.patente,profileDetailsError?{}:(profileDetails?.complementos||{}));
+      }else{
+        renderCurrentRankTenure('',{});
       }
       if(memberCard)memberCard.hidden=false;
       // Prefer the photo already saved in the approved youth record.
