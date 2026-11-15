@@ -829,51 +829,40 @@ async function renderYouthSignup(user,isAdmin,current){
 function setupMyPagePhotoUpload(){
  const pane=byId('fju-youth-profile-pane');if(!pane||byId('fju-my-page-photo-upload'))return;
  const words={
-  pt:{title:'Sua foto de perfil',hint:'Use uma foto nítida para personalizar seu cartão FJU.',choose:'Escolher foto',save:'Salvar foto',empty:'Escolha uma imagem para continuar.',uploading:'Salvando sua foto…',success:'Foto atualizada com sucesso.',failed:'Não foi possível salvar: ',alt:'Prévia da foto de perfil'},
-  ja:{title:'プロフィール写真',hint:'FJUカードに表示する写真を選択してください。',choose:'写真を選択',save:'写真を保存',empty:'写真を選択してください。',uploading:'写真を保存しています…',success:'プロフィール写真を更新しました。',failed:'保存できませんでした: ',alt:'プロフィール写真のプレビュー'},
-  en:{title:'Profile photo',hint:'Choose a clear photo for your FJU membership card.',choose:'Choose photo',save:'Save photo',empty:'Choose an image to continue.',uploading:'Saving your photo…',success:'Your profile photo was updated.',failed:'Could not save: ',alt:'Profile photo preview'}
- }[lang()]||{title:'Sua foto de perfil',hint:'Use uma foto nítida para personalizar seu cartão FJU.',choose:'Escolher foto',save:'Salvar foto',empty:'Escolha uma imagem para continuar.',uploading:'Salvando sua foto…',success:'Foto atualizada com sucesso.',failed:'Não foi possível salvar: ',alt:'Prévia da foto de perfil'};
- const area=document.createElement('section');area.id='fju-my-page-photo-upload';area.className='fju-profile-photo-card';
- const heading=document.createElement('h3');heading.textContent=words.title;
- const hint=document.createElement('p');hint.className='fju-profile-photo-hint';hint.textContent=words.hint;
- let pendingPhotoPreviewUrl=null;
- const cardPhoto=byId('fju-member-card-photo');
- const controls=document.createElement('div');controls.className='fju-profile-photo-controls';
- const input=document.createElement('input');input.type='file';input.accept='image/*';input.id='fju-profile-photo-input';input.setAttribute('aria-label',words.choose);
- const choose=document.createElement('label');choose.htmlFor=input.id;choose.className='fju-profile-photo-choose';choose.textContent=words.choose;
- const save=document.createElement('button');save.type='button';save.className='fju-profile-photo-save';save.textContent=words.save;save.disabled=true;
- const message=document.createElement('p');message.className='fju-profile-photo-status';message.setAttribute('role','status');message.setAttribute('aria-live','polite');
- controls.append(choose,input,save);
- area.append(heading,hint,controls,message);
- const card=byId('fju-member-collectible');pane.insertBefore(area,card||pane.firstChild);
- input.addEventListener('change',()=>{
+  pt:{choose:'Trocar foto do perfil',uploading:'Salvando foto…',success:'Foto atualizada.',failed:'Não foi possível salvar: ',empty:'Escolha uma imagem válida.'},
+  ja:{choose:'プロフィール写真を変更',uploading:'写真を保存中…',success:'写真を更新しました。',failed:'保存できませんでした: ',empty:'有効な画像を選択してください。'},
+  en:{choose:'Change profile photo',uploading:'Saving photo…',success:'Photo updated.',failed:'Could not save: ',empty:'Choose a valid image.'}
+ }[lang()]||{choose:'Trocar foto do perfil',uploading:'Salvando foto…',success:'Foto atualizada.',failed:'Não foi possível salvar: ',empty:'Escolha uma imagem válida.'};
+ const area=document.createElement('div');area.id='fju-my-page-photo-upload';area.className='fju-profile-photo-inline';
+ const input=document.createElement('input');input.type='file';input.accept='image/*';input.id='fju-profile-photo-input';input.setAttribute('aria-label',words.choose);input.hidden=true;
+ const avatarWrap=byId('fju-youth-hero-photo')?.parentElement;
+ if(!avatarWrap)return;
+ avatarWrap.classList.add('fju-youth-avatar-editable');
+ const camera=document.createElement('button');camera.type='button';camera.className='fju-youth-avatar-camera';camera.setAttribute('aria-label',words.choose);camera.title=words.choose;
+ camera.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.5-2h7l1.5 2h3A1.5 1.5 0 0 1 21.5 9v9a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+ const status=document.createElement('span');status.className='fju-youth-avatar-photo-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+ area.append(input,status);avatarWrap.append(camera,area);
+ camera.addEventListener('click',()=>input.click());
+ input.addEventListener('change',async()=>{
   const file=input.files?.[0];if(!file)return;
-  if(!file.type.startsWith('image/')){message.textContent=words.empty;return;}
-  if(pendingPhotoPreviewUrl)URL.revokeObjectURL(pendingPhotoPreviewUrl);
-  pendingPhotoPreviewUrl=URL.createObjectURL(file);
-  if(cardPhoto){cardPhoto.src=pendingPhotoPreviewUrl;cardPhoto.hidden=false;}
-  save.disabled=false;message.textContent='';
- });
- save.addEventListener('click',async()=>{
-  if(!input.files?.length){message.textContent=words.empty;return;}
-  save.disabled=true;choose.setAttribute('aria-disabled','true');message.textContent=words.uploading;
+  if(!file.type.startsWith('image/')){status.textContent=words.empty;input.value='';return;}
+  camera.disabled=true;status.textContent=words.uploading;
+  let previewUrl='';
   try{
    const {data:{user},error:authError}=await client.auth.getUser();
    if(authError||!user)throw new Error('Entre novamente na sua conta.');
-   const photo=await prepareSignupPhoto(input.files[0]);
+   const photo=await prepareSignupPhoto(file);
    const {error}=await client.storage.from('fju-inscricoes-fotos').upload(user.id+'/perfil.jpg',photo,{contentType:'image/jpeg',upsert:true});
    if(error)throw error;
    clearHeaderAvatarObjectUrl();headerAvatarObjectUrl=URL.createObjectURL(photo);
-   const avatar=byId('fju-account-avatar-photo');if(avatar){avatar.src=headerAvatarObjectUrl;avatar.hidden=false;}
    for(const id of ['fju-member-card-photo','fju-youth-hero-photo']){
     const img=byId(id);if(img){img.src=headerAvatarObjectUrl;img.hidden=false;}
    }
    const fallback=byId('fju-youth-hero-fallback');if(fallback)fallback.hidden=true;
-   if(pendingPhotoPreviewUrl){URL.revokeObjectURL(pendingPhotoPreviewUrl);pendingPhotoPreviewUrl=null;}
-   message.textContent=words.success;input.value='';
-   void setupYouthProfileCompletion();
-  }catch(error){message.textContent=words.failed+(error?.message||'Tente novamente.');}
-  finally{save.disabled=!input.files?.length;choose.removeAttribute('aria-disabled');}
+   const accountAvatar=byId('fju-account-avatar-photo');if(accountAvatar){accountAvatar.src=headerAvatarObjectUrl;accountAvatar.hidden=false;}
+   status.textContent=words.success;void setupYouthProfileCompletion();
+  }catch(error){status.textContent=words.failed+(error?.message||'Tente novamente.');}
+  finally{camera.disabled=false;input.value='';}
  });
 }
 function renderUnifiedCoordinatorPage(enabled){
