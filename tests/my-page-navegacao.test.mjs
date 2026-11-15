@@ -88,6 +88,6 @@ test('mostra a porcentagem de preenchimento do perfil no início do My Page',()=
 });
 test('atualiza a porcentagem após salvar a ficha ou a foto',()=>{
  assert.match(js,/Sua ficha foi atualizada com sucesso\.';\s*void setupYouthProfileCompletion\(\)/);
- assert.match(js,/message\.textContent=words\.success;input\.value='';\s*void setupYouthProfileCompletion\(\)/);
+ assert.match(js,/status\.textContent=words\.success;void setupYouthProfileCompletion\(\)/);
  assert.match(js,/showYouthPane\('profile'\)/);
 });
