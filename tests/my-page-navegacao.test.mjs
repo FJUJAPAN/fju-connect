@@ -76,3 +76,18 @@ test('cartão Meus pontos traduz quatro rótulos sem sobrescrever saldos',()=>{
  assert.doesNotMatch(points,/x\[2\]\.childNodes\[0\]/);
  assert.match(html,/fju-pontos-ranking\.js\?v=20261102-card-idioma-2/);
 });
+
+test('mostra a porcentagem de preenchimento do perfil no início do My Page',()=>{
+ assert.match(js,/async function setupYouthProfileCompletion\(\)/);
+ assert.match(js,/id='fju-profile-completion'/);
+ assert.match(js,/id='fju-profile-completion-fill'/);
+ assert.match(js,/role','progressbar'/);
+ assert.match(js,/client\.rpc\('fju_ler_meu_perfil'\)/);
+ assert.match(js,/checks\.filter\(Boolean\)\.length\/checks\.length\*100/);
+ assert.match(js,/if\(!verifiedAdmin\)void setupYouthProfileCompletion\(\)/);
+});
+test('atualiza a porcentagem após salvar a ficha ou a foto',()=>{
+ assert.match(js,/Sua ficha foi atualizada com sucesso\.';\s*void setupYouthProfileCompletion\(\)/);
+ assert.match(js,/message\.textContent=words\.success;input\.value='';\s*void setupYouthProfileCompletion\(\)/);
+ assert.match(js,/showYouthPane\('profile'\)/);
+});
