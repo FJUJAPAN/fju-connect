@@ -103,10 +103,11 @@ async function setupYouthProfileCompletion(){
   const extra=data?.complementos||{};
   const list=value=>{if(Array.isArray(value))return value.map(x=>String(x).trim()).filter(Boolean);if(typeof value!=='string'||!value.trim())return [];try{const parsed=JSON.parse(value);if(Array.isArray(parsed))return parsed.map(x=>String(x).trim()).filter(Boolean);}catch(_){}return value.split(',').map(x=>x.trim().replace(/^['\"]|['\"]$/g,'')).filter(Boolean);};
   const has=value=>value!==null&&value!==undefined&&String(value).trim()!=='';
+  const hasValidDate=value=>{if(!has(value))return false;const raw=String(value).trim();if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(raw))return false;const date=new Date(raw+'T00:00:00Z');return !Number.isNaN(date.getTime())&&date.toISOString().slice(0,10)===raw;};
   const cardPhoto=byId('fju-member-card-photo');
   const photo=Boolean((cardPhoto&&!cardPhoto.hidden&&cardPhoto.getAttribute('src'))||(headerAvatar&&!headerAvatar.hidden&&headerAvatar.getAttribute('src')));
   const rankKey={cpo:'inicio_cpo',colaborador:'inicio_colaborador',obreiro:'inicio_obra',coordenador:'inicio_coordenacao_fju'}[String(ficha.patente||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase()];
-  const rankDateRequired=rankKey?has(extra[rankKey]):true;
+  const rankDateRequired=rankKey?hasValidDate(extra[rankKey]):true;
   const checks=[has(ficha.nome_completo),has(ficha.nascimento),has(ficha.telefone),has(ficha.nacionalidade_iso2),has(ficha.endereco),has(ficha.estado_civil)&&ficha.estado_civil!=='nao_informado',list(ficha.idiomas).length>0,list(ficha.projetos).length>0,has(ficha.batismo_espirito_santo)||has(extra.batismo_espirito),rankDateRequired,has(ficha.testemunho),photo];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   byId('fju-profile-completion-title').textContent=words.title;byId('fju-profile-completion-percent').textContent=pct+'%';byId('fju-profile-completion-fill').style.width=pct+'%';
