@@ -300,3 +300,16 @@
   width:100%!important;min-width:0!important;min-height:54px!important;padding:14px 16px!important;
   white-space:nowrap!important;overflow:visible!important;font-size:15px!important;line-height:1.2!important
 }
+
+
+/* Troca de foto no próprio avatar, estilo Facebook */
+.fju-youth-avatar-wrap.fju-youth-avatar-editable{position:relative;overflow:visible}
+.fju-youth-avatar-camera{
+ position:absolute;right:-3px;bottom:-3px;z-index:3;display:grid;place-items:center;
+ width:29px;height:29px;padding:0;border:2px solid #fff;border-radius:50%;
+ background:#edf1f6;color:#27364b;box-shadow:0 2px 7px #14243b30;cursor:pointer
+}
+.fju-youth-avatar-camera svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.fju-youth-avatar-camera:disabled{opacity:.65;cursor:wait}
+.fju-profile-photo-inline{position:absolute;width:1px;height:1px;overflow:visible}
+.fju-youth-avatar-photo-status{position:absolute;left:0;top:calc(100% + 8px);z-index:4;width:max-content;max-width:min(260px,70vw);font-size:10px;line-height:1.35;color:#52647c}
