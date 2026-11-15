@@ -1626,10 +1626,10 @@ async function setupYouthProfileEdit(){
      <label>Data do batismo nas águas<input name="batismo_aguas" type="date"></label>
      <label>Data do batismo com o Espírito Santo<input name="batismo_espirito_santo" type="date"></label>
      <label>Registro complementar do batismo<input name="batismo_espirito" type="date"></label>
-     <label>Início no CPO<input name="inicio_cpo" type="date"></label>
-     <label>Início como Colaborador<input name="inicio_colaborador" type="date"></label>
-     <label>Início na Obra de Deus<input name="inicio_obra" type="date"></label>
-     <label class="fju-edit-full">Quando começou a cuidar da FJU<input name="inicio_coordenacao_fju" type="date"></label>
+     <label data-rank-field="cpo" hidden>Início no CPO<input name="inicio_cpo" type="date"></label>
+     <label data-rank-field="colaborador" hidden>Início como Colaborador<input name="inicio_colaborador" type="date"></label>
+     <label data-rank-field="obreiro" hidden>Início na Obra de Deus<input name="inicio_obra" type="date"></label>
+     <label class="fju-edit-full" data-rank-field="coordenador" hidden>Quando começou a cuidar da FJU<input name="inicio_coordenacao_fju" type="date"></label>
     </section>
     <section class="fju-edit-section">
      <h4 class="fju-edit-section-title">Projetos e informações adicionais</h4>
@@ -1675,7 +1675,7 @@ async function setupYouthProfileEdit(){
    if(data.estado_civil!=='casado')data.data_casamento='';
    if(!String(data.nome_completo||'').trim()){status.textContent='Informe seu nome completo.';return;}
    if(projects.length>5){status.textContent='Selecione no máximo 5 projetos.';return;}
-   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',inicio_cpo:data.inicio_cpo||'',inicio_colaborador:data.inicio_colaborador||'',inicio_obra:data.inicio_obra||'',inicio_coordenacao_fju:data.inicio_coordenacao_fju||'',projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
+   const payload={nome_completo:String(data.nome_completo).trim(),telefone:data.telefone||'',nacionalidade_iso2:data.nacionalidade_iso2||'',idiomas:languages,deseja_obra_altar:form.elements.deseja_obra_altar.checked,nascimento:data.nascimento||'',estado_civil:data.estado_civil||'nao_informado',data_casamento:data.data_casamento||'',endereco:data.endereco||'',batismo_aguas:data.batismo_aguas||'',batismo_espirito_santo:data.batismo_espirito_santo||'',batismo_espirito:data.batismo_espirito||'',...(form.querySelector('[data-rank-field="cpo"]').hidden?{}:{inicio_cpo:data.inicio_cpo||''}),...(form.querySelector('[data-rank-field="colaborador"]').hidden?{}:{inicio_colaborador:data.inicio_colaborador||''}),...(form.querySelector('[data-rank-field="obreiro"]').hidden?{}:{inicio_obra:data.inicio_obra||''}),...(form.querySelector('[data-rank-field="coordenador"]').hidden?{}:{inicio_coordenacao_fju:data.inicio_coordenacao_fju||''}),projetos:projects,testemunho:data.testemunho||'',observacoes:data.observacoes||''};
    button.disabled=true;
    status.textContent='Enviando sua ficha…';
    try{
@@ -1718,6 +1718,13 @@ async function setupYouthProfileEdit(){
   if(!result?.data?.ficha)throw new Error('Ficha vinculada não encontrada.');
   records=result.data.ficha;
   complements=result.data.complementos||{};
+  const rank=String(records.patente||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase();
+  for(const node of root.querySelectorAll('[data-rank-field]')){
+   const eligible=node.dataset.rankField===rank;
+   node.hidden=!eligible;
+   const input=node.querySelector('input');
+   if(input)input.disabled=!eligible;
+  }
  }catch(loadError){
   if(request!==youthProfileLoadSequence)return;
   status.textContent='Não foi possível carregar sua ficha: '+(loadError?.message||'Erro inesperado')+'. Seus dados estão protegidos; tente novamente.';
