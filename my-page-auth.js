@@ -1603,10 +1603,10 @@ async function setupYouthProfileEdit(){
     <div class="fju-edit-actions"><button type="submit">Salvar minha ficha</button></div>
    </form><p id="fju-youth-edit-status" role="status"></p>`;
   pane.prepend(root);
-  const form=root.querySelector('form'),marriageWrap=form.querySelector('[data-marriage-wrap]');
-  const editedDuringLoad=new Set();
-  form.addEventListener('input',event=>{if(event.target?.name)editedDuringLoad.add(event.target.name);});
-  form.addEventListener('change',event=>{if(event.target?.name)editedDuringLoad.add(event.target.name);});
+  const form=root.querySelector('form');
+  form.__fjuEditedDuringLoad=new Set();
+  form.addEventListener('input',event=>{if(event.target?.name)form.__fjuEditedDuringLoad.add(event.target.name);});
+  form.addEventListener('change',event=>{if(event.target?.name)form.__fjuEditedDuringLoad.add(event.target.name);});
   const projectOptions=form.querySelector('[data-project-options]');projectOptions.className='fju-edit-project-options';
   const projectItems=[['HELP','HELP','fju-project-mark--help'],['Cultura','CUL','fju-project-mark--culture'],['Esporte','ESP','fju-project-mark--sport'],['Mídia','MID','fju-project-mark--media'],['FJU BJJ','BJJ','fju-project-mark--bjj'],['Uniforça','UNI','fju-project-mark--uniforca']];
   for(const [project,short,markClass] of projectItems){
@@ -1650,6 +1650,9 @@ async function setupYouthProfileEdit(){
   });
  }
  const form=root.querySelector('form');
+ const marriageWrap=form.querySelector('[data-marriage-wrap]');
+ const editedDuringLoad=form.__fjuEditedDuringLoad||new Set();
+ form.__fjuEditedDuringLoad=editedDuringLoad;
  // Keep the fields visible while loading; only the save action stays disabled
  // until every existing value has been retrieved successfully.
  root.hidden=false;
