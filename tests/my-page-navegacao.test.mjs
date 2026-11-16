@@ -62,7 +62,7 @@ test('idioma preferido da conta também sincroniza o formulário de pontos',()=>
  assert.match(requests,/let renderedLanguage='';/);
  assert.match(requests,/new MutationObserver\(syncLanguage\)/);
  assert.match(requests,/window\.addEventListener\('pageshow',syncLanguage\)/);
- assert.match(html,/fju-pontos-ranking\.js\?v=20261102-card-idioma-2/);
+ assert.match(html,/fju-pontos-ranking\.js\?v=20261116-youth-i18n-2/);
 });
 
 test('cartão Meus pontos traduz quatro rótulos sem sobrescrever saldos',()=>{
@@ -74,7 +74,7 @@ test('cartão Meus pontos traduz quatro rótulos sem sobrescrever saldos',()=>{
  assert.match(points,/new MutationObserver\(\(\)=>\{labels\(\);/);
  assert.match(points,/window\.addEventListener\('pageshow',/);
  assert.doesNotMatch(points,/x\[2\]\.childNodes\[0\]/);
- assert.match(html,/fju-pontos-ranking\.js\?v=20261102-card-idioma-2/);
+ assert.match(html,/fju-pontos-ranking\.js\?v=20261116-youth-i18n-2/);
 });
 
 test('mostra a porcentagem de preenchimento do perfil no início do My Page',()=>{
