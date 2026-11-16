@@ -1627,6 +1627,30 @@ if(returnTicket){
       activeUserId=verified?.user?.id||'';
       await loadAccount({keepAccountVisible:true});
       if(!authenticated)throw new Error('A sessão foi confirmada, mas não foi possível carregar seu perfil.');
+      // After returning from the admin panel, keep the My Page home open and
+      // bring the signed-in coordinator's own polo card into view.
+      const focusOwnPoloCard=()=>{
+        const dashboard=byId('fju-youth-dashboard');
+        const poloLabel=(byId('fju-youth-hero-polo')?.textContent||byId('fju-account-church-name')?.textContent||'').trim();
+        if(!dashboard||!poloLabel)return false;
+        const normalize=value=>String(value||'').replace(/\\s+/g,' ').trim().toLocaleLowerCase();
+        const target=normalize(poloLabel);
+        const leaves=[...dashboard.querySelectorAll('*')].filter(node=>node.children.length===0&&normalize(node.textContent)===target);
+        const match=leaves.find(node=>node.closest('article,[class*="card"],[class*="polo"],section'))||leaves[0];
+        if(!match)return false;
+        const card=match.closest('article,[class*="card"],[class*="polo"],section')||match;
+        card.scrollIntoView({behavior:'smooth',block:'center'});
+        return true;
+      };
+      if(!focusOwnPoloCard()){
+        const dashboard=byId('fju-youth-dashboard');
+        dashboard?.scrollIntoView({behavior:'smooth',block:'start'});
+        const observer=new MutationObserver(()=>{
+          if(focusOwnPoloCard())observer.disconnect();
+        });
+        if(dashboard)observer.observe(dashboard,{childList:true,subtree:true,characterData:true});
+        window.setTimeout(()=>observer.disconnect(),5000);
+      }
     }catch(error){
       dialog.dataset.fjuAccountState='ready';
       showView('login');
