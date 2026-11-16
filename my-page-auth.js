@@ -115,6 +115,10 @@ async function setupYouthProfileCompletion(){
   byId('fju-profile-completion-note').textContent=words.note(pct);byId('fju-profile-completion-link').textContent=words.action;card.hidden=false;
  }catch(error){card.hidden=true;}
 }
+// Re-render the dynamic completion card whenever the preferred language changes.
+document.getElementById('language')?.addEventListener('change',()=>{
+ if(byId('fju-profile-completion'))void setupYouthProfileCompletion();
+});
 function renderCurrentRankTenure(rank,complements={}){
  const card=byId('fju-member-collectible');
  if(!card)return;
