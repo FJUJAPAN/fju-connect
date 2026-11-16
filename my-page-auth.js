@@ -650,9 +650,21 @@ function showDialog(){
 
 function renderYouthWelcomeCard(container){
  const old=container.querySelector('#fju-youth-welcome-card');if(old)old.remove();
+ const copy={
+  pt:{title:'Bem-vindo ao FJU CONNECT!',intro:'Sua jornada começa agora. Faça check-in quando estiver na igreja, participe das atividades e acumule pontos!',checkin:'Check-in',points:'Ganhe pontos',ranking:'Ranking',more:'SAIBA MAIS — regras e pontuações →',footer:'Entre no FJU CONNECT e participe de tudo!'},
+  ja:{title:'FJU CONNECTへようこそ！',intro:'ここからあなたの新しい一歩が始まります。教会にいるときにチェックインし、活動に参加してポイントを貯めましょう！',checkin:'チェックイン',points:'ポイントを獲得',ranking:'ランキング',more:'詳しく見る — ルールとポイント →',footer:'FJU CONNECTに参加して、すべての活動に参加しましょう！'},
+  en:{title:'Welcome to FJU CONNECT!',intro:'Your journey starts now. Check in when you are at church, take part in activities, and earn points!',checkin:'Check-in',points:'Earn points',ranking:'Ranking',more:'LEARN MORE — rules and points →',footer:'Join FJU CONNECT and take part in everything!'}
+ }[lang()];
  const card=document.createElement('section');card.id='fju-youth-welcome-card';
  card.style.cssText='margin-top:16px;padding:18px;border-radius:16px;background:linear-gradient(135deg,#101f46,#284987);color:#fff;box-shadow:0 12px 28px #132b5630';
- card.innerHTML='<div style="font-size:34px;line-height:1">🎉 🏆</div><h3 style="margin:10px 0 6px;color:#fff">Bem-vindo ao FJU CONNECT!</h3><p style="margin:0 0 14px;color:#e5edff;line-height:1.55">Sua jornada começa agora. Faça check-in quando estiver na igreja, participe das atividades e acumule pontos!</p><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0"><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">📍</div><strong style="font-size:12px">Check-in</strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">⭐</div><strong style="font-size:12px">Ganhe pontos</strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">🏆</div><strong style="font-size:12px">Ranking</strong></div></div><a href="regras-pontuacao.html" style="display:block;text-align:center;padding:13px;border-radius:10px;background:#fff;color:#17376e;font-weight:800;text-decoration:none">SAIBA MAIS — regras e pontuações →</a><p style="margin:12px 0 0;text-align:center;color:#dbe6ff;font-size:12px">Entre no FJU CONNECT e participe de tudo!</p>';
+ card.innerHTML='<div style="font-size:34px;line-height:1">🎉 🏆</div><h3 style="margin:10px 0 6px;color:#fff"></h3><p data-welcome-intro style="margin:0 0 14px;color:#e5edff;line-height:1.55"></p><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0"><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">📍</div><strong data-welcome-checkin style="font-size:12px"></strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">⭐</div><strong data-welcome-points style="font-size:12px"></strong></div><div style="padding:10px 6px;border-radius:10px;background:#ffffff16;text-align:center"><div style="font-size:24px">🏆</div><strong data-welcome-ranking style="font-size:12px"></strong></div></div><a href="regras-pontuacao.html" data-welcome-more style="display:block;text-align:center;padding:13px;border-radius:10px;background:#fff;color:#17376e;font-weight:800;text-decoration:none"></a><p data-welcome-footer style="margin:12px 0 0;text-align:center;color:#dbe6ff;font-size:12px"></p>';
+ card.querySelector('h3').textContent=copy.title;
+ card.querySelector('[data-welcome-intro]').textContent=copy.intro;
+ card.querySelector('[data-welcome-checkin]').textContent=copy.checkin;
+ card.querySelector('[data-welcome-points]').textContent=copy.points;
+ card.querySelector('[data-welcome-ranking]').textContent=copy.ranking;
+ card.querySelector('[data-welcome-more]').textContent=copy.more;
+ card.querySelector('[data-welcome-footer]').textContent=copy.footer;
  container.append(card);
 }
 
@@ -669,8 +681,22 @@ async function renderYouthSignup(user,isAdmin,current){
   container.replaceChildren();
   container.hidden=isAdmin;
   if(isAdmin)return null;
-  const title=document.createElement('h3');title.textContent='Cadastro na FJU';title.style.margin='0 0 8px';
+  const signupPanelLabels={
+    pt:{title:'Cadastro na FJU',approved:'Cadastro aprovado pelo coordenador.',rejected:'Sua inscrição não foi aprovada. Fale com o coordenador do seu polo.',pending:'Sua inscrição foi recebida. Aguarde a análise do coordenador do seu polo.'},
+    ja:{title:'FJU登録',approved:'コーディネーターによって登録が承認されました。',rejected:'登録は承認されませんでした。所属教会のコーディネーターにお問い合わせください。',pending:'登録を受け付けました。所属教会のコーディネーターによる確認をお待ちください。'},
+    en:{title:'FJU Registration',approved:'Your registration has been approved by the coordinator.',rejected:'Your registration was not approved. Please contact your church coordinator.',pending:'Your registration has been received. Please wait for your church coordinator to review it.'}
+  };
+  const title=document.createElement('h3');title.style.margin='0 0 8px';
   const status=document.createElement('p');status.setAttribute('role','status');status.style.fontSize='14px';
+  const updateSignupPanelLanguage=()=>{
+    const words=signupPanelLabels[lang()];
+    title.textContent=words.title;
+    const state=status.dataset.signupStatus;
+    if(state)status.textContent=words[state]||'';
+    if(container.querySelector('#fju-youth-welcome-card'))renderYouthWelcomeCard(container);
+  };
+  updateSignupPanelLanguage();
+  localeSelect?.addEventListener('change',updateSignupPanelLanguage);
   container.append(title,status);
   // Render a usable recovery action immediately, before any network requests.
   // Safari sessions may survive while one of the subsequent RPCs fails.
@@ -782,7 +808,8 @@ async function renderYouthSignup(user,isAdmin,current){
   try{pending=JSON.parse(sessionStorage.getItem('fju-youth-pending-signup')||'null');}catch(_){}
   if(pending?.email?.toLowerCase()!==user.email?.toLowerCase())pending=null;
   if(!existingError&&currentSignup){retry.remove();
-    status.textContent=currentSignup.status==='aprovado'?'Cadastro aprovado pelo coordenador.':currentSignup.status==='rejeitado'?'Sua inscrição não foi aprovada. Fale com o coordenador do seu polo.':'Sua inscrição foi recebida. Aguarde a análise do coordenador do seu polo.';
+    status.dataset.signupStatus=currentSignup.status==='aprovado'?'approved':currentSignup.status==='rejeitado'?'rejected':'pending';
+    updateSignupPanelLanguage();
     renderYouthWelcomeCard(container);
     return;
   }
