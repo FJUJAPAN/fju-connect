@@ -1607,12 +1607,38 @@ localeSelect?.addEventListener('change',()=>{localize();if(preferredLanguageUser
 renderHeaderAccount(null);
 localize();
 // Evita duas verificações de sessão simultâneas e abre cadastro direto.
-if(new URLSearchParams(window.location.search).get('cadastro')==='1'){
+const initialParams=new URLSearchParams(window.location.search);
+const returnTicket=initialParams.get('fju_return');
+if(returnTicket){
+  // Ticket de uso único: restaura a sessão administrativa no domínio oficial do My Page.
+  const cleanUrl=new URL(window.location.href);
+  cleanUrl.searchParams.delete('fju_return');
+  history.replaceState({},'',cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
+  dialog.dataset.fjuAccountState='checking';
+  showDialog();
+  void (async()=>{
+    try{
+      const {data,error}=await client.functions.invoke('fju-admin-handoff',{body:{action:'exchange',ticket:returnTicket}});
+      if(error)throw error;
+      if(!data?.token_hash)throw new Error('A autorização de retorno expirou ou já foi utilizada.');
+      const {data:verified,error:verifyError}=await client.auth.verifyOtp({token_hash:data.token_hash,type:'email'});
+      if(verifyError)throw verifyError;
+      // Prevent the auth listener from starting a duplicate load for this same verified user.
+      activeUserId=verified?.user?.id||'';
+      await loadAccount({keepAccountVisible:true});
+      if(!authenticated)throw new Error('A sessão foi confirmada, mas não foi possível carregar seu perfil.');
+    }catch(error){
+      dialog.dataset.fjuAccountState='ready';
+      showView('login');
+      setFeedback('Não foi possível retornar ao My Page com segurança: '+(error?.message||'entre novamente.'),true);
+    }
+  })();
+}else if(initialParams.get('cadastro')==='1'){
   void (async()=>{
     showDialog();
     await loadAccount();
     if(!authenticated && !passwordRecovery){
-      if(new URLSearchParams(window.location.search).get('tipo')==='coordenador'){signupGroup.value='FJU';signupGroup.closest('label')?.setAttribute('hidden','');signupGroup.style.display='none';}
+      if(initialParams.get('tipo')==='coordenador'){signupGroup.value='FJU';signupGroup.closest('label')?.setAttribute('hidden','');signupGroup.style.display='none';}
       signupFeedback();
       showView('signup');
       await loadSignupPolos();
