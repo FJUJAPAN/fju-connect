@@ -1621,7 +1621,7 @@ if(returnTicket){
       const {data,error}=await client.functions.invoke('fju-admin-handoff',{body:{action:'exchange',ticket:returnTicket}});
       if(error)throw error;
       if(!data?.token_hash)throw new Error('A autorização de retorno expirou ou já foi utilizada.');
-      const {data:verified,error:verifyError}=await client.auth.verifyOtp({token_hash:data.token_hash,type:'email'});
+      const {data:verified,error:verifyError}=await client.auth.verifyOtp({token_hash:data.token_hash,type:'magiclink'});
       if(verifyError)throw verifyError;
       // Prevent the auth listener from starting a duplicate load for this same verified user.
       activeUserId=verified?.user?.id||'';
