@@ -696,7 +696,9 @@ async function renderYouthSignup(user,isAdmin,current){
     if(container.querySelector('#fju-youth-welcome-card'))renderYouthWelcomeCard(container);
   };
   updateSignupPanelLanguage();
-  localeSelect?.addEventListener('change',updateSignupPanelLanguage);
+  if(container._fjuSignupLangHandler)localeSelect?.removeEventListener('change',container._fjuSignupLangHandler);
+  container._fjuSignupLangHandler=updateSignupPanelLanguage;
+  localeSelect?.addEventListener('change',container._fjuSignupLangHandler);
   container.append(title,status);
   // Render a usable recovery action immediately, before any network requests.
   // Safari sessions may survive while one of the subsequent RPCs fails.
