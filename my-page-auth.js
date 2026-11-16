@@ -663,7 +663,16 @@ function renderYouthWelcomeCard(container){
  card.querySelector('[data-welcome-checkin]').textContent=copy.checkin;
  card.querySelector('[data-welcome-points]').textContent=copy.points;
  card.querySelector('[data-welcome-ranking]').textContent=copy.ranking;
- card.querySelector('[data-welcome-more]').textContent=copy.more;
+ const moreLink=card.querySelector('[data-welcome-more]');
+ moreLink.textContent=copy.more;
+ moreLink.href=new URL('regras-pontuacao-'+lang()+'.html',document.baseURI).href;
+ moreLink.setAttribute('role','link');
+ moreLink.addEventListener('click',event=>{
+  event.preventDefault();
+  const destination=new URL('regras-pontuacao-'+lang()+'.html',document.baseURI);
+  if(dialog?.open)dialog.close();
+  window.location.assign(destination.href);
+ });
  card.querySelector('[data-welcome-footer]').textContent=copy.footer;
  container.append(card);
 }
