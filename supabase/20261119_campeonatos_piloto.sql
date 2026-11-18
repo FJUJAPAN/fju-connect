@@ -26,7 +26,7 @@ create table if not exists public.fju_campeonatos_times (
   campeonato_id uuid not null references public.fju_campeonatos(id) on delete cascade,
   polo_id uuid not null references public.fju_polos(id),
   nome_time text not null check (char_length(btrim(nome_time)) between 2 and 80),
-  capitão_nome text not null check (char_length(btrim(capitão_nome)) between 2 and 100),
+  capitao_nome text not null check (char_length(btrim(capitao_nome)) between 2 and 100),
   token_capitao_hash text not null unique check (token_capitao_hash ~ '^[a-f0-9]{64}$'),
   status text not null default 'pendente' check (status in ('pendente','aprovado','rejeitado')),
   criado_em timestamptz not null default now(),
@@ -46,7 +46,7 @@ create table if not exists public.fju_campeonatos_jogadores (
   criado_em timestamptz not null default now(),
   constraint jogador_dados_validos check (
     (status='convite') or
-    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and nascimento <= current_date and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160)
+    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and nascimento <= current_date and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160 and foto_path is not null)
   )
 );
 
@@ -65,6 +65,7 @@ as $$
 $$;
 revoke all on function private.fju_campeonato_staff(uuid) from public, anon;
 grant execute on function private.fju_campeonato_staff(uuid) to authenticated;
+grant usage on schema private to anon, authenticated;
 
 alter table public.fju_campeonatos enable row level security;
 alter table public.fju_campeonatos_times enable row level security;
@@ -135,7 +136,7 @@ begin
    and (prazo_inscricao is null or prazo_inscricao>=current_date);
   if v_max is null then raise exception 'Inscrições não estão abertas para este campeonato.'; end if;
   if not exists(select 1 from public.fju_polos where id=p_polo_id and ativo=true) then raise exception 'Polo inválido.'; end if;
-  insert into public.fju_campeonatos_times(campeonato_id,polo_id,nome_time,capitão_nome,token_capitao_hash)
+  insert into public.fju_campeonatos_times(campeonato_id,polo_id,nome_time,capitao_nome,token_capitao_hash)
   values(p_campeonato_id,p_polo_id,btrim(p_nome_time),btrim(p_nome_capitao),p_captain_hash) returning id into v_id;
   insert into public.fju_campeonatos_jogadores(time_id,token_inscricao_hash,nome,status)
   values(v_id,p_captain_invite_hash,btrim(p_nome_capitao),'convite');
@@ -165,7 +166,7 @@ declare v_result jsonb;
 begin
   if p_captain_hash !~ '^[a-f0-9]{64}$' then return null; end if;
   select jsonb_build_object(
-    'id',t.id,'nome',t.nome_time,'capitao',t.capitão_nome,'status',t.status,
+    'id',t.id,'nome',t.nome_time,'capitao',t.capitao_nome,'status',t.status,
     'evento',c.titulo,'modalidade',c.modalidade,'data',c.data_evento,'max',c.max_jogadores_time,
     'inscricoes_abertas',c.inscricoes_abertas,
     'jogadores',(select coalesce(jsonb_agg(jsonb_build_object('id',j.id,'nome',j.nome,'status',j.status) order by j.criado_em),'[]'::jsonb) from public.fju_campeonatos_jogadores j where j.time_id=t.id)
@@ -182,7 +183,7 @@ declare v_id uuid; v_time uuid;
 begin
   if p_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Convite inválido.'; end if;
   if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 then raise exception 'Preencha os campos obrigatórios corretamente.'; end if;
-  if p_foto_path is not null and p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Caminho de foto inválido.'; end if;
+  if p_foto_path is null or p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Foto obrigatória ou caminho inválido.'; end if;
   select j.id,j.time_id into v_id,v_time from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
   where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.inscricoes_abertas and c.publicado and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date);
   if v_id is null then raise exception 'Convite já utilizado ou inscrição encerrada.'; end if;
