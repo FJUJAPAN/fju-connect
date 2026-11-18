@@ -244,12 +244,12 @@ begin
    where t.campeonato_id=v_evento and j.jovem_id=v_jovem and j.status<>'rejeitado' and j.id<>v_id
   ) then raise exception 'Este FJU ID já está inscrito neste campeonato.'; end if;
   if exists(select 1 from storage.objects o where o.bucket_id='fju-fotos' and o.name=v_photo) then
-   if coalesce(char_length(coalesce(nullif(btrim(v_endereco),''),nullif(btrim(p_cidade_bairro),''))),0) not between 2 and 160 then
+   if coalesce(char_length(nullif(btrim(p_cidade_bairro),'')),0) not between 2 and 160 then
     raise exception 'Informe a cidade e o bairro.';
    end if;
    update public.fju_campeonatos_jogadores
    set nome=v_nome,nascimento=v_nascimento,
-    cidade_bairro=left(coalesce(nullif(btrim(v_endereco),''),btrim(p_cidade_bairro)),160),
+    cidade_bairro=left(btrim(p_cidade_bairro),160),
     foto_path=v_photo,fju_numero=p_fju_numero,jovem_id=v_jovem,status='pendente',
     enviado_em=now(),consent_confirmed_at=now()
    where id=v_id;
