@@ -352,15 +352,19 @@ drop policy if exists campeonato_staff_ler_fju_foto_inscrito on storage.objects;
 create policy campeonato_staff_ler_fju_foto_inscrito on storage.objects for select to authenticated
 using (
  bucket_id='fju-fotos'
- and name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\.jpg$'
- and exists(
-  select 1 from public.fju_campeonatos_jogadores j
-  join public.fju_campeonatos_times t on t.id=j.time_id
-  join public.fju_campeonatos c on c.id=t.campeonato_id
-  where j.jovem_id=split_part(name,'/',1)::uuid
-   and j.foto_path=name
-   and private.fju_campeonato_staff(c.polo_sede_id)
- )
+ and case
+  when name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\.jpg
+);
+
+commit;
+ then exists(
+   select 1 from public.fju_campeonatos_jogadores j
+   join public.fju_campeonatos_times t on t.id=j.time_id
+   join public.fju_campeonatos c on c.id=t.campeonato_id
+   where j.jovem_id=split_part(name,'/',1)::uuid
+    and j.foto_path=name
+    and private.fju_campeonato_staff(c.polo_sede_id)
+  ) else false end
 );
 
 commit;
