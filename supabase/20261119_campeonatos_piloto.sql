@@ -41,6 +41,8 @@ create table if not exists public.fju_campeonatos_jogadores (
   nascimento date,
   cidade_bairro text,
   foto_path text,
+  fju_numero bigint,
+  jovem_id uuid references public.fju_jovens(id),
   status text not null default 'convite' check (status in ('convite','pendente','aprovado','rejeitado')),
   enviado_em timestamptz,
   consent_confirmed_at timestamptz,
@@ -53,7 +55,7 @@ create table if not exists public.fju_campeonatos_jogadores (
 
 create index if not exists fju_campeonatos_data_idx on public.fju_campeonatos(data_evento);
 create index if not exists fju_campeonatos_times_evento_idx on public.fju_campeonatos_times(campeonato_id);
-create index if not exists fju_campeonatos_jogadores_time_idx on public.fju_campeonatos_jogadores(time_id);
+alter table public.fju_campeonatos_jogadores add column if not exists fju_numero bigint;\nalter table public.fju_campeonatos_jogadores add column if not exists jovem_id uuid references public.fju_jovens(id);\ncreate index if not exists fju_campeonatos_jogadores_time_idx on public.fju_campeonatos_jogadores(time_id);
 
 create or replace function public.fju_campeonato_listar_polos()
 returns table(id uuid,nome text) language sql stable security definer set search_path=''
@@ -102,7 +104,7 @@ for select to authenticated using (
 revoke all on public.fju_campeonatos, public.fju_campeonatos_times, public.fju_campeonatos_jogadores from public, anon, authenticated;
 grant select (id,polo_sede_id,titulo,modalidade,data_evento,local_evento,descricao,prazo_inscricao,max_jogadores_time,publicado,inscricoes_abertas) on public.fju_campeonatos to anon, authenticated;
 grant select (id,campeonato_id,polo_id,nome_time,capitao_nome,status,criado_em) on public.fju_campeonatos_times to authenticated;
-grant select (id,time_id,nome,nascimento,cidade_bairro,foto_path,status,enviado_em,consent_confirmed_at,criado_em) on public.fju_campeonatos_jogadores to authenticated;
+grant select (id,time_id,nome,nascimento,cidade_bairro,foto_path,fju_numero,jovem_id,status,enviado_em,consent_confirmed_at,criado_em) on public.fju_campeonatos_jogadores to authenticated;
 
 create or replace function public.fju_campeonato_criar(
   p_polo_sede_id uuid, p_titulo text, p_modalidade text, p_data_evento date,
@@ -183,22 +185,63 @@ begin
   return v_result;
 end; $$;
 
+create or replace function public.fju_campeonato_buscar_jovem_fju_id(
+  p_invite_hash text,p_numero bigint
+) returns table(jovem_id uuid,numero bigint,nome text,nascimento date,endereco text,foto_disponivel boolean)
+language plpgsql security definer set search_path=''
+as $$
+begin
+ if p_invite_hash !~ '^[a-f0-9]{64}$' or p_numero not between 1 and 99999 then raise exception 'FJU ID inválido.'; end if;
+ if not exists(select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
+   where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.publicado and c.inscricoes_abertas and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date)) then raise exception 'Link de inscrição inválido ou encerrado.'; end if;
+ return query
+ select y.id,i.numero,y.nome_completo,y.nascimento,coalesce(y.endereco,''),exists(select 1 from storage.objects o where o.bucket_id='fju-fotos' and o.name=y.id::text||'/perfil.jpg')
+ from public.fju_identidades i join public.fju_jovens y on y.id=i.jovem_id
+ where i.numero=p_numero and y.excluido_em is null;
+ if not found then raise exception 'FJU ID não encontrado. Confira o número ou faça o cadastro manual.'; end if;
+end; $$;
+revoke all on function public.fju_campeonato_buscar_jovem_fju_id(text,bigint) from public;
+grant execute on function public.fju_campeonato_buscar_jovem_fju_id(text,bigint) to anon,authenticated;
+
 create or replace function public.fju_campeonato_cadastrar_jogador(
-  p_invite_hash text,p_nome text,p_nascimento date,p_cidade_bairro text,p_foto_path text,p_consent boolean
+  p_invite_hash text,p_nome text,p_nascimento date,p_cidade_bairro text,p_foto_path text,p_consent boolean,p_fju_numero bigint default null
 ) returns boolean language plpgsql security definer set search_path=''
 as $$
-declare v_id uuid; v_time uuid;
+declare v_id uuid; v_time uuid; v_evento uuid; v_jovem uuid; v_nome text; v_nascimento date; v_endereco text; v_photo text; v_manual_photo boolean;
 begin
-  if p_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Convite inválido.'; end if;
-  if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_nascimento<date '1900-01-01' or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 or p_consent is distinct from true then raise exception 'Preencha os campos obrigatórios e confirme a autorização.'; end if;
-  if p_foto_path is null or p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Foto obrigatória ou caminho inválido.'; end if;
-  if not exists(select 1 from storage.objects where bucket_id='fju-campeonato-jogadores' and name=p_foto_path) then raise exception 'Foto não foi enviada.'; end if;
-  select j.id,j.time_id into v_id,v_time from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
-  where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.inscricoes_abertas and c.publicado and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date);
-  if v_id is null then raise exception 'Convite já utilizado ou inscrição encerrada.'; end if;
-  update public.fju_campeonatos_jogadores set nome=btrim(p_nome),nascimento=p_nascimento,cidade_bairro=btrim(p_cidade_bairro),foto_path=p_foto_path,status='pendente',enviado_em=now(),consent_confirmed_at=now() where id=v_id;
-  return true;
+ if p_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Convite inválido.'; end if;
+ if p_consent is distinct from true then raise exception 'Confirme a autorização para continuar.'; end if;
+ select j.id,j.time_id,t.campeonato_id into v_id,v_time,v_evento
+ from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
+ where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.inscricoes_abertas and c.publicado and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date);
+ if v_id is null then raise exception 'Convite já utilizado ou inscrição encerrada.'; end if;
+ if p_fju_numero is not null then
+   select y.id,y.nome_completo,y.nascimento,coalesce(y.endereco,''),y.id::text||'/perfil.jpg'
+   into v_jovem,v_nome,v_nascimento,v_endereco,v_photo
+   from public.fju_identidades i join public.fju_jovens y on y.id=i.jovem_id
+   where i.numero=p_fju_numero and y.excluido_em is null;
+   if v_jovem is null then raise exception 'FJU ID inválido ou ficha inativa.'; end if;
+   if exists(select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id
+     where t.campeonato_id=v_evento and j.jovem_id=v_jovem and j.status<>'rejeitado' and j.id<>v_id) then raise exception 'Este FJU ID já está inscrito neste campeonato.'; end if;
+   if exists(select 1 from storage.objects o where o.bucket_id='fju-fotos' and o.name=v_photo) then
+     update public.fju_campeonatos_jogadores set nome=v_nome,nascimento=v_nascimento,cidade_bairro=left(v_endereco,160),foto_path=v_photo,fju_numero=p_fju_numero,jovem_id=v_jovem,status='pendente',enviado_em=now(),consent_confirmed_at=now() where id=v_id;
+     return true;
+   end if;
+   -- If this young person has no current profile photo, fall back to the upload field.
+   v_manual_photo:=true;
+ else
+   if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_nascimento<date '1900-01-01' or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 then raise exception 'Preencha os campos obrigatórios corretamente.'; end if;
+   v_nome:=btrim(p_nome);v_nascimento:=p_nascimento;v_endereco:=btrim(p_cidade_bairro);v_manual_photo:=true;
+ end if;
+ if v_manual_photo then
+   if p_foto_path is null or p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Foto obrigatória ou caminho inválido.'; end if;
+   if not exists(select 1 from storage.objects where bucket_id='fju-campeonato-jogadores' and name=p_foto_path) then raise exception 'Foto não foi enviada.'; end if;
+   update public.fju_campeonatos_jogadores set nome=v_nome,nascimento=v_nascimento,cidade_bairro=left(v_endereco,160),foto_path=p_foto_path,fju_numero=p_fju_numero,jovem_id=v_jovem,status='pendente',enviado_em=now(),consent_confirmed_at=now() where id=v_id;
+ end if;
+ return true;
 end; $$;
+revoke all on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean,bigint) from public;
+grant execute on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean,bigint) to anon,authenticated;
 
 create or replace function public.fju_campeonato_aprovar_time(p_time_id uuid,p_status text)
 returns boolean language plpgsql security definer set search_path=''
@@ -263,6 +306,27 @@ with check (
  bucket_id='fju-campeonato-jogadores' and name ~ '^[a-f0-9]{64}/foto\\.jpg$'
  and public.fju_campeonato_token_foto_valido(split_part(name,'/',1))
 );
+
+create or replace function private.fju_campeonato_staff_fju_foto(p_jovem_id uuid)
+returns boolean language sql stable security definer set search_path=''
+as $ select exists(
+ select 1 from public.fju_campeonatos_jogadores j
+ join public.fju_campeonatos_times t on t.id=j.time_id
+ join public.fju_campeonatos c on c.id=t.campeonato_id
+ where j.jovem_id=p_jovem_id and j.foto_path=p_jovem_id::text||'/perfil.jpg'
+ and private.fju_campeonato_staff(c.polo_sede_id)
+); $;
+revoke all on function private.fju_campeonato_staff_fju_foto(uuid) from public,anon;
+grant execute on function private.fju_campeonato_staff_fju_foto(uuid) to authenticated;
+drop policy if exists campeonato_staff_ler_fju_foto_inscrito on storage.objects;
+create policy campeonato_staff_ler_fju_foto_inscrito on storage.objects for select to authenticated
+using (bucket_id='fju-fotos' and name ~ '^[0-9a-f-]{36}/perfil\\.jpg
+create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
+using (bucket_id='fju-campeonato-jogadores' and private.fju_campeonato_staff_foto(split_part(name,'/',1)));
+
+commit;
+
+ and private.fju_campeonato_staff_fju_foto(split_part(name,'/',1)::uuid));
 
 drop policy if exists campeonato_foto_staff_ler on storage.objects;
 create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
