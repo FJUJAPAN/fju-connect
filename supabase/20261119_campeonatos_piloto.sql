@@ -347,29 +347,20 @@ drop policy if exists campeonato_foto_staff_ler on storage.objects;
 create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
 using (bucket_id='fju-campeonato-jogadores' and private.fju_campeonato_staff_foto(split_part(name,'/',1)));
 
-create or replace function private.fju_campeonato_staff_fju_foto(p_jovem_id uuid)
-returns boolean language sql stable security definer set search_path=''
-as $
- select exists(
-  select 1 from public.fju_campeonatos_jogadores j
-  join public.fju_campeonatos_times t on t.id=j.time_id
-  join public.fju_campeonatos c on c.id=t.campeonato_id
-  where j.jovem_id=p_jovem_id and j.foto_path=p_jovem_id::text||'/perfil.jpg'
-   and private.fju_campeonato_staff(c.polo_sede_id)
- );
-$;
-revoke all on function private.fju_campeonato_staff_fju_foto(uuid) from public,anon;
-grant execute on function private.fju_campeonato_staff_fju_foto(uuid) to authenticated;
+drop function if exists private.fju_campeonato_staff_fju_foto(uuid);
 drop policy if exists campeonato_staff_ler_fju_foto_inscrito on storage.objects;
 create policy campeonato_staff_ler_fju_foto_inscrito on storage.objects for select to authenticated
 using (
  bucket_id='fju-fotos'
- and case
-  when name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\.jpg
-
-  then private.fju_campeonato_staff_fju_foto(split_part(name,'/',1)::uuid)
-  else false
- end
+ and name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\.jpg$'
+ and exists(
+  select 1 from public.fju_campeonatos_jogadores j
+  join public.fju_campeonatos_times t on t.id=j.time_id
+  join public.fju_campeonatos c on c.id=t.campeonato_id
+  where j.jovem_id=split_part(name,'/',1)::uuid
+   and j.foto_path=name
+   and private.fju_campeonato_staff(c.polo_sede_id)
+ )
 );
 
 commit;
