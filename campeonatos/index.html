@@ -27,6 +27,7 @@
 
 <section id="playerFormSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">PLAYER REGISTRATION</span><h2 data-t="playerTitle">Cadastro do jogador</h2></div></div><p class="muted" data-t="playerExplain">Preencha somente os seus dados. O capitão enviou este link para você.</p>
 <form id="playerForm" class="form-grid">
+<label class="wide fju-id-lookup"><span data-t="fjuIdLabel">Você já possui FJU ID?</span><div class="fju-id-line"><input name="fjuId" type="text" inputmode="numeric" pattern="[0-9]{1,5}" maxlength="5" placeholder="Ex.: 00023"><button type="button" id="lookupFjuId" class="quiet" data-t="lookupFjuId">Buscar</button></div><small data-t="fjuIdHint">Digite somente o número do FJU ID. Os dados da ficha serão preenchidos.</small><div id="fjuIdResult" class="fju-id-result" aria-live="polite"></div><button type="button" id="manualPlayerMode" class="quiet manual-mode" data-t="manualMode" hidden>Prefiro preencher manualmente</button></label>
 <label class="wide"><span data-t="fullName">Nome completo</span><input name="name" required maxlength="100"></label>
 <label><span data-t="birth">Data de nascimento</span><input name="birth" type="date" required min="1900-01-01"></label>
 <label><span data-t="cityWard">Cidade e bairro</span><input name="cityWard" required maxlength="160" placeholder="Ex.: Hamamatsu, Chuo-ku"></label>
