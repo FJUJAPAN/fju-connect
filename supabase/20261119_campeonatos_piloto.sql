@@ -272,7 +272,7 @@ revoke all on function public.fju_campeonato_atualizar(uuid,boolean,boolean) fro
 revoke all on function public.fju_campeonato_criar_time(uuid,uuid,text,text,text,text) from public;
 revoke all on function public.fju_campeonato_criar_convite(text,text) from public;
 revoke all on function public.fju_campeonato_time_por_token(text) from public;
-revoke all on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean) from public;
+revoke all on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean,bigint) from public;
 revoke all on function public.fju_campeonato_aprovar_time(uuid,text) from public,anon;
 revoke all on function public.fju_campeonato_aprovar_jogador(uuid,text) from public,anon;
 grant execute on function public.fju_campeonato_criar(uuid,text,text,date,text,text,date,integer,boolean,boolean) to authenticated;
@@ -280,7 +280,7 @@ grant execute on function public.fju_campeonato_atualizar(uuid,boolean,boolean) 
 grant execute on function public.fju_campeonato_criar_time(uuid,uuid,text,text,text,text) to anon,authenticated;
 grant execute on function public.fju_campeonato_criar_convite(text,text) to anon,authenticated;
 grant execute on function public.fju_campeonato_time_por_token(text) to anon,authenticated;
-grant execute on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean) to anon,authenticated;
+grant execute on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean,bigint) to anon,authenticated;
 grant execute on function public.fju_campeonato_aprovar_time(uuid,text) to authenticated;
 grant execute on function public.fju_campeonato_aprovar_jogador(uuid,text) to authenticated;
 
@@ -309,24 +309,25 @@ with check (
 
 create or replace function private.fju_campeonato_staff_fju_foto(p_jovem_id uuid)
 returns boolean language sql stable security definer set search_path=''
-as $ select exists(
- select 1 from public.fju_campeonatos_jogadores j
- join public.fju_campeonatos_times t on t.id=j.time_id
- join public.fju_campeonatos c on c.id=t.campeonato_id
- where j.jovem_id=p_jovem_id and j.foto_path=p_jovem_id::text||'/perfil.jpg'
- and private.fju_campeonato_staff(c.polo_sede_id)
-); $;
+as $$
+ select exists(
+  select 1 from public.fju_campeonatos_jogadores j
+  join public.fju_campeonatos_times t on t.id=j.time_id
+  join public.fju_campeonatos c on c.id=t.campeonato_id
+  where j.jovem_id=p_jovem_id
+    and j.foto_path=p_jovem_id::text||'/perfil.jpg'
+    and private.fju_campeonato_staff(c.polo_sede_id)
+ );
+$$;
 revoke all on function private.fju_campeonato_staff_fju_foto(uuid) from public,anon;
 grant execute on function private.fju_campeonato_staff_fju_foto(uuid) to authenticated;
 drop policy if exists campeonato_staff_ler_fju_foto_inscrito on storage.objects;
 create policy campeonato_staff_ler_fju_foto_inscrito on storage.objects for select to authenticated
-using (bucket_id='fju-fotos' and name ~ '^[0-9a-f-]{36}/perfil\\.jpg
-create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
-using (bucket_id='fju-campeonato-jogadores' and private.fju_campeonato_staff_foto(split_part(name,'/',1)));
-
-commit;
-
- and private.fju_campeonato_staff_fju_foto(split_part(name,'/',1)::uuid));
+using (
+ bucket_id='fju-fotos'
+ and name ~ '^[0-9a-f-]{36}/perfil\\.jpg$'
+ and private.fju_campeonato_staff_fju_foto(split_part(name,'/',1)::uuid)
+);
 
 drop policy if exists campeonato_foto_staff_ler on storage.objects;
 create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
