@@ -35,11 +35,11 @@ test('FJU ID lookup autofills player details and reuses private profile photo',(
  assert.match(script,/fju_campeonato_buscar_jovem_fju_id/);
  assert.match(script,/form\.elements\.name\.value=found\.nome/);
  assert.match(script,/p_fju_numero:playerIdentity\?\.numero\|\|null/);
- assert.match(script,/bucket=profilePhoto\?'fju-fotos':'fju-campeonato-jogadores'/);
+ assert.match(script,/bucket=profilePhoto\?'fju-fotos':'fju-campeonato-jogadores'/);\n assert.match(script,/form\.elements\.cityWard\.readOnly=false/);
  assert.match(migration,/public\.fju_identidades/);
  assert.match(migration,/fju_campeonato_cadastrar_jogador\(text,text,date,text,text,boolean,bigint\)/);
  assert.match(migration,/jovem_id/);
- assert.match(migration,/campeonato_staff_ler_fju_foto_inscrito/);
+ assert.match(migration,/campeonato_staff_ler_fju_foto_inscrito/);\n assert.equal((migration.match(/create or replace function public\.fju_campeonato_cadastrar_jogador/g)||[]).length,1);\n assert.equal((migration.match(/commit;/g)||[]).length,1);\n assert.equal((migration.match(/\$\$/g)||[]).length%2,0);
 });
 
 test('captain flow creates team tokens, individual invite links and copy/share controls',()=>{
