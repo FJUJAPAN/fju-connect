@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="./campeonatos.css?v=20261119-pilot">
 </head>
 <body>
-<header class="top"><a class="brand" href="../"><b>FJU<span>.</span></b><small>CONNECT JAPAN</small></a><div class="top-actions"><a href="../">← <span data-t="back">Voltar ao site</span></a><button id="lang" type="button" aria-label="Language">PT / 日本語 / EN</button></div></header>
+<header class="top"><a class="brand" href="../"><b>FJU<span>.</span></b><small>CONNECT JAPAN</small></a><div class="top-actions"><a href="../">← <span data-t="back">Voltar ao site</span></a><button id="lang" type="button" aria-label="Language">PT / 日本語 / EN</button><button id="staffAccess" class="quiet" type="button" data-t="staffLogin">Coordenação</button></div></header>
 <main class="container">
 <section class="intro"><div class="eyebrow">FJU CONNECT JAPAN · SPORTS</div><h1><span class="trophy">🏆</span> <span data-t="title">Campeonatos</span></h1><p data-t="subtitle">Crie seu time, compartilhe o link e cada jogador faz o próprio cadastro.</p></section>
 <div id="notice" class="notice" role="status" hidden></div>
@@ -31,7 +31,7 @@
 <label><span data-t="birth">Data de nascimento</span><input name="birth" type="date" required min="1900-01-01"></label>
 <label><span data-t="cityWard">Cidade e bairro</span><input name="cityWard" required maxlength="160" placeholder="Ex.: Hamamatsu, Chuo-ku"></label>
 <label class="wide"><span data-t="photo">Foto individual (selfie serve)</span><input name="photo" type="file" accept="image/*" required><small data-t="photoHint">A foto será privada e visível apenas à equipe responsável pela inscrição.</small></label>
-<div class="form-actions"><button class="primary" type="submit" data-t="submitPlayer">Enviar cadastro</button></div>
+<label class="wide consent"><input name="consent" type="checkbox" required><span data-t="consent">Confirmo que estou autorizado a fornecer esses dados; se sou menor de idade, tenho autorização do responsável.</span></label><div class="form-actions"><button class="primary" type="submit" data-t="submitPlayer">Enviar cadastro</button></div>
 </form></section>
 
 <section id="captainSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">CAPTAIN LINK</span><h2 data-t="captainDashboard">Painel do capitão</h2></div></div><div id="captainInfo"></div><div class="invite-box"><h3 data-t="invitePlayers">Convide os jogadores</h3><p class="muted" data-t="inviteExplain">Gere um link individual e envie para cada pessoa do time.</p><button class="primary" id="newInvite" data-t="newInvite">＋ Gerar link de cadastro</button><div id="inviteList"></div></div></section>
