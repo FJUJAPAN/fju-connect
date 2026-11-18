@@ -47,7 +47,7 @@ create table if not exists public.fju_campeonatos_jogadores (
   criado_em timestamptz not null default now(),
   constraint jogador_dados_validos check (
     (status='convite') or
-    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160 and foto_path is not null)
+    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160 and foto_path is not null and consent_confirmed_at is not null)
   )
 );
 
@@ -66,7 +66,7 @@ as $$
 $$;
 revoke all on function private.fju_campeonato_staff(uuid) from public, anon;
 grant execute on function private.fju_campeonato_staff(uuid) to authenticated;
-grant usage on schema private to anon, authenticated;
+grant usage on schema private to authenticated;
 
 alter table public.fju_campeonatos enable row level security;
 alter table public.fju_campeonatos_times enable row level security;
@@ -239,22 +239,22 @@ insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('fju-campeonato-jogadores','fju-campeonato-jogadores',false,3145728,array['image/jpeg'])
 on conflict(id) do update set public=false,file_size_limit=3145728,allowed_mime_types=array['image/jpeg'];
 
-create or replace function private.fju_campeonato_token_foto_valido(p_token_hash text)
+create or replace function public.fju_campeonato_token_foto_valido(p_token_hash text)
 returns boolean language sql stable security definer set search_path=''
 as $$ select exists(select 1 from public.fju_campeonatos_jogadores j where j.token_inscricao_hash=p_token_hash and j.status='convite'); $$;
 create or replace function private.fju_campeonato_staff_foto(p_token_hash text)
 returns boolean language sql stable security definer set search_path=''
 as $$ select exists(select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id where j.token_inscricao_hash=p_token_hash and private.fju_campeonato_staff(c.polo_sede_id)); $$;
-revoke all on function private.fju_campeonato_token_foto_valido(text) from public;
+revoke all on function public.fju_campeonato_token_foto_valido(text) from public;
 revoke all on function private.fju_campeonato_staff_foto(text) from public,anon;
-grant execute on function private.fju_campeonato_token_foto_valido(text) to anon,authenticated;
+grant execute on function public.fju_campeonato_token_foto_valido(text) to anon,authenticated;
 grant execute on function private.fju_campeonato_staff_foto(text) to authenticated;
 
 drop policy if exists campeonato_foto_upload_por_convite on storage.objects;
 create policy campeonato_foto_upload_por_convite on storage.objects for insert to anon,authenticated
 with check (
  bucket_id='fju-campeonato-jogadores' and name ~ '^[a-f0-9]{64}/foto\\.jpg$'
- and private.fju_campeonato_token_foto_valido(split_part(name,'/',1))
+ and public.fju_campeonato_token_foto_valido(split_part(name,'/',1))
 );
 
 drop policy if exists campeonato_foto_staff_ler on storage.objects;
