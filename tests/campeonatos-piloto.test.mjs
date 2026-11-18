@@ -29,6 +29,19 @@ test('registration page exposes team, player and staff flows',()=>{
  assert.match(page,/name="cityWard"/);
 });
 
+test('FJU ID lookup autofills player details and reuses private profile photo',()=>{
+ assert.match(page,/name="fjuId"/);
+ assert.match(page,/id="lookupFjuId"/);
+ assert.match(script,/fju_campeonato_buscar_jovem_fju_id/);
+ assert.match(script,/form\.elements\.name\.value=found\.nome/);
+ assert.match(script,/p_fju_numero:playerIdentity\?\.numero\|\|null/);
+ assert.match(script,/bucket=profilePhoto\?'fju-fotos':'fju-campeonato-jogadores'/);
+ assert.match(migration,/public\.fju_identidades/);
+ assert.match(migration,/jovem_id/);
+ assert.match(migration,/fju_campeonato_staff_fju_foto/);
+ assert.match(migration,/campeonato_staff_ler_fju_foto_inscrito/);
+});
+
 test('captain flow creates team tokens, individual invite links and copy/share controls',()=>{
  assert.match(script,/fju_campeonato_criar_time/);
  assert.match(script,/fju_campeonato_criar_convite/);
