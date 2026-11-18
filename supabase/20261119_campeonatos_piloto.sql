@@ -57,7 +57,7 @@ create index if not exists fju_campeonatos_jogadores_time_idx on public.fju_camp
 
 create or replace function public.fju_campeonato_listar_polos()
 returns table(id uuid,nome text) language sql stable security definer set search_path=''
-as $ select p.id,p.nome from public.fju_polos p where p.ativo=true order by p.nome; $;
+as $$ select p.id,p.nome from public.fju_polos p where p.ativo=true order by p.nome; $$;
 revoke all on function public.fju_campeonato_listar_polos() from public;
 grant execute on function public.fju_campeonato_listar_polos() to anon,authenticated;
 
