@@ -55,6 +55,12 @@ create index if not exists fju_campeonatos_data_idx on public.fju_campeonatos(da
 create index if not exists fju_campeonatos_times_evento_idx on public.fju_campeonatos_times(campeonato_id);
 create index if not exists fju_campeonatos_jogadores_time_idx on public.fju_campeonatos_jogadores(time_id);
 
+create or replace function public.fju_campeonato_listar_polos()
+returns table(id uuid,nome text) language sql stable security definer set search_path=''
+as $ select p.id,p.nome from public.fju_polos p where p.ativo=true order by p.nome; $;
+revoke all on function public.fju_campeonato_listar_polos() from public;
+grant execute on function public.fju_campeonato_listar_polos() to anon,authenticated;
+
 create or replace function private.fju_campeonato_staff(p_sede_polo_id uuid)
 returns boolean language sql stable security definer set search_path=''
 as $$
