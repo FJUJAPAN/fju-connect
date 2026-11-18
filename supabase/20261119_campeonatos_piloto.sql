@@ -328,7 +328,11 @@ drop policy if exists campeonato_staff_ler_fju_foto_inscrito on storage.objects;
 create policy campeonato_staff_ler_fju_foto_inscrito on storage.objects for select to authenticated
 using (
  bucket_id='fju-fotos'
- and case when name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\\.jpg
+ and case
+  when name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/perfil\.jpg$'
+  then private.fju_campeonato_staff_fju_foto(split_part(name,'/',1)::uuid)
+  else false
+ end
 );
 
 drop policy if exists campeonato_foto_staff_ler on storage.objects;
