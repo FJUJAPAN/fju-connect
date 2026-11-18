@@ -43,10 +43,11 @@ create table if not exists public.fju_campeonatos_jogadores (
   foto_path text,
   status text not null default 'convite' check (status in ('convite','pendente','aprovado','rejeitado')),
   enviado_em timestamptz,
+  consent_confirmed_at timestamptz,
   criado_em timestamptz not null default now(),
   constraint jogador_dados_validos check (
     (status='convite') or
-    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and nascimento <= current_date and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160 and foto_path is not null)
+    (nome is not null and char_length(btrim(nome)) between 2 and 100 and nascimento is not null and cidade_bairro is not null and char_length(btrim(cidade_bairro)) between 2 and 160 and foto_path is not null)
   )
 );
 
@@ -93,8 +94,9 @@ for select to authenticated using (
 );
 
 revoke all on public.fju_campeonatos, public.fju_campeonatos_times, public.fju_campeonatos_jogadores from public, anon, authenticated;
-grant select on public.fju_campeonatos to anon, authenticated;
-grant select on public.fju_campeonatos_times, public.fju_campeonatos_jogadores to authenticated;
+grant select (id,polo_sede_id,titulo,modalidade,data_evento,local_evento,descricao,prazo_inscricao,max_jogadores_time,publicado,inscricoes_abertas) on public.fju_campeonatos to anon, authenticated;
+grant select (id,campeonato_id,polo_id,nome_time,capitao_nome,status,criado_em) on public.fju_campeonatos_times to authenticated;
+grant select (id,time_id,nome,nascimento,cidade_bairro,foto_path,status,enviado_em,consent_confirmed_at,criado_em) on public.fju_campeonatos_jogadores to authenticated;
 
 create or replace function public.fju_campeonato_criar(
   p_polo_sede_id uuid, p_titulo text, p_modalidade text, p_data_evento date,
@@ -176,18 +178,18 @@ begin
 end; $$;
 
 create or replace function public.fju_campeonato_cadastrar_jogador(
-  p_invite_hash text,p_nome text,p_nascimento date,p_cidade_bairro text,p_foto_path text
+  p_invite_hash text,p_nome text,p_nascimento date,p_cidade_bairro text,p_foto_path text,p_consent boolean
 ) returns boolean language plpgsql security definer set search_path=''
 as $$
 declare v_id uuid; v_time uuid;
 begin
   if p_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Convite inválido.'; end if;
-  if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 then raise exception 'Preencha os campos obrigatórios corretamente.'; end if;
+  if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_nascimento<date '1900-01-01' or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 or p_consent is distinct from true then raise exception 'Preencha os campos obrigatórios e confirme a autorização.'; end if;
   if p_foto_path is null or p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Foto obrigatória ou caminho inválido.'; end if;
   select j.id,j.time_id into v_id,v_time from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
   where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.inscricoes_abertas and c.publicado and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date);
   if v_id is null then raise exception 'Convite já utilizado ou inscrição encerrada.'; end if;
-  update public.fju_campeonatos_jogadores set nome=btrim(p_nome),nascimento=p_nascimento,cidade_bairro=btrim(p_cidade_bairro),foto_path=p_foto_path,status='pendente',enviado_em=now() where id=v_id;
+  update public.fju_campeonatos_jogadores set nome=btrim(p_nome),nascimento=p_nascimento,cidade_bairro=btrim(p_cidade_bairro),foto_path=p_foto_path,status='pendente',enviado_em=now(),consent_confirmed_at=now() where id=v_id;
   return true;
 end; $$;
 
@@ -220,7 +222,7 @@ revoke all on function public.fju_campeonato_atualizar(uuid,boolean,boolean) fro
 revoke all on function public.fju_campeonato_criar_time(uuid,uuid,text,text,text,text) from public;
 revoke all on function public.fju_campeonato_criar_convite(text,text) from public;
 revoke all on function public.fju_campeonato_time_por_token(text) from public;
-revoke all on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text) from public;
+revoke all on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean) from public;
 revoke all on function public.fju_campeonato_aprovar_time(uuid,text) from public,anon;
 revoke all on function public.fju_campeonato_aprovar_jogador(uuid,text) from public,anon;
 grant execute on function public.fju_campeonato_criar(uuid,text,text,date,text,text,date,integer,boolean,boolean) to authenticated;
@@ -228,7 +230,7 @@ grant execute on function public.fju_campeonato_atualizar(uuid,boolean,boolean) 
 grant execute on function public.fju_campeonato_criar_time(uuid,uuid,text,text,text,text) to anon,authenticated;
 grant execute on function public.fju_campeonato_criar_convite(text,text) to anon,authenticated;
 grant execute on function public.fju_campeonato_time_por_token(text) to anon,authenticated;
-grant execute on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text) to anon,authenticated;
+grant execute on function public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean) to anon,authenticated;
 grant execute on function public.fju_campeonato_aprovar_time(uuid,text) to authenticated;
 grant execute on function public.fju_campeonato_aprovar_jogador(uuid,text) to authenticated;
 
