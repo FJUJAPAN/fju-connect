@@ -46,7 +46,8 @@ test('player submission uploads a compressed private photo and requires consent'
 });
 
 test('staff panel checks active national/coordinator profile and uses approval RPCs',()=>{
- assert.match(script,/fju_campeonato_listar_polos/);\n assert.match(script,/from\('fju_perfis'\)/);
+ assert.match(script,/fju_campeonato_listar_polos/);
+ assert.match(script,/from\('fju_perfis'\)/);
  assert.match(script,/!data\?\.ativo/);
  assert.match(script,/\['nacional','coordenador'\]/);
  assert.match(script,/fju_campeonato_aprovar_time/);
