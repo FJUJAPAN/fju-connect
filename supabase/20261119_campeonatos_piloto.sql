@@ -42,7 +42,7 @@ create table if not exists public.fju_campeonatos_jogadores (
   cidade_bairro text,
   foto_path text,
   fju_numero bigint,
-  jovem_id uuid references public.fju_jovens(id),
+  jovem_id uuid references public.fju_jovens(id) on delete set null,
   status text not null default 'convite' check (status in ('convite','pendente','aprovado','rejeitado')),
   enviado_em timestamptz,
   consent_confirmed_at timestamptz,
@@ -56,7 +56,7 @@ create table if not exists public.fju_campeonatos_jogadores (
 create index if not exists fju_campeonatos_data_idx on public.fju_campeonatos(data_evento);
 create index if not exists fju_campeonatos_times_evento_idx on public.fju_campeonatos_times(campeonato_id);
 alter table public.fju_campeonatos_jogadores add column if not exists fju_numero bigint;
-alter table public.fju_campeonatos_jogadores add column if not exists jovem_id uuid references public.fju_jovens(id);
+alter table public.fju_campeonatos_jogadores add column if not exists jovem_id uuid references public.fju_jovens(id) on delete set null;
 create index if not exists fju_campeonatos_jogadores_time_idx on public.fju_campeonatos_jogadores(time_id);
 
 create or replace function public.fju_campeonato_listar_polos()
@@ -227,7 +227,7 @@ begin
    if exists(select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id
      where t.campeonato_id=v_evento and j.jovem_id=v_jovem and j.status<>'rejeitado' and j.id<>v_id) then raise exception 'Este FJU ID já está inscrito neste campeonato.'; end if;
    if exists(select 1 from storage.objects o where o.bucket_id='fju-fotos' and o.name=v_photo) then
-     if char_length(coalesce(nullif(btrim(v_endereco),''),nullif(btrim(p_cidade_bairro),''))) not between 2 and 160 then raise exception 'Informe a cidade e o bairro.'; end if;
+     if coalesce(char_length(coalesce(nullif(btrim(v_endereco),''),nullif(btrim(p_cidade_bairro),''))),0) not between 2 and 160 then raise exception 'Informe a cidade e o bairro.'; end if;
      update public.fju_campeonatos_jogadores set nome=v_nome,nascimento=v_nascimento,cidade_bairro=left(coalesce(nullif(btrim(v_endereco),''),btrim(p_cidade_bairro)),160),foto_path=v_photo,fju_numero=p_fju_numero,jovem_id=v_jovem,status='pendente',enviado_em=now(),consent_confirmed_at=now() where id=v_id;
      return true;
    end if;
