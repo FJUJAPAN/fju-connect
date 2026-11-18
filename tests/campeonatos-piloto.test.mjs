@@ -36,9 +36,9 @@ test('FJU ID lookup autofills player details and reuses private profile photo',(
  assert.match(script,/form\.elements\.name\.value=found\.nome/);
  assert.match(script,/p_fju_numero:playerIdentity\?\.numero\|\|null/);
  assert.match(script,/bucket=profilePhoto\?'fju-fotos':'fju-campeonato-jogadores'/);
- assert.match(migration,/public\.fju_identidades/);
+ assert.match(migration,/public\.fju_identidades/);\n assert.match(migration,/fju_campeonato_cadastrar_jogador\(text,text,date,text,text,boolean,bigint\)/);
  assert.match(migration,/jovem_id/);
- assert.match(migration,/fju_campeonato_staff_fju_foto/);
+ assert.match(migration,/campeonato_staff_ler_fju_foto_inscrito/);
  assert.match(migration,/campeonato_staff_ler_fju_foto_inscrito/);
 });
 
