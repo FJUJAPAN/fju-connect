@@ -236,20 +236,26 @@ insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('fju-campeonato-jogadores','fju-campeonato-jogadores',false,3145728,array['image/jpeg'])
 on conflict(id) do update set public=false,file_size_limit=3145728,allowed_mime_types=array['image/jpeg'];
 
+create or replace function private.fju_campeonato_token_foto_valido(p_token_hash text)
+returns boolean language sql stable security definer set search_path=''
+as $$ select exists(select 1 from public.fju_campeonatos_jogadores j where j.token_inscricao_hash=p_token_hash and j.status='convite'); $$;
+create or replace function private.fju_campeonato_staff_foto(p_token_hash text)
+returns boolean language sql stable security definer set search_path=''
+as $$ select exists(select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id where j.token_inscricao_hash=p_token_hash and private.fju_campeonato_staff(c.polo_sede_id)); $$;
+revoke all on function private.fju_campeonato_token_foto_valido(text) from public;
+revoke all on function private.fju_campeonato_staff_foto(text) from public,anon;
+grant execute on function private.fju_campeonato_token_foto_valido(text) to anon,authenticated;
+grant execute on function private.fju_campeonato_staff_foto(text) to authenticated;
+
 drop policy if exists campeonato_foto_upload_por_convite on storage.objects;
 create policy campeonato_foto_upload_por_convite on storage.objects for insert to anon,authenticated
 with check (
- bucket_id='fju-campeonato-jogadores' and name ~ '^[a-f0-9]{64}/foto\.jpg$'
- and exists(select 1 from public.fju_campeonatos_jogadores j where j.token_inscricao_hash=split_part(name,'/',1) and j.status='convite')
+ bucket_id='fju-campeonato-jogadores' and name ~ '^[a-f0-9]{64}/foto\\.jpg$'
+ and private.fju_campeonato_token_foto_valido(split_part(name,'/',1))
 );
 
 drop policy if exists campeonato_foto_staff_ler on storage.objects;
 create policy campeonato_foto_staff_ler on storage.objects for select to authenticated
-using (
- bucket_id='fju-campeonato-jogadores' and exists(
-  select 1 from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
-  where j.token_inscricao_hash=split_part(name,'/',1) and private.fju_campeonato_staff(c.polo_sede_id)
- )
-);
+using (bucket_id='fju-campeonato-jogadores' and private.fju_campeonato_staff_foto(split_part(name,'/',1)));
 
 commit;
