@@ -205,6 +205,7 @@ end; $$;
 revoke all on function public.fju_campeonato_buscar_jovem_fju_id(text,bigint) from public;
 grant execute on function public.fju_campeonato_buscar_jovem_fju_id(text,bigint) to anon,authenticated;
 
+drop function if exists public.fju_campeonato_cadastrar_jogador(text,text,date,text,text,boolean);
 create or replace function public.fju_campeonato_cadastrar_jogador(
   p_invite_hash text,p_nome text,p_nascimento date,p_cidade_bairro text,p_foto_path text,p_consent boolean,p_fju_numero bigint default null
 ) returns boolean language plpgsql security definer set search_path=''
