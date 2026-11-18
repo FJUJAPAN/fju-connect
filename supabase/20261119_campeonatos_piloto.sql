@@ -186,6 +186,7 @@ begin
   if p_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Convite inválido.'; end if;
   if char_length(btrim(p_nome)) not between 2 and 100 or p_nascimento is null or p_nascimento>current_date or p_nascimento<date '1900-01-01' or p_cidade_bairro is null or char_length(btrim(p_cidade_bairro)) not between 2 and 160 or p_consent is distinct from true then raise exception 'Preencha os campos obrigatórios e confirme a autorização.'; end if;
   if p_foto_path is null or p_foto_path<>p_invite_hash||'/foto.jpg' then raise exception 'Foto obrigatória ou caminho inválido.'; end if;
+  if not exists(select 1 from storage.objects where bucket_id='fju-campeonato-jogadores' and name=p_foto_path) then raise exception 'Foto não foi enviada.'; end if;
   select j.id,j.time_id into v_id,v_time from public.fju_campeonatos_jogadores j join public.fju_campeonatos_times t on t.id=j.time_id join public.fju_campeonatos c on c.id=t.campeonato_id
   where j.token_inscricao_hash=p_invite_hash and j.status='convite' and c.inscricoes_abertas and c.publicado and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date);
   if v_id is null then raise exception 'Convite já utilizado ou inscrição encerrada.'; end if;
