@@ -189,7 +189,7 @@ end; $$;
 
 create or replace function public.fju_campeonato_buscar_jovem_fju_id(
  p_invite_hash text,p_numero bigint
-) returns table(jovem_id uuid,numero bigint,nome text,nascimento date,endereco text,foto_disponivel boolean)
+) returns table(numero bigint,nome text,nascimento date,endereco text,foto_disponivel boolean)
 language plpgsql security definer set search_path=''
 as $$
 begin
@@ -204,7 +204,7 @@ begin
     and c.publicado and c.inscricoes_abertas and (c.prazo_inscricao is null or c.prazo_inscricao>=current_date)
  ) then raise exception 'Link de inscrição inválido ou encerrado.'; end if;
  return query
- select y.id,i.numero,y.nome_completo,y.nascimento,coalesce(y.endereco,''),
+ select i.numero,y.nome_completo,y.nascimento,coalesce(y.endereco,''),
   exists(select 1 from storage.objects o where o.bucket_id='fju-fotos' and o.name=y.id::text||'/perfil.jpg')
  from public.fju_identidades i
  join public.fju_jovens y on y.id=i.jovem_id
