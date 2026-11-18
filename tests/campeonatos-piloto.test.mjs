@@ -57,7 +57,8 @@ test('staff panel checks active national/coordinator profile and uses approval R
 test('migration keeps participant data private and requires invitation token/photo/consent',()=>{
  assert.match(migration,/enable row level security/);
  assert.match(migration,/revoke all on public\.fju_campeonatos, public\.fju_campeonatos_times, public\.fju_campeonatos_jogadores from public, anon, authenticated/);
- assert.match(migration,/fju_campeonato_listar_polos/);\n assert.match(migration,/token_inscricao_hash/);
+ assert.match(migration,/fju_campeonato_listar_polos/);
+ assert.match(migration,/token_inscricao_hash/);
  assert.match(migration,/consent_confirmed_at/);
  assert.match(migration,/Foto não foi enviada/);
  assert.match(migration,/public=false/);
