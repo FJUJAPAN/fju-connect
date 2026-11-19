@@ -103,8 +103,8 @@ $('#eventForm').addEventListener('submit',async e=>{
  finally{button.disabled=false}
 });
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const fd=new FormData(e.currentTarget);const {error}=await db.auth.signInWithPassword({email:fd.get('email'),password:fd.get('password')});if(error){note(t('loginError'),'error');return}await checkAdmin()});
-$('#logout').onclick=async()=>{await db.auth.signOut();profile=null;show('loginSection')};
-async function checkAdmin(){const {data:{session}}=await db.auth.getSession();if(!session){show('loginSection');return}const {data,error}=await db.from('fju_perfis').select('papel,polo_id,ativo').eq('usuario_id',session.user.id).maybeSingle();if(error||!data?.ativo||!['nacional','coordenador'].includes(data.papel)||(data.papel==='coordenador'&&!data.polo_id)){profile=null;show('loginSection');note(t('noPermission'),'error');return}profile=data;show('adminSection');await loadAdmin()}
+$('#logout').onclick=async()=>{await db.auth.signOut();profile=null;show('public')};
+async function checkAdmin(){const {data:{session}}=await db.auth.getSession();if(!session){profile=null;show('public');return}const {data,error}=await db.from('fju_perfis').select('papel,polo_id,ativo').eq('usuario_id',session.user.id).maybeSingle();if(error||!data?.ativo||!['nacional','coordenador'].includes(data.papel)||(data.papel==='coordenador'&&!data.polo_id)){profile=null;show('public');return}profile=data;show('adminSection');await loadAdmin()}
 $('#staffAccess').onclick=async()=>{const {data:{session}}=await db.auth.getSession();if(session)await checkAdmin();else show('loginSection')};
 
 $('#eventForm input[name=cover]').addEventListener('change',e=>{const file=e.currentTarget.files?.[0],preview=$('#coverPreview');if(!file){preview.hidden=true;preview.removeAttribute('src');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)){e.currentTarget.value='';preview.hidden=true;note(t('eventFormError'),'error');return}preview.src=URL.createObjectURL(file);preview.hidden=false});
