@@ -151,3 +151,4 @@ test('rejecting a pending team deletes its team row and cascades player registra
 });
 
 test('duplicate team and technical backend errors are translated to user-friendly notices',()=>{\n assert.match(script,/function friendlyError/);\n assert.match(script,/fju_campeonatos_times_campeonato_id_polo_id_nome_time_key/);\n assert.match(script,/Já existe um time com esse nome neste campeonato e polo/);\n assert.match(script,/Não foi possível concluir/);\n});\n
+test('public teams directory only uses approved-team RPC and renders shareable team cards',()=>{\n assert.match(script,/fju_campeonato_times_publicos/);\n assert.match(script,/loadPublicTeams/);\n assert.match(script,/Ver ficha do time/);\n assert.match(script,/Compartilhar página/);\n});\n
