@@ -8,11 +8,11 @@ alter table public.fju_campeonatos
   add column if not exists hora_fim time,
   add column if not exists max_times integer;
 
-do $ begin
+do $$ begin
   if not exists(select 1 from pg_constraint where conname='fju_campeonatos_max_times_check' and conrelid='public.fju_campeonatos'::regclass) then
     alter table public.fju_campeonatos add constraint fju_campeonatos_max_times_check check (max_times is null or max_times between 1 and 64);
   end if;
-end $;
+end $$;
 
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('fju-campeonatos-capas','fju-campeonatos-capas',true,5242880,array['image/jpeg','image/png','image/webp'])
