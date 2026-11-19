@@ -91,14 +91,12 @@ grant execute on function public.fju_campeonato_criar_v2(uuid,text,text,date,tim
 create or replace function public.fju_campeonato_criar_time(
   p_campeonato_id uuid, p_polo_id uuid, p_nome_time text, p_captain_hash text, p_captain_invite_hash text, p_nome_capitao text
 ) returns uuid language plpgsql security definer set search_path=''
-as $
+as $$
 declare v_id uuid; v_max integer; v_max_times integer; v_count integer;
 begin
-  if p_captain_hash !~ '^[a-f0-9]{64}
- or p_captain_invite_hash !~ '^[a-f0-9]{64}
- then raise exception 'Token inválido.'; end if;
+  if p_captain_hash !~ '^[a-f0-9]{64}$' or p_captain_invite_hash !~ '^[a-f0-9]{64}$' then raise exception 'Token inválido.'; end if;
   select max_jogadores_time,max_times into v_max,v_max_times from public.fju_campeonatos
-   where id=p_campeonato_id and publicado=true and inscricoes_abertas
+   where id=p_campeonato_id and publicado=true and inscricoes_abertas=true
    and (prazo_inscricao is null or prazo_inscricao>=current_date) for update;
   if v_max is null then raise exception 'Inscrições não estão abertas para este campeonato.'; end if;
   if v_max_times is not null then
@@ -111,6 +109,5 @@ begin
   insert into public.fju_campeonatos_jogadores(time_id,token_inscricao_hash,nome,status)
   values(v_id,p_captain_invite_hash,btrim(p_nome_capitao),'convite');
   return v_id;
-end; $;
-
+end; $$;
 commit;
