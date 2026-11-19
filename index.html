@@ -1345,6 +1345,10 @@ html[lang^="en"] .fju-championships-nav [data-camp-lang="en"]{display:inline}
    <span class="fju-youth-tile-icon slate"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></span>
    <span data-fju-auth-i18n="youthAdmin">Painel de Coordenador</span>
   </a>
+  <a id="fju-youth-championships-tile" class="fju-youth-tile" href="https://fju-connect.vercel.app/campeonatos/?staff=1" hidden>
+   <span class="fju-youth-tile-icon violet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v4m-4 4h8m-7-4h6l1 4H8l1-4Z"/></svg></span>
+   <span data-fju-auth-i18n="youthChampionships">Campeonatos</span>
+  </a>
  </nav>
  <p class="fju-youth-menu-caption" data-fju-auth-i18n="youthMenuCaption">Tudo o que você precisa, em um só lugar.</p>
 </div>
@@ -1425,7 +1429,7 @@ function render(){const q=input.value.trim().toLocaleLowerCase();results.replace
 toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)input.focus()});input.addEventListener('input',render);results.addEventListener('click',e=>{if(e.target.closest('a')){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}})
 })();
 </script>
-<script type="module" src="./my-page-auth.js?v=20261116-language-pages-1"></script>
+<script type="module" src="./my-page-auth.js?v=20261119-championships-tile-1"></script>
 <script id="fju-direct-signup-fallback">
 /* Abre o cadastro mesmo quando a inicialização assíncrona do login atrasa. */
 if(new URLSearchParams(location.search).get('cadastro')==='1'){
