@@ -7,6 +7,7 @@ const script=readFileSync(new URL('campeonatos/campeonatos.js',root),'utf8');
 const css=readFileSync(new URL('campeonatos/campeonatos.css',root),'utf8');
 const home=readFileSync(new URL('index.html',root),'utf8');
 const migration=readFileSync(new URL('supabase/20261119_campeonatos_piloto.sql',root),'utf8');
+const completeMigration=readFileSync(new URL('supabase/20261119_campeonatos_criacao_completa.sql',root),'utf8');
 
 test('module JavaScript syntax remains valid after removing browser CDN import',()=>{
  const moduleSource=script.replace(/^import[^;]+;\s*/m,'');
@@ -80,4 +81,34 @@ test('migration keeps participant data private and requires invitation token/pho
  assert.match(migration,/Foto não foi enviada/);
  assert.match(migration,/public=false/);
  assert.match(migration,/to anon,authenticated/);
+});
+
+test('coordinator championship form includes required cover, schedule and polo',()=>{
+ assert.match(page,/name="cover" type="file"[^>]*required/);
+ assert.match(page,/name="startTime" type="time" required/);
+ assert.match(page,/name="endTime" type="time"/);
+ assert.match(page,/name="hostPolo"/);
+ assert.match(page,/name="maxTeams"/);
+ assert.match(script,/fju_campeonato_criar_v2/);
+ assert.match(script,/fju-campeonatos-capas/);
+ assert.match(script,/p_hora_inicio:f\.get\('startTime'\)/);
+ assert.match(script,/p_hora_fim:f\.get\('endTime'\)/);
+ assert.match(script,/p_max_times:f\.get\('maxTeams'\)/);
+ assert.match(script,/event-cover/);
+});
+test('complete championship migration stores metadata and restricts cover uploads to staff',()=>{
+ for(const col of ['foto_capa_url','hora_inicio','hora_fim','max_times'])assert.match(completeMigration,new RegExp('add column if not exists '+col));
+ assert.match(completeMigration,/fju-campeonatos-capas/);
+ assert.match(completeMigration,/fju_campeonato_capa_staff_upload/);
+ assert.match(completeMigration,/fju_campeonato_criar_v2/);
+ assert.match(completeMigration,/p_hora_inicio time/);
+ assert.match(completeMigration,/p_max_times integer/);
+ assert.match(completeMigration,/for update/);
+ assert.match(completeMigration,/limite de equipes/i);
+ assert.equal((completeMigration.match(/commit;/g)||[]).length,1);
+ assert.equal((completeMigration.match(/\$\$/g)||[]).length%2,0);
+});
+test('coordinator access shortcut opens championship staff login/create panel directly',()=>{
+ assert.match(script,/q\.has\('staff'\)/);
+ assert.match(script,/if\(session\)await checkAdmin\(\);else show\('loginSection'\)/);
 });
