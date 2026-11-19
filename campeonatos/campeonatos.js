@@ -56,7 +56,7 @@ async function loadAdmin(){
   head.append(title,toggle);const body=document.createElement('div');body.className='admin-event-body';
   if(ev.foto_capa_url){const cover=document.createElement('img');cover.className='admin-event-cover';cover.src=ev.foto_capa_url;cover.alt=ev.titulo;cover.loading='lazy';body.append(cover)}
   const metadata=document.createElement('p');metadata.className='muted';metadata.textContent='📍 '+ev.local_evento+' · '+(polos.find(p=>p.id===ev.polo_sede_id)?.nome||'')+(ev.max_times?' · '+ev.max_times+' times':'')+' · '+ev.max_jogadores_time+' jogadores/time';body.append(metadata);
-  const eventTeams=(teams||[]).filter(tm=>tm.campeonato_id===ev.id);
+  const eventTeams=(teams||[]).filter(tm=>tm.campeonato_id===ev.id&&tm.status!=='rejeitado');
   if(!eventTeams.length)body.insertAdjacentHTML('beforeend','<div class="empty">'+t('noTeams')+'</div>');
   for(const tm of eventTeams){
    const teamBox=document.createElement('div');teamBox.className='team-row';
