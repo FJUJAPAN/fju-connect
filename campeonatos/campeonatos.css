@@ -40,3 +40,38 @@
  .create-event summary{font-size:13px;}
  .form-actions .primary{position:sticky;bottom:10px;box-shadow:0 8px 24px #0006;}
 }
+
+/* Compact redesign v2: closed-by-default, grouped controls and shorter cards */
+.create-event{padding:8px;}
+.create-event summary{margin:0!important;min-height:42px;padding:9px 12px;font-weight:800;}
+.create-event[open] summary{margin-bottom:8px!important;}
+.form-grid{gap:7px;grid-template-columns:repeat(2,minmax(0,1fr));}
+.form-grid .compact-field{grid-column:1/-1;}
+.form-grid .compact-half{grid-column:span 1;min-width:0;}
+.form-grid label{gap:3px!important;font-size:11px!important;}
+.form-grid input,.form-grid select,.form-grid textarea{height:38px!important;min-height:38px!important;padding:6px 9px!important;border-radius:7px!important;font-size:13px!important;}
+.form-grid input[type=date],.form-grid input[type=time]{display:block;width:100%;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;}
+.form-grid input[type=file]{height:auto!important;min-height:38px!important;padding:5px!important;}
+.form-grid textarea{height:auto!important;min-height:58px!important;}
+.form-grid .toggle{min-height:36px;padding:6px 8px!important;align-items:center;}
+.form-grid .toggle input{height:16px!important;width:16px!important;min-height:16px!important;}
+.form-grid .toggle span{font-size:11px;line-height:1.25;}
+.form-actions .primary{min-height:40px!important;padding:9px 12px!important;font-size:12px!important;}
+.admin-events{margin-top:16px;}
+.admin-event-head{padding:10px;}
+.admin-event-body{padding:9px;}
+.event-card{padding:12px;gap:6px;}
+.event-card img,.event-cover{max-height:220px;object-fit:cover;}
+@media(max-width:740px){
+ .panel{padding:10px!important;margin:10px 0!important;}
+ .create-event{padding:6px!important;}
+ .form-grid{gap:6px!important;}
+ .form-grid .compact-field{grid-column:1/-1;}
+ .form-grid .compact-half{grid-column:span 1;}
+ .form-grid .toggle{grid-column:span 1;}
+ .form-grid input[type=date],.form-grid input[type=time]{font-size:12px!important;padding:5px!important;}
+ .form-actions .primary{position:static!important;box-shadow:none!important;}
+ .admin-event-body .cover,.admin-event img{max-height:180px!important;}
+ .team-row{padding:8px!important;margin:7px 0!important;}
+ .player-row{padding:7px 2px!important;margin-top:6px!important;}
+}
