@@ -8,9 +8,11 @@ alter table public.fju_campeonatos
   add column if not exists hora_fim time,
   add column if not exists max_times integer;
 
-alter table public.fju_campeonatos
-  add constraint fju_campeonatos_max_times_check
-  check (max_times is null or max_times between 1 and 64);
+do $ begin
+  if not exists(select 1 from pg_constraint where conname='fju_campeonatos_max_times_check' and conrelid='public.fju_campeonatos'::regclass) then
+    alter table public.fju_campeonatos add constraint fju_campeonatos_max_times_check check (max_times is null or max_times between 1 and 64);
+  end if;
+end $;
 
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
 values('fju-campeonatos-capas','fju-campeonatos-capas',true,5242880,array['image/jpeg','image/png','image/webp'])
@@ -85,5 +87,30 @@ end; $$;
 
 revoke all on function public.fju_campeonato_criar_v2(uuid,text,text,date,time,time,text,text,text,date,integer,integer,boolean,boolean) from public,anon;
 grant execute on function public.fju_campeonato_criar_v2(uuid,text,text,date,time,time,text,text,text,date,integer,integer,boolean,boolean) to authenticated;
+
+create or replace function public.fju_campeonato_criar_time(
+  p_campeonato_id uuid, p_polo_id uuid, p_nome_time text, p_captain_hash text, p_captain_invite_hash text, p_nome_capitao text
+) returns uuid language plpgsql security definer set search_path=''
+as $
+declare v_id uuid; v_max integer; v_max_times integer; v_count integer;
+begin
+  if p_captain_hash !~ '^[a-f0-9]{64}
+ or p_captain_invite_hash !~ '^[a-f0-9]{64}
+ then raise exception 'Token inválido.'; end if;
+  select max_jogadores_time,max_times into v_max,v_max_times from public.fju_campeonatos
+   where id=p_campeonato_id and publicado=true and inscricoes_abertas
+   and (prazo_inscricao is null or prazo_inscricao>=current_date) for update;
+  if v_max is null then raise exception 'Inscrições não estão abertas para este campeonato.'; end if;
+  if v_max_times is not null then
+    select count(*) into v_count from public.fju_campeonatos_times where campeonato_id=p_campeonato_id;
+    if v_count>=v_max_times then raise exception 'Este campeonato atingiu o limite de equipes.'; end if;
+  end if;
+  if not exists(select 1 from public.fju_polos where id=p_polo_id and ativo=true) then raise exception 'Polo inválido.'; end if;
+  insert into public.fju_campeonatos_times(campeonato_id,polo_id,nome_time,capitao_nome,token_capitao_hash)
+  values(p_campeonato_id,p_polo_id,btrim(p_nome_time),btrim(p_nome_capitao),p_captain_hash) returning id into v_id;
+  insert into public.fju_campeonatos_jogadores(time_id,token_inscricao_hash,nome,status)
+  values(v_id,p_captain_invite_hash,btrim(p_nome_capitao),'convite');
+  return v_id;
+end; $;
 
 commit;
