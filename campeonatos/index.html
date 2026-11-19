@@ -21,6 +21,10 @@
 <form id="teamForm" class="form-grid">
 <label><span data-t="teamName">Nome do time</span><input name="teamName" required maxlength="80" placeholder="Ex.: FJU Hamamatsu"></label>
 <label><span data-t="captainName">Nome do capitão</span><input name="captainName" required maxlength="100"></label>
+<label><span data-t="captainBirth">Data de nascimento do capitão</span><input name="captainBirth" type="date" required min="1900-01-01"></label>
+<label><span data-t="captainCity">Cidade e bairro do capitão</span><input name="captainCity" required maxlength="160" placeholder="Ex.: Hamamatsu, Chuo-ku"></label>
+<label class="wide"><span data-t="captainPhoto">Foto do capitão</span><input name="captainPhoto" type="file" accept="image/*" required><small data-t="captainPhotoHint">Foto individual, selfie serve. A foto ficará privada.</small></label>
+<label class="wide consent"><input name="captainConsent" type="checkbox" required><span data-t="captainConsent">Confirmo que estou autorizado a fornecer esses dados; se sou menor de idade, tenho autorização do responsável.</span></label>
 <label><span data-t="polo">Polo de origem</span><select name="polo" required><option value="" data-t="selectPolo">Selecione o polo</option></select></label>
 <div class="form-actions"><button class="primary" type="submit" data-t="createTeamBtn">Criar time e gerar link</button></div>
 </form></section>
