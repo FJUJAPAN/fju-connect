@@ -8,6 +8,8 @@ const css=readFileSync(new URL('campeonatos/campeonatos.css',root),'utf8');
 const home=readFileSync(new URL('index.html',root),'utf8');
 const migration=readFileSync(new URL('supabase/20261119_campeonatos_piloto.sql',root),'utf8');
 const completeMigration=readFileSync(new URL('supabase/20261119_campeonatos_criacao_completa.sql',root),'utf8');
+const sharedHeaderCss=readFileSync(new URL('fju-header-shared.css',root),'utf8');
+const mobileHeader=readFileSync(new URL('unified-mobile-header.js',root),'utf8');
 
 test('module JavaScript syntax remains valid after removing browser CDN import',()=>{
  const moduleSource=script.replace(/^import[^;]+;\s*/m,'');
@@ -126,4 +128,16 @@ test('captain is registered during team creation with required profile data',()=
  assert.match(script,/p_consent:fd\.get\('captainConsent'\)==='on'/);
  assert.match(script,/captainRegistrationFailed/);
  assert.match(script,/captainLink/);
+});
+
+test('championship page uses FJU global header and standard mobile header',()=>{
+ assert.match(page,/<header class="site-header">/);
+ assert.match(page,/brand-official-logo/);
+ assert.match(page,/fju-header-shared\.css/);
+ assert.match(page,/unified-mobile-header\.js/);
+ assert.match(page,/id="staffAccess"/);
+ assert.doesNotMatch(page,/Feito para celular/);
+ assert.match(sharedHeaderCss,/body>header \.header-side/);
+ assert.match(mobileHeader,/data-action="coord"/);
+ assert.match(mobileHeader,/currentLang\(\)/);
 });
