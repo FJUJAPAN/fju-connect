@@ -149,3 +149,5 @@ test('rejecting a pending team deletes its team row and cascades player registra
  assert.match(script,/confirmTeamReject/);
  assert.match(script,/db\.rpc\('fju_campeonato_excluir_time_rejeitado'/);
 });
+
+test('duplicate team and technical backend errors are translated to user-friendly notices',()=>{\n assert.match(script,/function friendlyError/);\n assert.match(script,/fju_campeonatos_times_campeonato_id_polo_id_nome_time_key/);\n assert.match(script,/Já existe um time com esse nome neste campeonato e polo/);\n assert.match(script,/Não foi possível concluir/);\n});\n
