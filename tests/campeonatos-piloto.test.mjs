@@ -147,5 +147,5 @@ test('rejecting a pending team deletes its team row and cascades player registra
  assert.match(script,/deleteRejectedTeam\(tm\.id\)/);
  assert.match(script,/teamDeleted/);
  assert.match(script,/confirmTeamReject/);
- assert.match(script,/on\w+|/);
+ assert.match(script,/db\.rpc\('fju_campeonato_excluir_time_rejeitado'/);
 });
