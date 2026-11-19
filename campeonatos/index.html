@@ -54,10 +54,10 @@
 <label class="wide cover-field"><span data-t="eventCover">Foto de capa</span><input name="cover" type="file" accept="image/jpeg,image/png,image/webp" required><small data-t="eventCoverHint">Escolha uma imagem (JPG, PNG ou WebP, até 5 MB).</small><img id="coverPreview" alt="Pré-visualização da capa" hidden></label>
 <label class="compact-half"><span data-t="hostPolo">Polo organizador</span><select name="hostPolo" required></select></label>
 <label class="compact-half"><span data-t="teamLimit">Máximo de jogadores por time</span><input name="limit" type="number" min="2" max="30" value="12" required></label>
-<label class="compact-half">Limite de equipes (opcional)</span><input name="maxTeams" type="number" min="1" max="64" placeholder="Sem limite"></label>
+<label class="compact-half"><span data-t="maxTeams">Limite de equipes (opcional)</span><input name="maxTeams" type="number" min="1" max="64" placeholder="Sem limite"></label>
 <label class="wide"><span data-t="description">Informações / regras</span><textarea name="description" rows="3" maxlength="2000"></textarea></label>
 <label class="toggle compact-toggle"><input name="publish" type="checkbox"><span data-t="publishNow">Publicar na página de campeonatos</span></label>
-<label class="toggle"><input name="open" type="checkbox" disabled><span data-t="openReg">Abrir inscrições</span></label>
+<label class="toggle compact-toggle"><input name="open" type="checkbox" disabled><span data-t="openReg">Abrir inscrições</span></label>
 <div class="form-actions"><button class="primary" type="submit" data-t="saveEvent">Salvar campeonato</button></div>
 </form></details>
 <div class="admin-events"><h3 data-t="manageEvents">Campeonatos e inscrições</h3><div id="adminData"><p class="muted" data-t="loading">Carregando…</p></div></div></section>
