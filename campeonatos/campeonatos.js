@@ -107,5 +107,34 @@ $('#staffAccess').onclick=async()=>{const {data:{session}}=await db.auth.getSess
 
 $('#eventForm input[name=cover]').addEventListener('change',e=>{const file=e.currentTarget.files?.[0],preview=$('#coverPreview');if(!file){preview.hidden=true;preview.removeAttribute('src');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)){e.currentTarget.value='';preview.hidden=true;note(t('eventFormError'),'error');return}preview.src=URL.createObjectURL(file);preview.hidden=false});
 $('#eventForm input[name=publish]').addEventListener('change',e=>{const open=$('#eventForm input[name=open]');open.disabled=!e.currentTarget.checked;if(e.currentTarget.checked)open.checked=true;else open.checked=false});
-async function init(){applyLang();try{await loadPolos();await loadEvents()}catch(err){$('#events').textContent=t('loadEventsError')+' ('+err.message+')';note(err.message,'error')}const q=new URLSearchParams(location.search);if(q.has('jogador')){initPlayer();return}if(q.has('capitao')){captainRaw=q.get('capitao');loadCaptain();return}const {data:{session}}=await db.auth.getSession();if(q.has('staff')){if(session)await checkAdmin();else show('loginSection');return}if(session){await checkAdmin()}else show('public');}
+async function loadPublicTeams(){
+ const target=$('#publicTeams');if(!target)return;
+ target.replaceChildren();
+ const {data,error}=await db.rpc('fju_campeonato_times_publicos');
+ if(error){target.textContent='Não foi possível carregar os times participantes.';return}
+ const list=Array.isArray(data)?data:[];
+ if(!list.length){target.innerHTML='<div class="empty">Ainda não há times aprovados para exibição pública.</div>';return}
+ const selected=new URLSearchParams(location.search).get('time');
+ for(const tm of list){
+  const card=document.createElement('article');card.className='event-card';
+  const title=document.createElement('h3');title.textContent=tm.nome_time;
+  const sport=document.createElement('div');sport.className='event-sport';sport.textContent=tm.modalidade+' · '+tm.polo;
+  const meta=document.createElement('div');meta.className='event-meta';meta.textContent=tm.campeonato+' · '+formatDate(tm.data);
+  const roster=Array.isArray(tm.jogadores)?tm.jogadores:[];
+  const count=document.createElement('p');count.textContent=roster.length+' atleta(s) aprovado(s)';
+  const view=document.createElement('button');view.className='primary';view.textContent='Ver ficha do time';
+  const details=document.createElement('div');details.className='team-row';details.hidden=true;
+  const heading=document.createElement('strong');heading.textContent='Elenco';
+  const names=document.createElement('div');names.className='invite-item';
+  names.textContent=roster.length?roster.map(x=>x.nome).filter(Boolean).join(' · '):'Elenco ainda não publicado.';
+  const share=document.createElement('button');share.className='quiet';share.textContent='Compartilhar página';
+  const url=baseUrl()+'?time='+encodeURIComponent(tm.time_id);
+  share.onclick=()=>shareLink(url);
+  details.append(heading,names,share);
+  view.onclick=()=>{details.hidden=!details.hidden;view.textContent=details.hidden?'Ver ficha do time':'Ocultar ficha';};
+  card.append(title,sport,meta,count,view,details);target.append(card);
+  if(selected===tm.time_id){details.hidden=false;view.textContent='Ocultar ficha';}
+ }
+}
+async function init(){applyLang();try{await loadPolos();await loadEvents();await loadPublicTeams()}catch(err){$('#events').textContent=t('loadEventsError')+' ('+err.message+')';note(err.message,'error')}const q=new URLSearchParams(location.search);if(q.has('jogador')){initPlayer();return}if(q.has('capitao')){captainRaw=q.get('capitao');loadCaptain();return}const {data:{session}}=await db.auth.getSession();if(q.has('staff')){if(session)await checkAdmin();else show('loginSection');return}if(session){await checkAdmin()}else show('public');}
 init();
