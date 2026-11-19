@@ -75,3 +75,7 @@
  .team-row{padding:8px!important;margin:7px 0!important;}
  .player-row{padding:7px 2px!important;margin-top:6px!important;}
 }
+
+/* Clear, mobile-first tournament registration CTA */
+.event-card .join-team-btn{width:100%;display:block;margin-top:12px;min-height:52px;font-size:15px;letter-spacing:.2px;box-shadow:0 6px 20px #a678ff30;}
+.event-card .join-team-btn:disabled{box-shadow:none;}
