@@ -1048,7 +1048,30 @@ body{padding-top:78px}
 #fju-youth-profile-pane .fju-account-identity{box-sizing:border-box;border-radius:20px}
 @media(max-width:480px){#fju-youth-profile-pane .fju-member-collectible{border-radius:22px}#fju-youth-profile-pane .fju-member-card-photo-frame{height:220px}#fju-youth-profile-pane .fju-member-card-top{padding:15px 17px}#fju-youth-profile-pane #fju-member-card-name{margin-left:17px;margin-right:17px}#fju-youth-profile-pane .fju-member-card-details{margin-left:17px;margin-right:17px}#fju-youth-profile-pane #fju-member-card-rank{margin-left:17px}#fju-youth-profile-pane .fju-member-card-bottom{margin-left:17px;margin-right:17px}}
 </style>
-</head>
+<style>
+.championships-home{padding:52px 0;background:linear-gradient(120deg,#11121f,#25183d 55%,#171225);border-top:1px solid #8b61c933;border-bottom:1px solid #8b61c933}
+.championships-home .home-camp-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:center}
+.championships-home .home-camp-kicker{font:800 11px 'Space Grotesk',sans-serif;letter-spacing:2.3px;color:#c79aff}
+.championships-home h2{font:700 clamp(32px,4.2vw,52px)/1.05 'Space Grotesk','Noto Sans JP',sans-serif;letter-spacing:-2px;margin:13px 0}
+.championships-home h2 span{color:#ed66dc}
+.championships-home p{color:#c4bdd2;max-width:560px;line-height:1.7}
+.championships-home .home-camp-button{display:inline-flex;margin-top:12px;padding:13px 19px;background:#a678ff;color:#171021;border-radius:9px;font:800 12px 'Space Grotesk',sans-serif}
+.championships-home .home-camp-card{border:1px solid #7e5ba7;background:#ffffff08;border-radius:14px;padding:22px;display:flex;align-items:center;gap:18px}
+.championships-home .home-camp-icon{font-size:54px}
+.championships-home .home-camp-card strong{display:block;font:700 20px 'Space Grotesk','Noto Sans JP',sans-serif}
+.championships-home .home-camp-card small{display:block;color:#b7a6ce;margin-top:6px}
+.championships-home [data-camp-lang]{display:none}
+html[lang^="pt"] .championships-home [data-camp-lang="pt"],html:not([lang]) .championships-home [data-camp-lang="pt"]{display:inline}
+html[lang^="ja"] .championships-home [data-camp-lang="ja"]{display:inline}
+html[lang^="en"] .championships-home [data-camp-lang="en"]{display:inline}
+@media(max-width:760px){.championships-home{padding:36px 0}.championships-home .home-camp-grid{grid-template-columns:1fr;gap:18px}.championships-home .home-camp-card{padding:16px}}
+</style><style>
+.fju-championships-nav [data-camp-lang]{display:none}
+html[lang^="pt"] .fju-championships-nav [data-camp-lang="pt"],html:not([lang]) .fju-championships-nav [data-camp-lang="pt"]{display:inline}
+html[lang^="ja"] .fju-championships-nav [data-camp-lang="ja"]{display:inline}
+html[lang^="en"] .fju-championships-nav [data-camp-lang="en"]{display:inline}
+.fju-championships-nav{color:#d5b8ff!important}
+</style></head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -1061,7 +1084,7 @@ body{padding-top:78px}
         <a href="#acao" data-i18n="navAction">FJU EM AÇÃO</a><a href="#live" data-i18n="navLive">LIVE</a>
         <a href="#musica" data-i18n="navMusic">MUSIC</a>
         <a href="#projetos" data-i18n="navProjects">PROJECTS</a>
-        <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a><a href="ranking/" class="fju-rank-header-link" aria-label="Ranking de participação">🏆 RANKING</a>
+        <a href="eventos/" data-i18n="navEvents" data-gallery-nav>GALERIA / GALLERY ↗</a><a href="encontre-a-fju/" data-i18n="navPoles">FIND FJU</a><a href="ranking/" class="fju-rank-header-link" aria-label="Ranking de participação">🏆 RANKING</a><a href="campeonatos/" class="fju-championships-nav">🏆 <span data-camp-lang="pt">CAMPEONATOS</span><span data-camp-lang="ja">大会</span><span data-camp-lang="en">CHAMPIONSHIPS</span></a>
       </nav>
       <div class="fju-mobile-tools" aria-label="Ferramentas do site">
 <button type="button" id="fju-search-toggle" aria-label="Buscar no site" aria-expanded="false" aria-controls="fju-search-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
@@ -1134,7 +1157,7 @@ body{padding-top:78px}
     </section>
 
     <div class="brand-stripe" aria-hidden="true"></div>
-<section class="section action-section" id="acao"><div class="wrap">
+<section class="championships-home" id="campeonatos"><div class="wrap home-camp-grid"><div><div class="home-camp-kicker">FJU JAPAN · SPORTS</div><h2><span data-camp-lang="pt">CAMPEONATOS <span>FJU</span></span><span data-camp-lang="ja">FJU <span>大会</span></span><span data-camp-lang="en">FJU <span>CHAMPIONSHIPS</span></span></h2><p><span data-camp-lang="pt">Monte seu time, faça a inscrição e acompanhe os campeonatos da FJU em todo o Japão.</span><span data-camp-lang="ja">チームを作って参加登録。日本全国のFJU大会情報をチェックしよう。</span><span data-camp-lang="en">Create your team, register, and follow FJU tournaments throughout Japan.</span></p><a class="home-camp-button" href="campeonatos/"><span data-camp-lang="pt">VER CAMPEONATOS ↗</span><span data-camp-lang="ja">大会を見る ↗</span><span data-camp-lang="en">VIEW TOURNAMENTS ↗</span></a></div><div class="home-camp-card"><div class="home-camp-icon">🏆</div><div><strong><span data-camp-lang="pt">Inscrição pelo celular</span><span data-camp-lang="ja">スマホで簡単登録</span><span data-camp-lang="en">Easy mobile registration</span></strong><small><span data-camp-lang="pt">Capitão cria o time · jogadores preenchem individualmente</span><span data-camp-lang="ja">キャプテンがチーム作成・選手は個別登録</span><span data-camp-lang="en">Captain creates team · players register individually</span></small></div></div></div></section><section class="section action-section" id="acao"><div class="wrap">
   <div class="action-section-head"><div><span class="kicker">01 / THIS IS FJU</span><h2 data-i18n-html="actionTitle">A FJU ACONTECE <span>DE VERDADE.</span></h2><p data-i18n="actionDesc">Muito mais do que uma página: encontros, amizades, desafios e histórias que acontecem aqui no Japão.</p></div><a class="action-social-link" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/fjujapan"><span data-i18n="actionMore">ACOMPANHE NOSSO INSTAGRAM</span> ↗</a></div>
 <section id="fju-news" class="fju-news fju-news-in-action" hidden aria-label="Matérias FJU"><div class="fju-news-inner"><div class="fju-news-meta">FJU CONNECT JAPAN / NOTÍCIAS</div><h2>ÚLTIMAS MATÉRIAS</h2><div class="fju-news-card" id="fju-news-card" aria-live="off"></div><div class="fju-news-controls"><button type="button" id="fju-news-prev" aria-label="Matéria anterior">←</button><span id="fju-news-count"></span><button type="button" id="fju-news-next" aria-label="Próxima matéria">→</button></div><div style="text-align:center;margin:22px 0"><a href="materias.html" style="display:inline-block;background:#0e315c;color:#fff;text-decoration:none;padding:13px 24px;border-radius:10px;font-weight:800">Ver todas as matérias →</a></div></div></section>
 <div class="fju-news-detail" id="fju-news-detail" hidden role="dialog" aria-modal="true" aria-label="Matéria completa"><div class="fju-news-article" id="fju-news-article"></div></div>
