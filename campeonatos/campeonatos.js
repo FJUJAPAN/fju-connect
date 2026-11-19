@@ -11,7 +11,7 @@ function getLang(){const v=(localStorage.getItem('fju_lang')||localStorage.getIt
 function t(k){return labels[lang]?.[k]||labels.pt[k]||k}
 function applyLang(){lang=getLang();document.documentElement.lang=lang;$$('[data-t]').forEach(el=>{el.textContent=t(el.dataset.t)});$('#lang').textContent=lang==='pt'?'PT / 日本語 / EN':lang==='ja'?'日本語 / PT / EN':'EN / PT / 日本語';renderEvents();if(captainRaw)loadCaptain();if(profile)loadAdmin()}
 $('#lang').onclick=()=>{lang=lang==='pt'?'ja':lang==='ja'?'en':'pt';localStorage.setItem('fju-connect-lang',lang);applyLang()};
-function note(msg,type=''){const n=$('#notice');n.textContent=msg;n.className='notice '+type;n.hidden=false;scrollTo({top:n.offsetTop-100,behavior:'smooth'});setTimeout(()=>{if(n.textContent===msg)n.hidden=true},6500)}
+function friendlyError(msg){const raw=String(msg||'');if(/duplicate key|unique constraint|already exists|\b23505\b|fju_campeonatos_times_campeonato_id_polo_id_nome_time_key/i.test(raw))return lang==='ja'?'この大会・ポロには同じ名前のチームが既に登録されています。チーム名を確認してください。':lang==='en'?'A team with this name is already registered for this tournament and polo. Check the team name.':'Já existe um time com esse nome neste campeonato e polo. Verifique o nome do time.';if(/permission denied|row.level security|\b42501\b|\bPGRST\b|\bSQL\b|constraint|stack|\.js:\d+|https?:\/\/.*supabase/i.test(raw))return lang==='ja'?'処理できませんでした。入力内容を確認するか、運営にお問い合わせください。':lang==='en'?'We could not complete this action. Check the information or contact the organizers.':'Não foi possível concluir. Confira os dados ou entre em contato com a organização.';return raw}function note(msg,type=''){msg=friendlyError(msg);const n=$('#notice');n.textContent=msg;n.className='notice '+type;n.hidden=false;scrollTo({top:n.offsetTop-100,behavior:'smooth'});setTimeout(()=>{if(n.textContent===msg)n.hidden=true},6500)}
 function show(id){for(const x of ['public','teamCreate','playerFormSection','captainSection','adminSection','loginSection'])$('#'+x).hidden=true;$('#'+id).hidden=false}
 function token(){const b=crypto.getRandomValues(new Uint8Array(32));return [...b].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function hash(raw){const bytes=new TextEncoder().encode(raw),out=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(out)].map(x=>x.toString(16).padStart(2,'0')).join('')}
@@ -107,5 +107,34 @@ $('#staffAccess').onclick=async()=>{const {data:{session}}=await db.auth.getSess
 
 $('#eventForm input[name=cover]').addEventListener('change',e=>{const file=e.currentTarget.files?.[0],preview=$('#coverPreview');if(!file){preview.hidden=true;preview.removeAttribute('src');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)){e.currentTarget.value='';preview.hidden=true;note(t('eventFormError'),'error');return}preview.src=URL.createObjectURL(file);preview.hidden=false});
 $('#eventForm input[name=publish]').addEventListener('change',e=>{const open=$('#eventForm input[name=open]');open.disabled=!e.currentTarget.checked;if(e.currentTarget.checked)open.checked=true;else open.checked=false});
-async function init(){applyLang();try{await loadPolos();await loadEvents()}catch(err){$('#events').textContent=t('loadEventsError')+' ('+err.message+')';note(err.message,'error')}const q=new URLSearchParams(location.search);if(q.has('jogador')){initPlayer();return}if(q.has('capitao')){captainRaw=q.get('capitao');loadCaptain();return}const {data:{session}}=await db.auth.getSession();if(q.has('staff')){if(session)await checkAdmin();else show('loginSection');return}if(session){await checkAdmin()}else show('public');}
+async function loadPublicTeams(){
+ const target=$('#publicTeams');if(!target)return;
+ target.replaceChildren();
+ const {data,error}=await db.rpc('fju_campeonato_times_publicos');
+ if(error){target.textContent='Não foi possível carregar os times participantes.';return}
+ const list=Array.isArray(data)?data:[];
+ if(!list.length){target.innerHTML='<div class="empty">Ainda não há times aprovados para exibição pública.</div>';return}
+ const selected=new URLSearchParams(location.search).get('time');
+ for(const tm of list){
+  const card=document.createElement('article');card.className='event-card';
+  const title=document.createElement('h3');title.textContent=tm.nome_time;
+  const sport=document.createElement('div');sport.className='event-sport';sport.textContent=tm.modalidade+' · '+tm.polo;
+  const meta=document.createElement('div');meta.className='event-meta';meta.textContent=tm.campeonato+' · '+formatDate(tm.data);
+  const roster=Array.isArray(tm.jogadores)?tm.jogadores:[];
+  const count=document.createElement('p');count.textContent=roster.length+' atleta(s) aprovado(s)';
+  const view=document.createElement('button');view.className='primary';view.textContent='Ver ficha do time';
+  const details=document.createElement('div');details.className='team-row';details.hidden=true;
+  const heading=document.createElement('strong');heading.textContent='Elenco';
+  const names=document.createElement('div');names.className='invite-item';
+  names.textContent=roster.length?roster.map(x=>x.nome).filter(Boolean).join(' · '):'Elenco ainda não publicado.';
+  const share=document.createElement('button');share.className='quiet';share.textContent='Compartilhar página';
+  const url=baseUrl()+'?time='+encodeURIComponent(tm.time_id);
+  share.onclick=()=>shareLink(url);
+  details.append(heading,names,share);
+  view.onclick=()=>{details.hidden=!details.hidden;view.textContent=details.hidden?'Ver ficha do time':'Ocultar ficha';};
+  card.append(title,sport,meta,count,view,details);target.append(card);
+  if(selected===tm.time_id){details.hidden=false;view.textContent='Ocultar ficha';}
+ }
+}
+async function init(){applyLang();try{await loadPolos();await loadEvents();await loadPublicTeams()}catch(err){$('#events').textContent=t('loadEventsError')+' ('+err.message+')';note(err.message,'error')}const q=new URLSearchParams(location.search);if(q.has('jogador')){initPlayer();return}if(q.has('capitao')){captainRaw=q.get('capitao');loadCaptain();return}const {data:{session}}=await db.auth.getSession();if(q.has('staff')){if(session)await checkAdmin();else show('loginSection');return}if(session){await checkAdmin()}else show('public');}
 init();
