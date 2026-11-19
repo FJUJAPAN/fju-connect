@@ -31,6 +31,8 @@
 <div class="form-actions"><button class="primary" type="submit" data-t="createTeamBtn">Criar time e gerar link</button></div>
 </form></section>
 
+<section id="teamJoinSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">TEAM LINK</span><h2>Inscrição no time</h2></div></div><div id="joinTeamInfo" class="selected-event"></div><p class="muted">Você está no link do seu próprio time. Clique abaixo para preencher sua ficha de jogador.</p><button class="primary" id="joinTeamBtn" type="button">Cadastrar-se neste time</button></section>
+
 <section id="playerFormSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">PLAYER REGISTRATION</span><h2 data-t="playerTitle">Cadastro do jogador</h2></div></div><p class="muted" data-t="playerExplain">Preencha somente os seus dados. O capitão enviou este link para você.</p>
 <form id="playerForm" class="form-grid">
 <label class="wide fju-id-lookup"><span data-t="fjuIdLabel">Você já possui FJU ID?</span><div class="fju-id-line"><input name="fjuId" type="text" inputmode="numeric" pattern="[0-9]{1,5}" maxlength="5" placeholder="Ex.: 00023"><button type="button" id="lookupFjuId" class="quiet" data-t="lookupFjuId">Buscar</button></div><small data-t="fjuIdHint">Digite somente o número do FJU ID. Os dados da ficha serão preenchidos.</small><div id="fjuIdResult" class="fju-id-result" aria-live="polite"></div><button type="button" id="manualPlayerMode" class="quiet manual-mode" data-t="manualMode" hidden>Prefiro preencher manualmente</button></label>
@@ -41,7 +43,7 @@
 <label class="wide consent"><input name="consent" type="checkbox" required><span data-t="consent">Confirmo que estou autorizado a fornecer esses dados; se sou menor de idade, tenho autorização do responsável.</span></label><div class="form-actions"><button class="primary" type="submit" data-t="submitPlayer">Enviar cadastro</button></div>
 </form></section>
 
-<section id="captainSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">CAPTAIN LINK</span><h2 data-t="captainDashboard">Painel do capitão</h2></div></div><div id="captainInfo"></div><div class="invite-box"><h3 data-t="invitePlayers">Convide os jogadores</h3><p class="muted" data-t="inviteExplain">Gere um link individual e envie para cada pessoa do time.</p><button class="primary" id="newInvite" data-t="newInvite">＋ Gerar link de cadastro</button><div id="inviteList"></div></div></section>
+<section id="captainSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">CAPTAIN LINK</span><h2 data-t="captainDashboard">Painel do capitão</h2></div></div><div id="captainInfo"></div><div class="invite-box"><h3>Link único do time</h3><p class="muted" data-t="inviteExplain">Compartilhe o mesmo link com todos os jogadores. Cada um entra e faz o próprio cadastro.</p><button class="primary" id="newInvite" data-t="newInvite">Compartilhar link do time</button><div id="inviteList"></div></div></section>
 
 <section id="adminSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">COORDINATOR / NATIONAL</span><h2 data-t="adminTitle">Painel de organização</h2></div><button class="quiet" id="logout" data-t="logout">Sair</button></div><div id="adminIdentity" class="muted"></div>
 <details class="create-event"><summary data-t="newEvent">＋ Criar campeonato</summary><form id="eventForm" class="form-grid">
