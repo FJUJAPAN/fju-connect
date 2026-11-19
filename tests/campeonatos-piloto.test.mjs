@@ -116,7 +116,7 @@ test('coordinator access shortcut opens championship staff login/create panel di
 test('captain is registered during team creation with required profile data',()=>{
  for(const name of ['captainBirth','captainCity','captainPhoto','captainConsent'])assert.match(page,new RegExp('name="'+name+'"'));
  assert.match(page,/name="captainBirth" type="date" required/);
- assert.match(page,/name="captainPhoto" type="file" accept="image\\/\\*" required/);
+ assert.ok(page.includes('name="captainPhoto" type="file" accept="image/*" required'));
  assert.match(page,/name="captainConsent" type="checkbox" required/);
  assert.match(script,/fju_campeonato_criar_time/);
  assert.match(script,/fju_campeonato_cadastrar_jogador/);
