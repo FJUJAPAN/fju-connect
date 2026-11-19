@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./campeonatos.css?v=20261119-pilot">
+<link rel="stylesheet" href="./campeonatos.css?v=20261119-creation-2">
 </head>
 <body>
 <header class="top"><a class="brand" href="../"><b>FJU<span>.</span></b><small>CONNECT JAPAN</small></a><div class="top-actions"><a href="../">← <span data-t="back">Voltar ao site</span></a><button id="lang" type="button" aria-label="Language">PT / 日本語 / EN</button><button id="staffAccess" class="quiet" type="button" data-t="staffLogin">Coordenação</button></div></header>
@@ -42,13 +42,17 @@
 <label><span data-t="eventTitle">Nome do campeonato</span><input name="title" required maxlength="120" placeholder="FJU Hamamatsu — Vôlei"></label>
 <label><span data-t="sport">Modalidade</span><input name="sport" required maxlength="60" placeholder="Vôlei de quadra"></label>
 <label><span data-t="eventDate">Data</span><input name="date" type="date" required></label>
+<label><span data-t="eventTimeStart">Horário de início</span><input name="startTime" type="time" required></label>
+<label><span data-t="eventTimeEnd">Horário de término (opcional)</span><input name="endTime" type="time"></label>
 <label><span data-t="deadline">Prazo das inscrições (opcional)</span><input name="deadline" type="date"></label>
 <label><span data-t="venue">Local</span><input name="venue" required maxlength="200"></label>
+<label class="wide cover-field"><span data-t="eventCover">Foto de capa</span><input name="cover" type="file" accept="image/jpeg,image/png,image/webp" required><small data-t="eventCoverHint">Escolha uma imagem (JPG, PNG ou WebP, até 5 MB).</small><img id="coverPreview" alt="Pré-visualização da capa" hidden></label>
 <label><span data-t="hostPolo">Polo organizador</span><select name="hostPolo" required></select></label>
 <label><span data-t="teamLimit">Máximo de jogadores por time</span><input name="limit" type="number" min="2" max="30" value="12" required></label>
+<label><span data-t="maxTeams">Limite de equipes (opcional)</span><input name="maxTeams" type="number" min="1" max="64" placeholder="Sem limite"></label>
 <label class="wide"><span data-t="description">Informações / regras</span><textarea name="description" rows="3" maxlength="2000"></textarea></label>
-<label class="toggle"><input name="publish" type="checkbox" checked><span data-t="publishNow">Publicar na página de campeonatos</span></label>
-<label class="toggle"><input name="open" type="checkbox" checked><span data-t="openReg">Abrir inscrições</span></label>
+<label class="toggle"><input name="publish" type="checkbox"><span data-t="publishNow">Publicar na página de campeonatos</span></label>
+<label class="toggle"><input name="open" type="checkbox" disabled><span data-t="openReg">Abrir inscrições</span></label>
 <div class="form-actions"><button class="primary" type="submit" data-t="saveEvent">Salvar campeonato</button></div>
 </form></details>
 <div class="admin-events"><h3 data-t="manageEvents">Campeonatos e inscrições</h3><div id="adminData"><p class="muted" data-t="loading">Carregando…</p></div></div></section>
@@ -56,5 +60,5 @@
 <section id="loginSection" class="panel" hidden><div class="section-head"><div><span class="eyebrow">STAFF ACCESS</span><h2 data-t="staffLogin">Acesso da coordenação</h2></div></div><p class="muted" data-t="staffLoginExplain">Entre com a mesma conta usada na My Page. Apenas perfil Nacional ou Coordenador ativo poderá acessar.</p><form id="loginForm" class="login-form"><label><span data-t="email">E-mail</span><input name="email" type="email" autocomplete="username" required></label><label><span data-t="password">Senha</span><input name="password" type="password" autocomplete="current-password" required></label><button class="primary" type="submit" data-t="login">Entrar</button></form></section>
 <footer><p>FJU CONNECT JAPAN · <span data-t="privacy">Dados de inscrição são usados somente para organização e segurança do campeonato.</span></p></footer>
 </main>
-<script type="module" src="./campeonatos.js?v=20261119-pilot"></script>
+<script type="module" src="./campeonatos.js?v=20261119-creation-2"></script>
 </body></html>
