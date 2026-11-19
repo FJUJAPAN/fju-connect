@@ -79,7 +79,8 @@ async function loadAdmin(){
  }
 }
 async function teamAction(id,status){const {error}=await db.rpc('fju_campeonato_aprovar_time',{p_time_id:id,p_status:status});if(error)note(error.message,'error');else note(status==='aprovado'?t('teamApproved'):t('rejectedSuccess'),'success');loadAdmin()}
-async function deleteRejectedTeam(id){const {error}=await db.rpc('fju_campeonato_excluir_time_rejeitado',{p_time_id:id});if(error)note(error.message,'error');else note(t('teamDeleted'),'success');loadAdmin()}\nasync function playerAction(id,status){const {error}=await db.rpc('fju_campeonato_aprovar_jogador',{p_jogador_id:id,p_status:status});if(error)note(error.message,'error');else note(status==='aprovado'?t('playerApproved'):t('rejectedSuccess'),'success');loadAdmin()}
+async function deleteRejectedTeam(id){const {error}=await db.rpc('fju_campeonato_excluir_time_rejeitado',{p_time_id:id});if(error)note(error.message,'error');else note(t('teamDeleted'),'success');loadAdmin()}
+async function playerAction(id,status){const {error}=await db.rpc('fju_campeonato_aprovar_jogador',{p_jogador_id:id,p_status:status});if(error)note(error.message,'error');else note(status==='aprovado'?t('playerApproved'):t('rejectedSuccess'),'success');loadAdmin()}
 $('#eventForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!profile)return;
  const form=e.currentTarget,f=new FormData(form),polo=profile.papel==='coordenador'?profile.polo_id:f.get('hostPolo'),button=form.querySelector('button[type=submit]'),file=f.get('cover');
