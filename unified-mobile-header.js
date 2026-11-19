@@ -44,8 +44,10 @@ body>header:not(#fju-unified-top){display:none!important}
  const panel=bar.querySelector('.fju-panel'),search=bar.querySelector('.fju-search-box');
  const langButton=bar.querySelector('[data-action="language"]');
  const nativeSelect=original.querySelector('#lang,#language');
+ const nativeStaff=original.querySelector('#staffAccess');
  const langs={pt:'🇧🇷',ja:'🇯🇵',en:'🇺🇸'};
- function syncLang(){langButton.textContent=langs[nativeSelect?.value]||'🇧🇷';}
+ function currentLang(){if(nativeSelect?.tagName==='SELECT')return nativeSelect.value||'pt';const label=nativeSelect?.textContent?.trim()||'';return label.startsWith('日本語')?'ja':label.startsWith('EN')?'en':'pt';}
+ function syncLang(){langButton.textContent=langs[currentLang()]||'🇧🇷';}
  syncLang();nativeSelect?.addEventListener('change',syncLang);
  function show(html){search.hidden=true;panel.innerHTML=html;panel.hidden=false;}
  bar.addEventListener('click',e=>{
@@ -54,9 +56,10 @@ body>header:not(#fju-unified-top){display:none!important}
   if(action==='search'){if(isHome&&document.querySelector('#fju-search-toggle')){document.querySelector('#fju-search-toggle').click();panel.hidden=true;search.hidden=true;}else{panel.hidden=true;search.hidden=!search.hidden;if(!search.hidden)search.querySelector('input').focus();}}
   if(action==='language')show(Object.entries(langs).map(([code,flag])=>`<button type="button" data-lang="${code}">${flag} ${code.toUpperCase()}</button>`).join(''));
   if(action==='notifications'){const native=original.querySelector('#fju-notification-toggle');if(isHome&&native&&!native.hidden)native.click();else show('<p style="margin:8px;font:13px system-ui">As atualizações da sua conta aparecerão aqui.</p>');}
-  if(action==='menu')show(`<a href="${base.href}">Início</a><a href="${new URL('eventos/',base)}">Eventos</a><a href="${new URL('encontre-a-fju/',base)}">Polos</a><a href="${new URL('ranking/',base)}">🏆 Ranking</a><a href="${base.href}#projetos">Projetos</a><a href="${base.href}#my-page">My Page</a>`);
+  if(action==='menu')show(`<a href="${base.href}">Início</a><a href="${new URL('eventos/',base)}">Eventos</a><a href="${new URL('campeonatos/',base)}">🏆 Campeonatos</a><a href="${new URL('encontre-a-fju/',base)}">Polos</a><a href="${new URL('ranking/',base)}">🏆 Ranking</a><a href="${base.href}#projetos">Projetos</a><a href="${base.href}#my-page">My Page</a><button type="button" data-action="coord">Acesso da coordenação</button>`);
+  if(action==='coord'){panel.hidden=true;nativeStaff?.click();}
  });
- panel.addEventListener('click',e=>{const code=e.target.closest('[data-lang]')?.dataset.lang;if(code&&nativeSelect){nativeSelect.value=code;nativeSelect.dispatchEvent(new Event('change',{bubbles:true}));syncLang();panel.hidden=true;}});
+ panel.addEventListener('click',e=>{const code=e.target.closest('[data-lang]')?.dataset.lang;if(code&&nativeSelect){if(nativeSelect.tagName==='SELECT'){nativeSelect.value=code;nativeSelect.dispatchEvent(new Event('change',{bubbles:true}));}else{let current=currentLang(),order=['pt','ja','en'];for(let i=0;i<3&&current!==code;i++){nativeSelect.click();current=currentLang();}}syncLang();panel.hidden=true;}});
  search.addEventListener('submit',e=>{e.preventDefault();const term=search.querySelector('input').value.trim();if(term)location.href=base.href+'?q='+encodeURIComponent(term);});
  document.addEventListener('click',e=>{if(!bar.contains(e.target))panel.hidden=true;});
  const account=bar.querySelector('[data-action="profile"]');
