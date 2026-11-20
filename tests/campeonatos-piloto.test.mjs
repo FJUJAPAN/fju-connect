@@ -13,7 +13,8 @@ const mobileHeader=readFileSync(new URL('unified-mobile-header.js',root),'utf8')
 
 test('module JavaScript syntax remains valid after removing browser CDN import',()=>{
  const moduleSource=script.replace(/^import[^;]+;\s*/m,'');
- assert.doesNotThrow(()=>new Function(moduleSource));
+ const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+ assert.doesNotThrow(()=>new AsyncFunction(moduleSource));
 });
 
 test('homepage links and displays championships in PT, JA and EN',()=>{
@@ -53,7 +54,7 @@ test('captain flow creates team tokens, individual invite links and copy/share c
  assert.match(script,/fju_campeonato_criar_time/);
  assert.match(script,/fju_campeonato_criar_convite/);
  assert.match(script,/\?capitao=/);
- assert.match(script,/\?jogador=/);
+ assert.match(script,/searchParams\.set\('jogador'/);
  assert.match(script,/navigator\.share/);
  assert.match(script,/navigator\.clipboard/);
 });
