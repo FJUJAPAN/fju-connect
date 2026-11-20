@@ -79,3 +79,5 @@
 /* Clear, mobile-first tournament registration CTA */
 .event-card .join-team-btn{width:100%;display:block;margin-top:12px;min-height:52px;font-size:15px;letter-spacing:.2px;box-shadow:0 6px 20px #a678ff30;}
 .event-card .join-team-btn:disabled{box-shadow:none;}
+
+.event-card .view-teams-btn{align-self:stretch;text-align:center;border:1px solid #8a68bd;background:#282039;color:#e8d8ff;border-radius:9px;padding:11px 14px;font:700 13px 'Space Grotesk','Noto Sans JP';cursor:pointer;min-height:44px}.event-card .view-teams-btn:hover{background:#35264a}

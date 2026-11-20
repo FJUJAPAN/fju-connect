@@ -160,6 +160,9 @@ test('duplicate team and technical backend errors are translated to user-friendl
 test('public teams directory only uses approved-team RPC and renders shareable team cards',()=>{
  assert.match(script,/fju_campeonato_times_publicos/);
  assert.match(script,/loadPublicTeams/);
- assert.match(script,/Ver ficha do time/);
+ assert.match(script,/viewTeams:'Ver Times'/);
+ assert.match(script,/loadPublicTeams\(e\.id\)/);
+ assert.match(script,/viewPlayers:'Ver jogadores'/);
+ assert.match(script,/renderPublicTeams\(eventId\)/);
  assert.match(script,/Compartilhar página/);
 });
