@@ -13,7 +13,7 @@ const mobileHeader=readFileSync(new URL('unified-mobile-header.js',root),'utf8')
 
 test('module JavaScript syntax remains valid after removing browser CDN import',()=>{
  const moduleSource=script.replace(/^import[^;]+;\s*/m,'');
- assert.doesNotThrow(()=>new Function(moduleSource));
+ const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;\n assert.doesNotThrow(()=>new AsyncFunction(moduleSource));
 });
 
 test('homepage links and displays championships in PT, JA and EN',()=>{
