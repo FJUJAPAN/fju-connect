@@ -1,4 +1,5 @@
-import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+let createClient;
+try{({createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'))}catch(primaryError){try{({createClient}=await import('https://esm.sh/@supabase/supabase-js@2'))}catch(fallbackError){const host=document.querySelector('#events');if(host)host.textContent='Não foi possível conectar ao carregamento do sistema. Atualize a página ou tente novamente.';console.error('Supabase client CDN load failed',primaryError,fallbackError);throw fallbackError}}
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const labels={
