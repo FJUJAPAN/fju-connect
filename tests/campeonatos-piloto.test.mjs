@@ -162,7 +162,9 @@ test('public teams directory only uses approved-team RPC and renders shareable t
  assert.match(script,/loadPublicTeams/);
  assert.match(script,/viewTeams:'Ver Times'/);
  assert.match(script,/loadPublicTeams\(e\.id\)/);
- assert.match(script,/viewPlayers:'Ver jogadores'/);
- assert.match(script,/renderPublicTeams\(eventId\)/);
- assert.match(script,/Compartilhar página/);
+ assert.match(script,/function openPublicTeam\(tm\)/);
+ assert.match(script,/teamDetailTitle/);
+ assert.match(script,/teamPlayersPage/);
+ assert.match(page,/id="teamDetail" class="panel" hidden/);
+ assert.match(page,/id="backToTeams"/);
 });
