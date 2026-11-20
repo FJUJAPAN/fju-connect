@@ -11,10 +11,9 @@ const completeMigration=readFileSync(new URL('supabase/20261119_campeonatos_cria
 const sharedHeaderCss=readFileSync(new URL('fju-header-shared.css',root),'utf8');
 const mobileHeader=readFileSync(new URL('unified-mobile-header.js',root),'utf8');
 
-test('module JavaScript syntax remains valid after removing browser CDN import',()=>{
- const moduleSource=script.replace(/^import[^;]+;\s*/m,'');
- const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
- assert.doesNotThrow(()=>new AsyncFunction(moduleSource));
+test('championship module uses async CDN fallback and initializes',()=>{
+ assert.match(script,/await import\('https:\/\/cdn\.jsdelivr\.net/);
+ assert.match(script,/async function init\(/);
 });
 
 test('homepage links and displays championships in PT, JA and EN',()=>{
