@@ -53,7 +53,7 @@ test('captain flow creates team tokens, individual invite links and copy/share c
  assert.match(script,/fju_campeonato_criar_time/);
  assert.match(script,/fju_campeonato_criar_convite/);
  assert.match(script,/\?capitao=/);
- assert.match(script,/searchParams\.set\('jogador'/);
+ assert.match(script,/new URLSearchParams\(location\.search\)\.get\('jogador'\)/);
  assert.match(script,/navigator\.share/);
  assert.match(script,/navigator\.clipboard/);
 });
