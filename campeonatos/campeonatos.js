@@ -60,21 +60,27 @@ async function loadAdmin(){
   if(!eventTeams.length)body.insertAdjacentHTML('beforeend','<div class="empty">'+t('noTeams')+'</div>');
   for(const tm of eventTeams){
    const teamBox=document.createElement('div');teamBox.className='team-row';
-   const teamHead=document.createElement('div');teamHead.className='team-title';
+   const teamHead=document.createElement('button');teamHead.type='button';teamHead.className='team-title team-open';teamHead.setAttribute('aria-expanded','false');
    const teamTitle=document.createElement('strong');teamTitle.textContent=tm.nome_time+' · '+(polos.find(p=>p.id===tm.polo_id)?.nome||'');
    const teamState=document.createElement('span');teamState.className='status '+tm.status;teamState.textContent=t(tm.status==='aprovado'?'approved':tm.status==='rejeitado'?'rejected':'pending');
-   teamHead.append(teamTitle,teamState);teamBox.append(teamHead);
+   const teamArrow=document.createElement('span');teamArrow.className='team-open-arrow';teamArrow.textContent='›';
+   teamHead.append(teamTitle,teamState,teamArrow);teamBox.append(teamHead);
    const teamActions=document.createElement('div');teamActions.className='actions';
    if(tm.status==='pendente'){const approve=document.createElement('button');approve.className='approve';approve.textContent=t('approved');approve.onclick=()=>teamAction(tm.id,'aprovado');const reject=document.createElement('button');reject.className='reject';reject.textContent=t('rejected');reject.onclick=()=>confirm(t('confirmTeamReject'))&&deleteRejectedTeam(tm.id);teamActions.append(approve,reject)}
    teamBox.append(teamActions);
-   for(const pl of players.filter(x=>x.time_id===tm.id)){
+   const rosterPanel=document.createElement('div');rosterPanel.className='team-roster-panel';rosterPanel.hidden=true;
+   teamHead.onclick=()=>{rosterPanel.hidden=!rosterPanel.hidden;teamHead.setAttribute('aria-expanded',String(!rosterPanel.hidden));teamArrow.textContent=rosterPanel.hidden?'›':'⌄';};
+   const teamPlayers=players.filter(x=>x.time_id===tm.id&&x.nome&&x.status!=='convite');
+   if(!teamPlayers.length){const empty=document.createElement('p');empty.className='muted';empty.textContent=t('noOtherPlayers');rosterPanel.append(empty)}
+   for(const pl of teamPlayers){
     const line=document.createElement('div');line.className='player-row';const photo=document.createElement('img');photo.alt='';
     if(pl.foto_path){const profilePhoto=/^[0-9a-f-]{36}\/perfil\.jpg$/i.test(pl.foto_path),bucket=profilePhoto?'fju-fotos':'fju-campeonato-jogadores';const {data}=await db.storage.from(bucket).createSignedUrl(pl.foto_path,1800);if(data?.signedUrl)photo.src=data.signedUrl}
-    const info=document.createElement('div');info.className='player-detail';const name=document.createElement('strong');name.textContent=pl.nome||t('invited');const details=document.createElement('div');details.className='muted';details.textContent=pl.nascimento?formatDate(pl.nascimento)+' · '+(pl.cidade_bairro||'')+(pl.fju_numero?' · FJU ID: '+String(pl.fju_numero).padStart(5,'0'):''):t('invited');info.append(name,details);
+    const info=document.createElement('div');info.className='player-detail';const name=document.createElement('strong');name.textContent=pl.nome;const details=document.createElement('div');details.className='muted';details.textContent=pl.nascimento?formatDate(pl.nascimento)+' · '+(pl.cidade_bairro||'')+(pl.fju_numero?' · FJU ID: '+String(pl.fju_numero).padStart(5,'0'):''):'';info.append(name,details);
     const actions=document.createElement('div');actions.className='actions';
     if(pl.status==='pendente'){const yes=document.createElement('button');yes.className='approve';yes.textContent=t('approved');yes.onclick=()=>playerAction(pl.id,'aprovado');const no=document.createElement('button');no.className='reject';no.textContent=t('rejected');no.onclick=()=>confirm(t('confirmReject'))&&playerAction(pl.id,'rejeitado');actions.append(yes,no)}
-    line.append(photo,info,actions);teamBox.append(line)
+    line.append(photo,info,actions);rosterPanel.append(line)
    }
+   teamBox.append(rosterPanel);
    body.append(teamBox)
   }
   card.append(head,body);target.append(card)
