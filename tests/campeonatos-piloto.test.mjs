@@ -171,7 +171,7 @@ test('public teams directory only uses approved-team RPC and renders shareable t
 
 
 test('public championship page uses only one event loader to avoid competing registration buttons',()=>{
- assert.doesNotMatch(page,/<script[^>]*public-loader\\.js/);
- assert.match(page,/<script type="module" src="\\.\/campeonatos\\.js\\?v=20261121-single-loader"/);
- assert.match(script,/button\\.onclick=\\(\\)=>\\{if\\(!closed\\)openTeam\\(e\\.id\\)\\}/);
+ assert.doesNotMatch(page,/<script[^>]*public-loader\.js/);
+ assert.match(page,/<script type="module" src="\.\/campeonatos\.js\\?v=20261121-single-loader"/);
+ assert.match(script,/button\.onclick=\(\)=>\{if\(!closed\)openTeam\(e\.id\)\}/);
 });
