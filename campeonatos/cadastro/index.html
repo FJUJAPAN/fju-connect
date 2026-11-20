@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10101b">
+<title>Cadastro de Time | FJU Connect Japan</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#10101b;color:#fff;font:16px system-ui,sans-serif;display:grid;place-items:center;padding:24px}.card{width:min(100%,440px);padding:28px;border:1px solid #33334a;border-radius:20px;background:#1b1b2b;text-align:center}.logo{font-weight:900;letter-spacing:.1em;color:#f6c344}.spinner{width:30px;height:30px;border:3px solid #555;border-top-color:#f6c344;border-radius:50%;animation:spin 1s linear infinite;margin:22px auto}@keyframes spin{to{transform:rotate(360deg)}}p{color:#c8c8d8;line-height:1.5}a{color:#f6c344}
+</style>
+</head>
+<body>
+<main class="card"><div class="logo">FJU CONNECT JAPAN</div><h1>Cadastro de time</h1><div class="spinner"></div><p id="status">Abrindo formulário de inscrição…</p></main>
+<script>
+(function(){
+const q=new URLSearchParams(location.search);
+const id=q.get('evento')||q.get('criar')||q.get('id');
+if(!id){document.querySelector('#status').innerHTML='Link sem identificação do campeonato. <a href="../">Abrir campeonatos</a>';return;}
+const target=new URL('../',location.href);target.searchParams.set('criar',id);target.searchParams.set('cadastro_direto','1');
+location.replace(target.toString());
+})();
+</script>
+</body>
+</html>
