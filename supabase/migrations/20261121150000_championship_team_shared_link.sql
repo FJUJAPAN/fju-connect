@@ -1,4 +1,4 @@
-alter table public.fju_campeonatos_times add column if not exists capitao_email text,add column if not exists link_time_hash text;
+alter table public.fju_campeonatos_times add column if not exists capitao_email text,add column if not exists link_time_hash text,add column if not exists team_email_sent_at timestamptz;
 create unique index if not exists teams_shared_hash_unique on public.fju_campeonatos_times(link_time_hash) where link_time_hash is not null;
 create or replace function public.fju_campeonato_criar_time_link(p_campeonato_id uuid,p_polo_id uuid,p_nome_time text,p_nome_capitao text,p_email_capitao text,p_nascimento_capitao date,p_cidade_capitao text,p_foto_capitao_path text,p_link_time_hash text,p_token_capitao_hash text,p_consent boolean) returns uuid language plpgsql security definer set search_path=''
 as $$declare v_id uuid;v_today date;begin
