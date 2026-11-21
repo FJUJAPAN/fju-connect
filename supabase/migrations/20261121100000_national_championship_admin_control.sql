@@ -77,21 +77,21 @@ declare v_snap jsonb;
 begin
  if not private.fju_campeonato_nacional() then raise exception 'Somente Nacional pode excluir registros.'; end if;
  if p_tipo='player' then
-  select to_jsonb(j) into v_snap from public.fju_campeonato_jogadores j where j.id=p_id;
+  select to_jsonb(j) into v_snap from public.fju_campeonatos_jogadores j where j.id=p_id;
   if v_snap is null then raise exception 'Atleta não encontrado.'; end if;
   insert into campeonato_archive.admin_deleted_records(record_type,record_id,snapshot,deleted_by,reason) values('player',p_id,v_snap,auth.uid(),p_motivo);
-  delete from public.fju_campeonato_jogadores where id=p_id;
+  delete from public.fju_campeonatos_jogadores where id=p_id;
  elsif p_tipo='team' then
-  select jsonb_build_object('team',to_jsonb(t),'players',coalesce((select jsonb_agg(to_jsonb(j)) from public.fju_campeonato_jogadores j where j.time_id=t.id),'[]'::jsonb)) into v_snap from public.fju_campeonato_times t where t.id=p_id;
+  select jsonb_build_object('team',to_jsonb(t),'players',coalesce((select jsonb_agg(to_jsonb(j)) from public.fju_campeonatos_jogadores j where j.time_id=t.id),'[]'::jsonb)) into v_snap from public.fju_campeonato_times t where t.id=p_id;
   if v_snap is null then raise exception 'Time não encontrado.'; end if;
   insert into campeonato_archive.admin_deleted_records(record_type,record_id,snapshot,deleted_by,reason) values('team',p_id,v_snap,auth.uid(),p_motivo);
-  delete from public.fju_campeonato_jogadores where time_id=p_id;
+  delete from public.fju_campeonatos_jogadores where time_id=p_id;
   delete from public.fju_campeonato_times where id=p_id;
  elsif p_tipo='event' then
-  select jsonb_build_object('event',to_jsonb(c),'teams',coalesce((select jsonb_agg(to_jsonb(t)) from public.fju_campeonato_times t where t.campeonato_id=c.id),'[]'::jsonb),'players',coalesce((select jsonb_agg(to_jsonb(j)) from public.fju_campeonato_jogadores j join public.fju_campeonato_times t on t.id=j.time_id where t.campeonato_id=c.id),'[]'::jsonb)) into v_snap from public.fju_campeonatos c where c.id=p_id;
+  select jsonb_build_object('event',to_jsonb(c),'teams',coalesce((select jsonb_agg(to_jsonb(t)) from public.fju_campeonato_times t where t.campeonato_id=c.id),'[]'::jsonb),'players',coalesce((select jsonb_agg(to_jsonb(j)) from public.fju_campeonatos_jogadores j join public.fju_campeonato_times t on t.id=j.time_id where t.campeonato_id=c.id),'[]'::jsonb)) into v_snap from public.fju_campeonatos c where c.id=p_id;
   if v_snap is null then raise exception 'Campeonato não encontrado.'; end if;
   insert into campeonato_archive.admin_deleted_records(record_type,record_id,snapshot,deleted_by,reason) values('event',p_id,v_snap,auth.uid(),p_motivo);
-  delete from public.fju_campeonato_jogadores where time_id in (select id from public.fju_campeonato_times where campeonato_id=p_id);
+  delete from public.fju_campeonatos_jogadores where time_id in (select id from public.fju_campeonato_times where campeonato_id=p_id);
   delete from public.fju_campeonato_times where campeonato_id=p_id;
   delete from public.fju_campeonatos where id=p_id;
  else raise exception 'Tipo inválido.'; end if;
