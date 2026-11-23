@@ -168,7 +168,7 @@ const translations={
   pt:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'Sua conta FJU Connect JAPAN, sem sair do site oficial.',
-    youthOverline:'MINHA PÁGINA',youthMenuHeading:'Acesso rápido',youthProfile:'Meu Perfil',youthInteractions:'Interações',youthEvents:'Eventos',youthSaved:'Salvos',youthAdmin:'Painel',youthChampionships:'Campeonatos',youthMenuCaption:'Sua área FJU Connect, em um só lugar.',youthBack:'‹ Voltar',youthInteractionsTitle:'Faça parte da conversa',youthInteractionsText:'Participe das matérias da FJU com seu perfil.',youthOpenArticles:'Abrir matérias',youthSavedTitle:'Seus conteúdos favoritos',youthSavedText:'Esta função está em preparação.',
+    youthOverline:'MINHA PÁGINA',youthMenuHeading:'Acesso rápido',youthProfile:'Meu Perfil',youthInteractions:'Interações',youthEvents:'Eventos',youthSaved:'Salvos',youthAdmin:'Painel',youthMenuCaption:'Sua área FJU Connect, em um só lugar.',youthBack:'‹ Voltar',youthInteractionsTitle:'Faça parte da conversa',youthInteractionsText:'Participe das matérias da FJU com seu perfil.',youthOpenArticles:'Abrir matérias',youthSavedTitle:'Seus conteúdos favoritos',youthSavedText:'Esta função está em preparação.',
     loading:'Verificando sua conta...',
     email:'E-mail',password:'Senha',loginButton:'Entrar',
     forgotLink:'Esqueci minha senha',forgotTitle:'Recuperar acesso',
@@ -198,7 +198,7 @@ const translations={
   ja:{
     loginHeader:'ログイン',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'FJU公式サイトから離れずにログインできます。',
-    youthOverline:'マイページ',youthMenuHeading:'クイックアクセス',youthProfile:'マイプロフィール',youthInteractions:'交流',youthEvents:'イベント',youthSaved:'保存済み',youthAdmin:'管理パネル',youthChampionships:'大会',youthMenuCaption:'FJU Connectの機能をここから利用できます。',youthBack:'‹ 戻る',youthInteractionsTitle:'交流に参加しよう',youthInteractionsText:'プロフィールを使ってFJUの記事にコメントできます。',youthOpenArticles:'記事を見る',youthSavedTitle:'保存したコンテンツ',youthSavedText:'準備中の機能です。',
+    youthOverline:'マイページ',youthMenuHeading:'クイックアクセス',youthProfile:'マイプロフィール',youthInteractions:'交流',youthEvents:'イベント',youthSaved:'保存済み',youthAdmin:'管理パネル',youthMenuCaption:'FJU Connectの機能をここから利用できます。',youthBack:'‹ 戻る',youthInteractionsTitle:'交流に参加しよう',youthInteractionsText:'プロフィールを使ってFJUの記事にコメントできます。',youthOpenArticles:'記事を見る',youthSavedTitle:'保存したコンテンツ',youthSavedText:'準備中の機能です。',
     loading:'アカウントを確認しています...',
     email:'メールアドレス',password:'パスワード',loginButton:'ログイン',
     forgotLink:'パスワードを忘れた方',forgotTitle:'パスワードの再設定',
@@ -228,7 +228,7 @@ const translations={
   en:{
     loginHeader:'LOGIN',pageHeader:'MY PAGE',title:'MY PAGE',
     subtitle:'Sign in without leaving the official FJU site.',
-    youthOverline:'MY PAGE',youthMenuHeading:'Quick access',youthProfile:'My Profile',youthInteractions:'Interactions',youthEvents:'Events',youthSaved:'Saved',youthAdmin:'Dashboard',youthChampionships:'Championships',youthMenuCaption:'Your FJU Connect space, all in one place.',youthBack:'‹ Back',youthInteractionsTitle:'Join the conversation',youthInteractionsText:'Join the discussion on FJU articles with your profile.',youthOpenArticles:'Open articles',youthSavedTitle:'Your saved content',youthSavedText:'This feature is coming soon.',
+    youthOverline:'MY PAGE',youthMenuHeading:'Quick access',youthProfile:'My Profile',youthInteractions:'Interactions',youthEvents:'Events',youthSaved:'Saved',youthAdmin:'Dashboard',youthMenuCaption:'Your FJU Connect space, all in one place.',youthBack:'‹ Back',youthInteractionsTitle:'Join the conversation',youthInteractionsText:'Join the discussion on FJU articles with your profile.',youthOpenArticles:'Open articles',youthSavedTitle:'Your saved content',youthSavedText:'This feature is coming soon.',
     loading:'Checking your account...',
     email:'Email',password:'Password',loginButton:'Sign in',
     forgotLink:'Forgot password?',forgotTitle:'Recover access',
@@ -1319,11 +1319,6 @@ async function loadAccount({keepAccountVisible=false,navigateAdmin=false}={}){
         const label=adminTile.querySelector('[data-fju-auth-i18n="youthAdmin"]');
         if(label){label.removeAttribute('data-fju-auth-i18n');label.textContent=profile.papel==='coordenador'?(lang()==='ja'?'コーディネーター管理画面':lang()==='en'?'Coordinator Panel':'Painel de Coordenador'):(lang()==='ja'?'全国管理画面':lang()==='en'?'National Panel':'Painel Nacional');}
       }
-    }
-    const championshipsTile=byId('fju-youth-championships-tile');
-    if(championshipsTile){
-      championshipsTile.hidden=!verifiedAdmin;
-      championshipsTile.href='https://fju-connect.vercel.app/campeonatos/?staff=1';
     }
     // Always expose the coordinator dashboard from the visible MY PAGE home.
     // This independent shortcut survives older/cached dashboard layouts on mobile.
