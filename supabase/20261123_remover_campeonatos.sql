@@ -49,6 +49,7 @@ begin
 end $$;
 
 -- 3) Tabelas (as políticas, índices e restrições delas saem junto).
+drop table if exists public.fju_campeonato_admin_audit cascade;
 drop table if exists public.fju_campeonatos_jogadores cascade;
 drop table if exists public.fju_campeonatos_times cascade;
 drop table if exists public.fju_campeonatos cascade;
@@ -72,7 +73,8 @@ commit;
 
 -- PASSO 2 — Fotos (fazer pelo painel, não pelo SQL):
 -- O Supabase não permite apagar arquivos do Storage direto pelo SQL.
--- Supabase → Storage → para cada bucket abaixo: "Empty bucket" e depois "Delete bucket".
+-- Executado em 23/11/2026: banco limpo; buckets abaixo ficaram privados e sem políticas.
+-- Para apagar os arquivos: Supabase → Storage → "Empty bucket" e depois "Delete bucket".
 --   • fju-campeonato-jogadores  (fotos dos jogadores)
 --   • fju-campeonatos-capas     (capas dos campeonatos)
 -- NÃO mexer no bucket fju-fotos.
