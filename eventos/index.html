@@ -73,8 +73,10 @@ const OPEN_MAT_HAMAMATSU_IMAGES=Array.from({length:10},(_,i)=>'openMatHamamatsu'
 OPEN_MAT_HAMAMATSU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/open-mat-hamamatsu-2026/'+String(i+1).padStart(2,'0')+'.webp';});
 
 // Álbum Cultura • Teatro FJU Hamamatsu • MEGA HELP, 12/09/2026
-const MEGA_HELP_IMAGES=Array.from({length:10},(_,i)=>'megaHelp'+String(i+1).padStart(2,'0'));
-MEGA_HELP_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/teatro-mega-help-2026/'+String(i+1).padStart(2,'0')+'.webp';});
+// Teatro Mega Help: fotos 02, 03, 05, 06, 07, 08 e 09 retiradas a pedido (23/11/2026).
+const MEGA_HELP_FOTOS=['01','04','10'];
+const MEGA_HELP_IMAGES=MEGA_HELP_FOTOS.map(n=>'megaHelp'+n);
+MEGA_HELP_FOTOS.forEach(n=>{IMG['megaHelp'+n]='./fotos/teatro-mega-help-2026/'+n+'.webp';});
 // Galeria Esporte FJU — sete fotos publicadas no portal (a primeira imagem foi removida).
 const SPORT_FJU_IMAGES=Array.from({length:7},(_,i)=>'sportFju'+String(i+2).padStart(2,'0'));
 SPORT_FJU_IMAGES.forEach((key,i)=>{IMG[key]='./fotos/esporte-fju-home-2026/'+String(i+2).padStart(2,'0')+'.webp';});
