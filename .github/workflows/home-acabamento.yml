@@ -1,0 +1,31 @@
+name: FJU JAPAN - Acabamento da home
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'universal-highlights.css'
+      - 'index.html'
+      - 'assets/og-fju-japan.jpg'
+      - 'tests/home-acabamento.test.mjs'
+      - '.github/workflows/home-acabamento.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'universal-highlights.css'
+      - 'index.html'
+      - 'assets/og-fju-japan.jpg'
+      - 'tests/home-acabamento.test.mjs'
+      - '.github/workflows/home-acabamento.yml'
+permissions:
+  contents: read
+jobs:
+  verify-home:
+    runs-on: ubuntu-latest
+    name: Validar acabamento da home
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar textos, numeração, fontes e prévia
+        run: node --test tests/home-acabamento.test.mjs
