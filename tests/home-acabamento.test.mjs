@@ -28,3 +28,15 @@ test('prévia de compartilhamento completa',()=>{
 test('zoom travado de propósito, para a home funcionar como app',()=>{
  assert.match(home,/maximum-scale=1, user-scalable=no/);
 });
+
+test('comportamento de app em todas as páginas com o menu do celular',()=>{
+ const js=readFileSync(new URL('unified-mobile-header.js',root),'utf8');
+ assert.match(js,/gesturestart/);
+ assert.match(js,/touch-action:manipulation/);
+ assert.match(js,/font-size:16px!important/);
+ for(const p of ['index.html','check-in/index.html','encontre-a-fju/index.html','eventos/index.html','materia.html','materias.html','polos/hamamatsu/index.html','projetos/index.html','ranking/index.html']){
+  const html=readFileSync(new URL(p,root),'utf8');
+  assert.match(html,/user-scalable=no/,p);
+  assert.match(html,/unified-mobile-header\.js\?v=20261123-app-1/,p);
+ }
+});

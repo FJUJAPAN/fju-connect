@@ -1,4 +1,19 @@
 /* FJU JAPAN — unified mobile top navigation. Bottom navigation untouched. */
+/* FJU JAPAN — comportamento de app (decisão de design: o site deve parecer um app).
+   - sem zoom de pinça (o Safari do iPhone ignora user-scalable=no, por isso o gesturestart)
+   - sem zoom de toque duplo
+   - sem zoom automático ao tocar em campos de texto no iPhone (fonte mínima de 16px)
+   - sem ajuste automático do tamanho da letra ao girar o celular */
+(()=>{
+ if(window.__fjuAppFeel)return;window.__fjuAppFeel=true;
+ const st=document.createElement('style');st.id='fju-app-feel';
+ st.textContent=`html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation}
+@media(max-width:740px){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px!important}}`;
+ document.head.append(st);
+ const block=e=>e.preventDefault();
+ for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,block,{passive:false});
+ document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});
+})();
 const base=new URL('./',import.meta.url);
 const original=document.querySelector('body > header');
 const isHome=!!original?.classList.contains('site-header');
