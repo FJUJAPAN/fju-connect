@@ -6,6 +6,9 @@ on:
       - 'universal-highlights.css'
       - 'index.html'
       - 'assets/og-fju-japan.jpg'
+      - 'assets/img/**'
+      - 'eventos/index.html'
+      - 'polos/**'
       - 'tests/home-acabamento.test.mjs'
       - '.github/workflows/home-acabamento.yml'
   push:
@@ -14,6 +17,9 @@ on:
       - 'universal-highlights.css'
       - 'index.html'
       - 'assets/og-fju-japan.jpg'
+      - 'assets/img/**'
+      - 'eventos/index.html'
+      - 'polos/**'
       - 'tests/home-acabamento.test.mjs'
       - '.github/workflows/home-acabamento.yml'
 permissions:
