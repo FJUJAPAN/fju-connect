@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#111B30">
+ <meta name="description" content="Projetos da FJU Connect Japan: Mídia, Esporte, Cultura, HELP, Jiu-jitsu e Uniforça. Área exclusiva para os membros de cada projeto.">
+ <title>Projetos | FJU Connect Japan</title>
+ <link rel="stylesheet" href="../fju-header-shared.css?v=20261024-color">
+ <link rel="stylesheet" href="./projetos.css?v=20261123-1">
+</head>
+<body class="fju-projects-page">
+ <a class="skip-link" href="#main">Ir para o conteúdo</a>
+ <header class="fju-subpage-header">
+  <div class="wrap header-in">
+   <a href="../" class="proj-brand" aria-label="FJU Connect Japan — Início"><span class="mark">FJU</span><span>CONNECT <small>JAPAN</small></span></a>
+   <nav class="proj-header-nav" aria-label="Navegação principal">
+    <a href="../" data-t="navHome">Início</a>
+    <a href="../eventos/" data-t="navEvents">Eventos</a>
+    <a href="../ranking/">🏆 Ranking</a>
+    <a href="./" aria-current="page" data-t="navProjects">Projetos</a>
+   </nav>
+   <div class="proj-header-actions">
+    <select id="language" aria-label="Idioma / 言語 / Language"><option value="pt">Português</option><option value="ja">日本語</option><option value="en">English</option></select>
+    <a class="fju-subpage-my-page" href="../#my-page">My Page</a>
+   </div>
+  </div>
+ </header>
+
+ <main id="main">
+  <section class="proj-heading">
+   <div class="wrap">
+    <p class="kicker">FJU CONNECT JAPAN</p>
+    <h1 data-t="title">Projetos</h1>
+    <p class="lead" data-t="lead">Cada projeto tem uma área exclusiva para os seus membros.</p>
+   </div>
+  </section>
+
+  <section class="wrap proj-list" id="proj-list" aria-labelledby="proj-list-title">
+   <h2 id="proj-list-title" class="sr-only" data-t="listTitle">Todos os projetos</h2>
+   <p class="proj-status" id="proj-status" role="status" hidden></p>
+   <div class="proj-grid" id="proj-grid"></div>
+  </section>
+
+  <section class="wrap proj-area" id="proj-area" hidden aria-live="polite"></section>
+ </main>
+
+ <footer class="site-footer">FJU CONNECT JAPAN · <span data-t="footer">Projetos</span></footer>
+
+ <script type="module" src="../unified-mobile-header.js?v=20261123-projetos-1"></script>
+ <script type="module" src="./projetos.js?v=20261123-1"></script>
+</body>
+</html>
