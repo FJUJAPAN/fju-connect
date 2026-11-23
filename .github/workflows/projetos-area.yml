@@ -1,0 +1,33 @@
+name: FJU JAPAN - Área de Projetos
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'projetos/**'
+      - 'index.html'
+      - 'unified-mobile-header.js'
+      - 'supabase/20261123_projetos_area_membros.sql'
+      - 'tests/projetos-area.test.mjs'
+      - '.github/workflows/projetos-area.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'projetos/**'
+      - 'index.html'
+      - 'unified-mobile-header.js'
+      - 'supabase/20261123_projetos_area_membros.sql'
+      - 'tests/projetos-area.test.mjs'
+      - '.github/workflows/projetos-area.yml'
+permissions:
+  contents: read
+jobs:
+  verify-projects:
+    runs-on: ubuntu-latest
+    name: Validar área de projetos
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar links, acesso e catálogo
+        run: node --test tests/projetos-area.test.mjs
