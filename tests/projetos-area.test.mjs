@@ -10,9 +10,10 @@ const sql=read('supabase/20261123_projetos_area_membros.sql');
 const home=read('index.html');
 const mobile=read('unified-mobile-header.js');
 
-test('link Projetos no cabeçalho do site e no menu do celular',()=>{
- assert.match(home,/<a href="projetos\/" class="fju-projects-header-link"/);
+test('Projetos no cabeçalho, no menu do celular e na barra de baixo',()=>{
+ assert.match(home,/<a href="projetos\/" data-i18n="navProjects">/);
  assert.match(home,/<a href="projetos\/">Projetos<\/a>/);
+ assert.match(home,/<a href="projetos\/"><svg[^>]*>.*?<\/svg>Projetos<\/a>/);
  assert.match(mobile,/new URL\('projetos\/',base\)\}">Projetos</);
 });
 
@@ -40,4 +41,10 @@ test('página com idioma, descrição e script do menu do celular',()=>{
  assert.match(page,/<meta name="description"/);
  assert.match(page,/unified-mobile-header\.js/);
  assert.match(page,/id="language"/);
+});
+
+test('nenhum link de navegação aponta mais para a seção antiga #projetos',()=>{
+ for(const p of ['index.html','check-in/index.html','encontre-a-fju/index.html','eventos/index.html']){
+  assert.doesNotMatch(read(p),/href="(\.\.\/)?#projetos"/,p);
+ }
 });
