@@ -9,6 +9,8 @@ on:
       - 'assets/img/**'
       - 'eventos/index.html'
       - 'polos/**'
+      - 'eventos/fotos/**'
+      - 'tests/fotos-retiradas.test.mjs'
       - 'tests/home-acabamento.test.mjs'
       - '.github/workflows/home-acabamento.yml'
   push:
@@ -20,6 +22,8 @@ on:
       - 'assets/img/**'
       - 'eventos/index.html'
       - 'polos/**'
+      - 'eventos/fotos/**'
+      - 'tests/fotos-retiradas.test.mjs'
       - 'tests/home-acabamento.test.mjs'
       - '.github/workflows/home-acabamento.yml'
 permissions:
@@ -34,4 +38,4 @@ jobs:
         with:
           node-version: '22'
       - name: Testar textos, numeração, fontes e prévia
-        run: node --test tests/home-acabamento.test.mjs
+        run: node --test tests/home-acabamento.test.mjs tests/fotos-retiradas.test.mjs
