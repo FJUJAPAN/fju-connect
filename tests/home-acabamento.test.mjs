@@ -40,3 +40,13 @@ test('comportamento de app em todas as páginas com o menu do celular',()=>{
   assert.match(html,/unified-mobile-header\.js\?v=20261123-app-1/,p);
  }
 });
+
+test('páginas sem fotos embutidas no HTML (carregam leves)',()=>{
+ for(const p of ['index.html','eventos/index.html','polos/hamamatsu/index.html','encontre-a-fju/index.html','materia.html','materias.html']){
+  const html=readFileSync(new URL(p,root),'utf8');
+  assert.doesNotMatch(html,/base64,[A-Za-z0-9+\/=]{1000,}/,p);
+  for(const m of html.matchAll(/(?:\.\.\/)*assets\/img\/([0-9a-f]{12}\.(?:webp|jpg|png|gif|svg))/g)){
+   assert.ok(existsSync(new URL('assets/img/'+m[1],root)),p+' -> '+m[1]);
+  }
+ }
+});
