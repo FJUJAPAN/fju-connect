@@ -11,8 +11,8 @@ test('sem textos provisórios visíveis na home',()=>{
 
 test('numeração das seções em sequência, sem repetir',()=>{
  const nums=[...home.matchAll(/<span class="kicker">(\d\d) \//g)].map(m=>m[1]);
- const visiveis=nums.slice(0,6);
- assert.deepEqual(visiveis,['01','02','03','04','05','06']);
+ assert.ok(nums.length>=4);
+ assert.deepEqual(nums,nums.map((_,i)=>String(i+1).padStart(2,'0')));
 });
 
 test('todas as fontes têm reserva sans-serif',()=>{
@@ -49,4 +49,15 @@ test('páginas sem fotos embutidas no HTML (carregam leves)',()=>{
    assert.ok(existsSync(new URL('assets/img/'+m[1],root)),p+' -> '+m[1]);
   }
  }
+});
+
+test('nova ordem da home: polos logo após o hero, projetos oficiais, música e Universal no rodapé',()=>{
+ const pos=id=>home.indexOf(`id="${id}"`);
+ const ordem=['inicio','polos','projetos','live','galeria','historias','acao'].map(pos);
+ assert.ok(ordem.every(p=>p>0));
+ assert.deepEqual(ordem,[...ordem].sort((a,b)=>a-b));
+ for(const k of ['projectMedia','projectSports','projectCulture','projectHelp','projectBjj','projectUniforca'])assert.match(home,new RegExp(`<h3 data-i18n="${k}"`));
+ assert.match(home,/class="btn pv2-all" href="projetos\/"/);
+ assert.doesNotMatch(home,/id="musica"|id="fju-universal-news"|href="#musica"/);
+ assert.match(home,/footer-links[^]*open\.spotify\.com[^]*universaljp\.org/);
 });
