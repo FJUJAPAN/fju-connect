@@ -25,6 +25,6 @@ test('prévia de compartilhamento completa',()=>{
  assert.ok(existsSync(new URL('assets/og-fju-japan.jpg',root)));
 });
 
-test('zoom liberado no celular',()=>{
- assert.doesNotMatch(home,/user-scalable=no/);
+test('zoom travado de propósito, para a home funcionar como app',()=>{
+ assert.match(home,/maximum-scale=1, user-scalable=no/);
 });
