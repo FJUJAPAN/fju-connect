@@ -1,4 +1,5 @@
 /* Avatares circulares no ranking, respeitando o acesso privado por polo. */
+import './signed-url-cache.js';
 const seen=new Map();
 const idPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const css=document.createElement('style');
@@ -12,9 +13,9 @@ document.head.append(css);
 
 async function urlPrivada(db,bucket,path){
  const key=bucket+':'+path, existing=seen.get(key);
- if(existing&&existing.validUntil>Date.now())return existing.promise;
- const promise=db.storage.from(bucket).createSignedUrl(path,300).then(({data,error})=>error?'':data?.signedUrl||'').catch(()=>'');
- seen.set(key,{promise,validUntil:Date.now()+240000});
+ if(existing)return existing;
+ const promise=window.fjuSignedUrl(db,bucket,path).then(({data,error})=>error?'':data?.signedUrl||'').catch(()=>'');
+ seen.set(key,promise);
  return promise;
 }
 function verificaImagem(url,wrap){
@@ -26,7 +27,7 @@ function verificaImagem(url,wrap){
   img.src=url;
  });
 }
-export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false,fotoUrl=''}={}){
+export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false,fotoUrl='',fotoChave=''}={}){
  const wrap=document.createElement('span');
  wrap.className='fju-rank-avatar';
  wrap.setAttribute('aria-hidden','true');
@@ -34,7 +35,7 @@ export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false,foto
  fallback.className='fju-rank-avatar-fallback';
  fallback.textContent='👤';
  wrap.append(fallback);
- if(fotoUrl){void verificaImagem(fotoUrl,wrap);return wrap;}
+ if(fotoUrl){void verificaImagem(fotoUrl,wrap).then(ok=>{if(!ok&&fotoChave)window.fjuSignedUrlEsquecer?.(fotoChave);});return wrap;}
  if(!idPattern.test(String(usuarioId||'')))return wrap;
  let started=false;
  const carrega=async()=>{
@@ -45,6 +46,7 @@ export function criarAvatarRanking(db,usuarioId,{jovemId=null,privado=false,foto
    for(const [bucket,path] of caminhos){
     const url=await urlPrivada(db,bucket,path);
     if(url&&await verificaImagem(url,wrap))return;
+    if(url){window.fjuSignedUrlEsquecer?.(bucket,path);seen.delete(bucket+':'+path);}
    }
   }
   const publicUrl=db.storage.from('fju-comentarios-avatars').getPublicUrl(usuarioId+'/perfil.jpg').data?.publicUrl;

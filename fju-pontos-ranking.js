@@ -1,5 +1,6 @@
-import './fju-ranking-polo.js?v=20261102-choice-polo-1';
-import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261102-1';
+import './signed-url-cache.js';
+import './fju-ranking-polo.js?v=20261124-cache';
+import {criarAvatarRanking} from './fju-ranking-avatar.js?v=20261124-cache';
 import './fju-solicitacoes-pontos.js?v=20261116-youth-i18n-2';
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const db=createClient('https://hmacroktklgwkofxsygv.supabase.co','sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ');
@@ -68,20 +69,29 @@ function rank(){
    const last=cycle.data?.atualizado_em?new Date(cycle.data.atualizado_em).toLocaleString(locale(),{timeZone:'Asia/Tokyo'}):'—';
    meta.textContent=(period==='semanal'?t('week'):t('month'))+key.slice(8)+'/'+key.slice(5,7)+'/'+key.slice(0,4)+(cycle.data?.fechado?t('closedMeta'):'')+t('updated')+last+' JST';
    if(!score.data?.length){const item=document.createElement('li');item.textContent=t('empty');list.append(item);return;}
-   let rankPhotos={};
-   try{
-    const photoResponse=await fetch('https://hmacroktklgwkofxsygv.supabase.co/functions/v1/fju-ranking-fotos',{
-     method:'POST',headers:{'Content-Type':'application/json','apikey':'sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ'},
-     body:JSON.stringify({periodo:period,inicio:key})
-    });
-    if(photoResponse.ok)rankPhotos=(await photoResponse.json()).photos||{};
-   }catch(_){}
+   // Fotos do ranking: reaproveita os links guardados no aparelho (ver signed-url-cache.js)
+   // e só pede links novos quando falta a foto de alguém.
+   const rankPhotos={};
+   const ids=[...new Set(score.data.map(x=>x.usuario_id).filter(Boolean))];
+   for(const id of ids){const u=window.fjuSignedUrlLer?.('rank:'+id);if(u)rankPhotos[id]=u;}
+   if(ids.some(id=>!rankPhotos[id])){
+    try{
+     const photoResponse=await fetch('https://hmacroktklgwkofxsygv.supabase.co/functions/v1/fju-ranking-fotos',{
+      method:'POST',headers:{'Content-Type':'application/json','apikey':'sb_publishable_mdkfafhpqtthwzU8Hf7u9A_rErx3MFJ'},
+      body:JSON.stringify({periodo:period,inicio:key})
+     });
+     if(photoResponse.ok){
+      const novas=(await photoResponse.json()).photos||{};
+      for(const [id,url] of Object.entries(novas)){if(!rankPhotos[id]){rankPhotos[id]=url;window.fjuSignedUrlGuardar?.('rank:'+id,url);}}
+     }
+    }catch(_){}
+   }
    if(stamp!==request)return;
    for(const item of score.data){
     const li=document.createElement('li'),place=document.createElement('span'),name=document.createElement('span'),points=document.createElement('span');
     place.className='place';place.textContent=item.posicao+'º';name.className='name';name.textContent=item.apelido;
     if(item.polo){const small=document.createElement('small');small.textContent='FJU '+item.polo;name.append(small);}
-    points.className='points';points.textContent=fmt(item.pontos)+t('points');const avatar=criarAvatarRanking(db,item.usuario_id,{fotoUrl:rankPhotos[item.usuario_id]||''});
+    points.className='points';points.textContent=fmt(item.pontos)+t('points');const avatar=criarAvatarRanking(db,item.usuario_id,{fotoUrl:rankPhotos[item.usuario_id]||'',fotoChave:'rank:'+item.usuario_id});
     li.append(place,avatar,name,points);list.append(li);
    }
   }catch(e){if(stamp===request)meta.textContent=t('failed');}
