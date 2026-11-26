@@ -25,7 +25,7 @@ A implementação nova deve substituir/adicionar uma fonte dinâmica para os ál
 1. **Frontend público**: `eventos/index.html` consulta apenas álbuns com estado `published` e suas fotos; as imagens usam URLs do domínio público de mídia da FJU.
 2. **Supabase/Postgres**: tabelas para permissões da equipe de mídia, álbuns, fotos e trilha de aprovação. RLS habilitada em todas as tabelas expostas.
 3. **Upload assinado**: endpoint backend autenticado valida o JWT do Supabase e confirma o perfil do usuário. Só Administrador Nacional ativo ou membro ativo da allowlist de mídia pode solicitar URL temporária de upload.
-4. **Cloudflare R2**: bucket privado durante upload/revisão; depois da aprovação, objetos aprovados são servidos pelo domínio público/CDN configurado. Não publicar objetos pendentes.
+4. **Cloudflare R2**: usar bucket privado de staging para uploads e revisão e bucket separado de publicação ligado ao domínio público/CDN. Após aprovação, o backend copia somente os objetos aprovados para o bucket público e remove/expira a cópia de staging. Nunca colocar arquivos pendentes no bucket público.
 5. **Aprovação nacional**: apenas Administrador Nacional ativo pode aprovar/rejeitar; publicação atualiza o estado do álbum e disponibiliza as imagens aprovadas.
 6. **Segredos**: credenciais R2 e chave de assinatura somente em secrets do backend/Cloudflare; nunca em HTML, JavaScript público, GitHub ou tabela acessível ao navegador.
 
@@ -73,11 +73,11 @@ A autorização deve ser conferida no backend e reforçada com RLS. Esconder bot
 - Não alterar as tabelas/políticas existentes de jovens, perfis ou fotos.
 
 ### Fase 2 — R2 e upload seguro
-- Criar bucket R2 e domínio de entrega público dedicado (por exemplo, `fotos.fjujapan.com`, se o domínio estiver disponível e sob controle da organização).
+- Criar bucket R2 privado de staging e bucket R2 público separado, com domínio de entrega dedicado (por exemplo, `fotos.fjujapan.com`, se o domínio estiver disponível e sob controle da organização).
 - Criar endpoint autenticado para emitir URLs temporárias de upload.
 - Validar tipo real do arquivo, tamanho máximo, quantidade por lote, extensão e nome/chave gerada pelo servidor.
 - Definir limites contra abuso, repetição de upload e arquivos não-imagem.
-- Manter objetos em área não pública até a aprovação.
+- Manter objetos somente no bucket privado de staging até a aprovação; após aprovação, copiar para o bucket público e limpar a área de staging.
 
 ### Fase 3 — Painel de gestão
 - Criar área para Nacional e equipe de mídia autorizada.
