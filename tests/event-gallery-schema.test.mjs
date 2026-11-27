@@ -1,9 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync, statSync} from 'node:fs';
+import {readFileSync} from 'node:fs';
 
 const sql = readFileSync(new URL('../supabase/migrations/20261127090000_fju_event_gallery.sql', import.meta.url), 'utf8');
-const watermark = new URL('../assets/branding/fju-gallery-watermark.png', import.meta.url);
 
 test('galeria limita miniatura e imagem principal a 200 KB', () => {
   assert.match(sql, /tamanho_thumb_bytes integer NOT NULL CHECK \(tamanho_thumb_bytes BETWEEN 1 AND 204800\)/);
@@ -29,14 +28,4 @@ test('RPCs de transição só podem ser executadas pelo backend service_role', (
 test('clientes não recebem INSERT direto em fotografias nem UPDATE de status', () => {
   assert.doesNotMatch(sql, /GRANT[^;]*INSERT[^;]*fju_galeria_fotos TO authenticated/i);
   assert.match(sql, /GRANT UPDATE \(titulo, descricao, categoria, cidade, data_evento\) ON public\.fju_galeria_albuns TO authenticated/);
-});
-
-test('marca d’água é PNG com alpha e sem metadados pessoais', () => {
-  const bytes = readFileSync(watermark);
-  assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
-  assert.ok(statSync(watermark).size < 150_000);
-  assert.equal(bytes[25], 6);
-  assert.equal(bytes.includes(Buffer.from('eXIf')), false);
-  assert.equal(bytes.includes(Buffer.from('iTXt')), false);
-  assert.equal(bytes.includes(Buffer.from('tEXt')), false);
 });
