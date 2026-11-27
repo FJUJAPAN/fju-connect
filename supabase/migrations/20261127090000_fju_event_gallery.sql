@@ -1,6 +1,6 @@
 -- FJU Connect Japan — galeria exclusiva de Eventos Realizados.
 -- Fotografias antigas permanecem intocadas; esta estrutura atende apenas aos novos álbuns.
--- Os objetos ficam no R2 privado até a aprovação nacional.
+-- Os objetos ficam no bucket privado do Supabase Storage até a aprovação nacional.
 
 BEGIN;
 
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS public.fju_galeria_albuns (
 CREATE TABLE IF NOT EXISTS public.fju_galeria_fotos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   album_id uuid NOT NULL REFERENCES public.fju_galeria_albuns(id) ON DELETE CASCADE,
-  chave_r2_thumb text NOT NULL UNIQUE CHECK (length(chave_r2_thumb) BETWEEN 1 AND 500),
-  chave_r2_full text NOT NULL UNIQUE CHECK (length(chave_r2_full) BETWEEN 1 AND 500),
+  storage_path_thumb text NOT NULL UNIQUE CHECK (length(storage_path_thumb) BETWEEN 1 AND 500),
+  storage_path_full text NOT NULL UNIQUE CHECK (length(storage_path_full) BETWEEN 1 AND 500),
   nome_original text NOT NULL DEFAULT '' CHECK (length(nome_original) <= 255),
   mime_type text NOT NULL DEFAULT 'image/webp' CHECK (mime_type = 'image/webp'),
   tamanho_thumb_bytes integer NOT NULL CHECK (tamanho_thumb_bytes BETWEEN 1 AND 204800),
@@ -168,7 +168,7 @@ BEGIN
 END;
 $function$;
 
--- O backend copia primeiro os objetos do R2 privado para o público; esta RPC
+-- O backend copia primeiro os objetos do bucket privado para o público; esta RPC
 -- publica todas as fotos e o álbum em uma única transação SQL.
 CREATE OR REPLACE FUNCTION public.fju_galeria_aprovar_album(p_album_id uuid, p_actor_id uuid)
 RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $function$
