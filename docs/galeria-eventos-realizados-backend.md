@@ -7,7 +7,7 @@ Esta implementação é isolada da galeria/fotos legadas. Não migrar, renomear,
 - Somente Administrador Nacional e equipe de mídia explicitamente autorizada podem enviar álbuns.
 - Toda foto enviada fica em armazenamento privado até aprovação.
 - A aprovação publica todas as fotos e o álbum de forma atômica no banco.
-- O cliente nunca recebe credenciais R2 nem pode definir status de fotos/álbuns.
+- O cliente nunca recebe credenciais Supabase Storage nem pode definir status de fotos/álbuns.
 - Imagens aceitas: WebP, até 1600 × 1600 px, até 200 KiB por arquivo.
 - Validar o conteúdo real do arquivo, não confiar no MIME informado pelo navegador.
 
@@ -22,12 +22,12 @@ Operações previstas:
 5. reject: exigir papel nacional e chamar a RPC de rejeição com o usuário autenticado no servidor.
 
 ## Configuração necessária antes de implantar
-Definir e validar os nomes dos buckets (privado e público), endpoint/account ID R2, access key ID, secret access key e domínio público de leitura. Esses valores devem ser cadastrados como secrets no Supabase, nunca no repositório ou no frontend.
+Criar dois buckets exclusivos: fju-eventos-privado (privado) e fju-eventos-publico (público). O backend usa a chave service_role apenas no servidor; nunca expor essa chave no frontend.
 
 ## Bloqueios de implantação
-- Confirmar as credenciais e os buckets R2 reais do projeto.
+- Criar e validar os buckets exclusivos fju-eventos-privado e fju-eventos-publico.
 - Escolher/validar o processador WebP no runtime Edge; não aceitar imagens apenas renomeadas para .webp.
-- Implementar e testar rollback de cópias parciais no R2.
+- Implementar e testar rollback de cópias parciais no Supabase Storage.
 - Aplicar a migração somente após revisão e aprovação do PR.
 - Não implantar a função até que os secrets e o fluxo de armazenamento estejam configurados.
 
@@ -37,6 +37,6 @@ Definir e validar os nomes dos buckets (privado e público), endpoint/account ID
 - Alterar actor_id no payload não altera a identidade usada no servidor.
 - Upload inválido, >200 KiB ou >1600 px é recusado.
 - Álbuns pendentes e suas fotos não aparecem publicamente.
-- Falha de cópia R2 não publica álbum/fotos no banco.
+- Falha de cópia Supabase Storage não publica álbum/fotos no banco.
 - Aprovação publica todas as fotos e o álbum numa única transação SQL.
 - Fotos e álbuns antigos continuam intactos.
