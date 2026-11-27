@@ -138,6 +138,7 @@ CREATE POLICY fju_galeria_fotos_midia_select ON public.fju_galeria_fotos
 REVOKE ALL ON public.fju_galeria_equipe, public.fju_galeria_albuns, public.fju_galeria_fotos FROM anon, authenticated;
 GRANT SELECT ON public.fju_galeria_albuns, public.fju_galeria_fotos TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.fju_galeria_equipe TO authenticated;
+GRANT ALL PRIVILEGES ON public.fju_galeria_equipe, public.fju_galeria_albuns, public.fju_galeria_fotos TO service_role;
 GRANT INSERT ON public.fju_galeria_albuns TO authenticated;
 GRANT UPDATE (titulo, descricao, categoria, cidade, data_evento) ON public.fju_galeria_albuns TO authenticated;
 
